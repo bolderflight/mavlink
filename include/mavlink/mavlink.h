@@ -37,7 +37,7 @@ class MavLink {
   void SendAttitude(uint32_t time_ms, float roll_rad, float pitch_rad, float yaw_rad, float gx_radps, float gy_radps, float gz_radps);
   void SendGnss(uint32_t time_ms, uint8_t fix, uint8_t num_sv, double lat_rad, double lon_rad, float alt_msl_m, float alt_wgs84_m, float ground_speed_mps, float track_rad, float hacc, float vacc, float sacc, float tacc);
   void SendHud(uint32_t time_ms, float airspeed_mps, float ground_speed_mps, float alt_msl_m, float climb_mps, float heading_rad, float throttle_nd);
-  void SendBattery();
+  void SendBattery(float voltage);
 
  private:
   /* Serial bus */

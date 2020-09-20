@@ -71,4 +71,28 @@ void MavLink::SendHud(uint32_t time_ms, float airspeed_mps, float ground_speed_m
   bus_->write(msg_buf_, msg_len_);
 }
 
+void MavLink::SendBattery(float voltage) {
+  uint16_t voltages[14];
+  for (std::size_t i = 0; i < 14; i++) {
+    voltages[i] = UINT16_MAX;
+  }
+  voltages[0] = static_cast<uint16_t>(voltage * 1000.0f);
+  msg_len_ = mavlink_msg_battery_status_pack(sys_id_, comp_id_, &msg_,
+  1,
+  MAV_BATTERY_FUNCTION_ALL,
+  MAV_BATTERY_TYPE_LIPO,
+  INT16_MAX,
+  &voltages[0],
+  -1,
+  -1,
+  -1,
+  -1,
+  0,
+  MAV_BATTERY_CHARGE_STATE_UNDEFINED,
+  &voltages[10]
+  );
+  mavlink_msg_to_send_buffer(msg_buf_, &msg_);
+  bus_->write(msg_buf_, msg_len_);
+}
+
 }  // telemetry
