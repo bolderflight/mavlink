@@ -5,7 +5,7 @@ if (DEFINED MCU)
 endif()
 # Project information
 project(Mavlink
-	VERSION 1.0.0
+	VERSION 1.0.1
 	DESCRIPTION "Mavlink communication protocol interface"
 	LANGUAGES CXX
 )
@@ -18,18 +18,21 @@ if (DEFINED MCU)
 	FetchContent_Declare(
 		core
 		GIT_REPOSITORY 	git@gitlab.com:bolderflight/software/core.git
+		GIT_TAG v1.0.1
 	)
 	FetchContent_MakeAvailable(core)
 	# Fetch mavlink-v2 headers
 	FetchContent_Declare(
 		mavlink_headers_v2
 		GIT_REPOSITORY 	git@gitlab.com:bolderflight/software/mavlink_c_library_v2.git
+		GIT_TAG v1.0.0
 	)
 	FetchContent_MakeAvailable(mavlink_headers_v2)
 	# Fetch global_defs
 	FetchContent_Declare(
 		global_defs
 		GIT_REPOSITORY 	git@gitlab.com:bolderflight/software/global_defs.git
+		GIT_TAG v1.1.1
 	)
 	FetchContent_MakeAvailable(global_defs)
 	# Add the library target
