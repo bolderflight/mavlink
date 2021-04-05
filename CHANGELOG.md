@@ -1,5 +1,7 @@
 # Changelog
 
+## v2.0.0
+
 ## v1.0.3
 - Updated for core v1.0.3 and global_defs v1.1.2
 

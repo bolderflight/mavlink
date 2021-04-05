@@ -20,18 +20,10 @@
 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-* IN THE SOFTWARE.dd
+* IN THE SOFTWARE.
 */
 
-#include "mavlink/mavlink.h"
-
-bfs::MavLink<50, 1000, 500, 500> mavlink(&Serial4, bfs::VehicleType::FIXED_WING);
-
-int main() {
-  Serial.begin(115200);
-  while (!Serial) {}
-  mavlink.Begin(57600);
-  while (1) {
-    mavlink.Update();
-  }
-}
+#include "mavlink/heartbeat.h"
+#include "core/core.h"
+#include "mavlink_types.h"
+#include "common/mavlink.h"
