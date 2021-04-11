@@ -53,6 +53,28 @@ class MavLinkTelemetry {
                    bus_(bus), sys_id_(sys_id) {}
   void Update();
   void MsgHandler(const mavlink_message_t &ref);
+  /* Config */
+  inline void SetRawSensPeriod_ms(int val) {
+    data_stream_period_ms_[SRx_RAW_SENS_STREAM] = val;
+  }
+  inline void SetExtStatusPeriod_ms(int val) {
+    data_stream_period_ms_[SRx_EXT_STAT_STREAM] = val;
+  }
+  inline void SetRcChanPeriod_ms(int val) {
+    data_stream_period_ms_[SRx_RC_CHAN_STREAM] = val;
+  }
+  inline void SetPosPeriod_ms(int val) {
+    data_stream_period_ms_[SRx_POSITION_STREAM] = val;
+  }
+  inline void SetExtra1Period_ms(int val) {
+    data_stream_period_ms_[SRx_EXTRA1_STREAM] = val;
+  }
+  inline void SetExtra2Period_ms(int val) {
+    data_stream_period_ms_[SRx_EXTRA2_STREAM] = val;
+  }
+  inline void SetExtra3Period_ms(int val) {
+    data_stream_period_ms_[SRx_EXTRA3_STREAM] = val;
+  }
   /* Getters */
   inline constexpr uint8_t sys_id() const {return sys_id_;}
   inline constexpr uint8_t comp_id() const {return comp_id_;}
@@ -224,6 +246,14 @@ class MavLinkTelemetry {
                                                    -1, -1, -1, -1, -1, -1};
   elapsedMillis data_stream_timer_ms_[NUM_DATA_STREAMS_];
   /* Data streams */
+  static constexpr int SRx_RAW_SENS_STREAM = 1;
+  static constexpr int SRx_EXT_STAT_STREAM = 2;
+  static constexpr int SRx_RC_CHAN_STREAM = 3;
+  static constexpr int SRx_RAW_CTRL_STREAM = 4;
+  static constexpr int SRx_POSITION_STREAM = 6;
+  static constexpr int SRx_EXTRA1_STREAM = 10;
+  static constexpr int SRx_EXTRA2_STREAM = 11;
+  static constexpr int SRx_EXTRA3_STREAM = 12;
   typedef void (MavLinkTelemetry::*DataStream)(void);
   DataStream streams_[NUM_DATA_STREAMS_] = {
     &MavLinkTelemetry::SRx_ALL,

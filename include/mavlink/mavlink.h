@@ -65,6 +65,14 @@ class MavLink {
       }
     }
   }
+  /* Config */
+  inline void SetExtStatusPeriod_ms(int val) {telem_.SetExtStatusPeriod_ms(val);}
+  inline void SetExtra1Period_ms(int val) {telem_.SetExtra1Period_ms(val);}
+  inline void SetExtra2Period_ms(int val) {telem_.SetExtra2Period_ms(val);}
+  inline void SetExtra3Period_ms(int val) {telem_.SetExtra3Period_ms(val);}
+  inline void SetPosPeriod_ms(int val) {telem_.SetPosPeriod_ms(val);}
+  inline void SetRawSensPeriod_ms(int val) {telem_.SetRawSensPeriod_ms(val);}
+  inline void SetRcChanPeriod_ms(int val) {telem_.SetRcChanPeriod_ms(val);}
   /*** Getters ***/
   inline constexpr VehicleType vehicle_type() const {return heartbeat_.vehicle_type();}
   inline constexpr uint8_t sys_id() const {return heartbeat_.sys_id();}
