@@ -1,0 +1,12 @@
+stages:
+  - lint
+
+Lint:
+  stage: lint
+  tags:
+    - bfs
+  script: 
+    - cpplint --verbose=0 src/mavlink/hearbeat.cc
+    - cpplint --verbose=0 include/mavlink/heartbeat.h
+    - cpplint --verbose=0 include/mavlink/util.h
+    - cpplint --verbose=0 include/mavlink/mavlink.h
