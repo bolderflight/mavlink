@@ -26,6 +26,7 @@
 #ifndef INCLUDE_MAVLINK_MAVLINK_H_
 #define INCLUDE_MAVLINK_MAVLINK_H_
 
+#include <string>
 #include "core/core.h"
 #include "./mavlink_types.h"
 #include "common/mavlink.h"
@@ -226,8 +227,12 @@ class MavLink {
   inline float param(const int32_t idx) const {return param_.param(idx);}
   inline int32_t updated_param() const {return param_.updated_param();}
   template<std::size_t NCHAR>
-  inline void SetParamId(const int32_t idx, char const (&name)[NCHAR]) {param_.SetParamId(idx, name);}
-  inline std::string param_id(const int32_t idx) const {return param_.param_id(idx);}
+  inline void SetParamId(const int32_t idx, char const (&name)[NCHAR]) {
+    param_.SetParamId(idx, name);
+  }
+  inline std::string param_id(const int32_t idx) const {
+    return param_.param_id(idx);
+  }
 
  private:
   /* Serial bus */
