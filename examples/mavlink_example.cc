@@ -25,7 +25,7 @@
 
 #include "mavlink/mavlink.h"
 
-bfs::MavLink<50, 1000, 500, 500> mavlink(&Serial4, bfs::VehicleType::FIXED_WING);
+bfs::MavLink<50> mavlink(&Serial4, bfs::VehicleType::FIXED_WING);
 
 int main() {
   Serial.begin(115200);

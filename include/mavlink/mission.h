@@ -29,7 +29,7 @@
 #include <array>
 #include <string>
 #include "core/core.h"
-#include "mavlink_types.h"
+#include "./mavlink_types.h"
 #include "common/mavlink.h"
 #include "mavlink/util.h"
 

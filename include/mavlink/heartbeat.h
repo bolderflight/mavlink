@@ -27,12 +27,12 @@
 #define INCLUDE_MAVLINK_HEARTBEAT_H_
 
 #include "core/core.h"
-#include "mavlink_types.h"
+#include "./mavlink_types.h"
 #include "common/mavlink.h"
 
 namespace bfs {
 
-enum class VehicleType {
+enum class VehicleType : uint8_t {
   FIXED_WING = 1,
   QUADROTOR = 2,
   COAXIAL_HELICOPTER = 3,
@@ -44,18 +44,22 @@ enum class VehicleType {
   DODECAROTOR = 29,
   DECAROTOR = 35
 };
-enum class VehicleMode {
+enum class VehicleMode : uint8_t {
   MANUAL,
   STABALIZED,
   ATTITUDE,
   AUTO,
   TEST
 };
-enum class VehicleState {
+enum class VehicleState : uint8_t {
+  UNINIT = 0,
+  BOOT = 1,
+  CALIBRATING = 2,
   STANDBY = 3,
   ACTIVE = 4,
   CAUTION = 5,
   EMERGENCY = 6,
+  POWEROFF = 7,
   FTS = 8
 };
 
@@ -66,18 +70,18 @@ class MavLinkHeartbeat {
   MavLinkHeartbeat(HardwareSerial *bus, const VehicleType type,
                    const uint8_t sys_id) : bus_(bus),
                    vehicle_type_(type), sys_id_(sys_id) {}
-  /* Setters */
-  inline void throttle_enabled(const bool val) {throttle_enabled_ = val;}
-  inline void vehicle_mode(const VehicleMode val) {vehicle_mode_ = val;}
-  inline void vehicle_state(const VehicleState val) {vehicle_state_ = val;}
-  /* Getters */
+  /* Vehicle type, system and component ID getters */
   inline constexpr VehicleType vehicle_type() const {return vehicle_type_;}
   inline constexpr uint8_t sys_id() const {return sys_id_;}
   inline constexpr uint8_t comp_id() const {return comp_id_;}
-  inline bool throttle_enabled() const {return throttle_enabled_;}
-  inline VehicleMode vehicle_mode() const {return vehicle_mode_;}
-  inline VehicleState vehicle_state() const {return vehicle_state_;}
-  /* Update */
+  /* 
+  * Setters and getters for the throttle enabled flag, vehicle mode,
+  * and vehicle state
+  */
+  inline void throttle_enabled(const bool val) {throttle_enabled_ = val;}
+  inline void vehicle_mode(const VehicleMode val) {vehicle_mode_ = val;}
+  inline void vehicle_state(const VehicleState val) {vehicle_state_ = val;}
+  /* Update method */
   void Update();
 
  private:

@@ -28,7 +28,7 @@
 
 #include <string>
 #include "core/core.h"
-#include "mavlink_types.h"
+#include "./mavlink_types.h"
 #include "common/mavlink.h"
 
 namespace bfs {
@@ -46,10 +46,10 @@ enum class Severity {
 
 class MavLinkUtil {
  public:
-  MavLinkUtil(HardwareSerial *bus) : bus_(bus) {}
+  explicit MavLinkUtil(HardwareSerial *bus) : bus_(bus) {}
   MavLinkUtil(HardwareSerial *bus, const uint8_t sys_id) :
               bus_(bus), sys_id_(sys_id) {}
-  /* Getters */
+  /* System and component ID getters */
   inline constexpr uint8_t sys_id() const {return sys_id_;}
   inline constexpr uint8_t comp_id() const {return comp_id_;}
   /* Send status text */

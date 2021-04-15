@@ -28,7 +28,7 @@
 
 #include <array>
 #include "core/core.h"
-#include "mavlink_types.h"
+#include "./mavlink_types.h"
 #include "common/mavlink.h"
 #include "mavlink/util.h"
 
@@ -48,42 +48,77 @@ enum class GnssFix : uint8_t {
 
 class MavLinkTelemetry {
  public:
-  MavLinkTelemetry(HardwareSerial *bus) : bus_(bus) {}
+  explicit MavLinkTelemetry(HardwareSerial *bus) : bus_(bus) {}
   MavLinkTelemetry(HardwareSerial *bus, const uint8_t sys_id) :
                    bus_(bus), sys_id_(sys_id) {}
+  /* Update and message handler methods */
   void Update();
   void MsgHandler(const mavlink_message_t &ref);
-  /* Config */
-  inline void SetRawSensPeriod_ms(int val) {
-    data_stream_period_ms_[SRx_RAW_SENS_STREAM] = val;
-  }
-  inline void SetExtStatusPeriod_ms(int val) {
-    data_stream_period_ms_[SRx_EXT_STAT_STREAM] = val;
-  }
-  inline void SetRcChanPeriod_ms(int val) {
-    data_stream_period_ms_[SRx_RC_CHAN_STREAM] = val;
-  }
-  inline void SetPosPeriod_ms(int val) {
-    data_stream_period_ms_[SRx_POSITION_STREAM] = val;
-  }
-  inline void SetExtra1Period_ms(int val) {
-    data_stream_period_ms_[SRx_EXTRA1_STREAM] = val;
-  }
-  inline void SetExtra2Period_ms(int val) {
-    data_stream_period_ms_[SRx_EXTRA2_STREAM] = val;
-  }
-  inline void SetExtra3Period_ms(int val) {
-    data_stream_period_ms_[SRx_EXTRA3_STREAM] = val;
-  }
-  /* Getters */
+  /* System and component ID getters */
   inline constexpr uint8_t sys_id() const {return sys_id_;}
   inline constexpr uint8_t comp_id() const {return comp_id_;}
-  /*** Setters ***/
+  /* Config data stream rates */
+  inline void raw_sens_stream_period_ms(const int32_t val) {
+    data_stream_period_ms_[SRx_RAW_SENS_STREAM] = val;
+  }
+  inline int32_t raw_sens_stream_period_ms() const {
+    return data_stream_period_ms_[SRx_RAW_SENS_STREAM];
+  }
+  inline void ext_status_stream_period_ms(const int32_t val) {
+    data_stream_period_ms_[SRx_EXT_STAT_STREAM] = val;
+  }
+  inline int32_t ext_status_stream_period_ms() const {
+    return data_stream_period_ms_[SRx_EXT_STAT_STREAM];
+  }
+  inline void rc_chan_stream_period_ms(const int32_t val) {
+    data_stream_period_ms_[SRx_RC_CHAN_STREAM] = val;
+  }
+  inline int32_t rc_chan_stream_period_ms() const {
+    return data_stream_period_ms_[SRx_RC_CHAN_STREAM];
+  }
+  inline void pos_stream_period_ms(const int32_t val) {
+    data_stream_period_ms_[SRx_POSITION_STREAM] = val;
+  }
+  inline int32_t pos_stream_period_ms() const {
+    return data_stream_period_ms_[SRx_POSITION_STREAM];
+  }
+  inline void extra1_stream_period_ms(const int32_t val) {
+    data_stream_period_ms_[SRx_EXTRA1_STREAM] = val;
+  }
+  inline int32_t extra1_stream_period_ms() const {
+    return data_stream_period_ms_[SRx_EXTRA1_STREAM];
+  }
+  inline void extra2_stream_period_ms(const int32_t val) {
+    data_stream_period_ms_[SRx_EXTRA2_STREAM] = val;
+  }
+  inline int32_t extra2_stream_period_ms() const {
+    return data_stream_period_ms_[SRx_EXTRA2_STREAM];
+  }
+  inline void extra3_stream_period_ms(const int32_t val) {
+    data_stream_period_ms_[SRx_EXTRA3_STREAM] = val;
+  }
+  inline int32_t extra3_stream_period_ms() const {
+    return data_stream_period_ms_[SRx_EXTRA3_STREAM];
+  }
   /* System */
-  inline void sys_time_s(const double val) {sys_time_s_ = val;}
-  inline void cpu_load(const float val) {cpu_load_ = val;}
+  inline void sys_time_us(const uint64_t val) {sys_time_us_ = val;}
+  inline void cpu_load(uint32_t frame_time_us, uint32_t frame_period_us) {
+    frame_time_us_ = frame_time_us;
+    frame_period_us_ = frame_period_us;
+  }
+  /* Installed sensors */
+  inline void gyro_installed(const bool val) {gyro_installed_ = val;}
+  inline void accel_installed(const bool val) {accel_installed_ = val;}
+  inline void mag_installed(const bool val) {mag_installed_ = val;}
+  inline void static_pres_installed(const bool val) {
+    static_pres_installed_ = val;
+  }
   inline void diff_pres_installed(const bool val) {diff_pres_installed_ = val;}
-  inline void imu_healthy(const bool val) {imu_healthy_ = val;}
+  inline void gnss_installed(const bool val) {gnss_installed_ = val;}
+  inline void inceptor_installed(const bool val) {inceptor_installed_ = val;}
+  inline void gyro_healthy(const bool val) {gyro_healthy_ = val;}
+  inline void accel_healthy(const bool val) {accel_healthy_ = val;}
+  inline void mag_healthy(const bool val) {mag_healthy_ = val;}
   inline void static_pres_healthy(const bool val) {static_pres_healthy_ = val;}
   inline void diff_pres_healthy(const bool val) {diff_pres_healthy_ = val;}
   inline void gnss_healthy(const bool val) {gnss_healthy_ = val;}
@@ -110,7 +145,9 @@ class MavLinkTelemetry {
   /* Airdata */
   inline void static_pres_pa(const float val) {static_pres_pa_ = val;}
   inline void diff_pres_pa(const float val) {diff_pres_pa_ = val;}
-  inline void static_pres_die_temp_c(const float val) {static_pres_die_temp_c_ = val;}
+  inline void static_pres_die_temp_c(const float val) {
+    static_pres_die_temp_c_ = val;
+  }
   /* GNSS data */
   inline void gnss_fix(const GnssFix val) {gnss_fix_ = val;}
   inline void gnss_num_sats(const uint8_t val) {
@@ -119,22 +156,40 @@ class MavLinkTelemetry {
   }
   inline void gnss_lat_rad(const double val) {gnss_lat_rad_ = val;}
   inline void gnss_lon_rad(const double val) {gnss_lon_rad_ = val;}
-  inline void gnss_alt_msl_m(const float val) {gnss_alt_msl_m_= val;}
+  inline void gnss_alt_msl_m(const float val) {gnss_alt_msl_m_ = val;}
   inline void gnss_alt_wgs84_m(const float val) {gnss_alt_wgs84_m_ = val;}
-  inline void gnss_north_vel_mps(const float val) {gnss_north_vel_mps_ = val;}
-  inline void gnss_east_vel_mps(const float val) {gnss_east_vel_mps_ = val;}
-  inline void gnss_down_vel_mps(const float val) {gnss_down_vel_mps_ = val;}
+  inline void gnss_hdop(const float val) {
+    gnss_hdop_.set = true;
+    gnss_hdop_.val = val;
+  }
+  inline void gnss_vdop(const float val) {
+    gnss_vdop_.set = true;
+    gnss_vdop_.val = val;
+  }
+  inline void gnss_track_rad(const float val) {
+    gnss_track_rad_.set = true;
+    gnss_track_rad_.val = val;
+  }
+  inline void gnss_spd_mps(const float val) {
+    gnss_vel_mps_.set = true;
+    gnss_vel_mps_.val = val;
+  }
   inline void gnss_horz_acc_m(const float val) {gnss_horz_acc_m_ = val;}
   inline void gnss_vert_acc_m(const float val) {gnss_vert_acc_m_ = val;}
   inline void gnss_vel_acc_mps(const float val) {gnss_vel_acc_mps_ = val;}
+  inline void gnss_track_acc_rad(const float val) {gnss_track_acc_rad_ = val;}
   /* Estimation data */
   inline void nav_lat_rad(const double val) {nav_lat_rad_ = val;}
   inline void nav_lon_rad(const double val) {nav_lon_rad_ = val;}
   inline void nav_alt_msl_m(const float val) {nav_alt_msl_m_ = val;}
   inline void nav_alt_agl_m(const float val) {nav_alt_agl_m_ = val;}
+  inline void nav_north_pos_m(const float val) {nav_north_pos_m_ = val;}
+  inline void nav_east_pos_m(const float val) {nav_east_pos_m_ = val;}
+  inline void nav_down_pos_m(const float val) {nav_down_pos_m_ = val;}
   inline void nav_north_vel_mps(const float val) {nav_north_vel_mps_ = val;}
   inline void nav_east_vel_mps(const float val) {nav_east_vel_mps_ = val;}
   inline void nav_down_vel_mps(const float val) {nav_down_vel_mps_ = val;}
+  inline void nav_gnd_spd_mps(const float val) {nav_gnd_spd_mps_ = val;}
   inline void nav_ias_mps(const float val) {nav_ias_mps_ = val;}
   inline void nav_pitch_rad(const float val) {nav_pitch_rad_ = val;}
   inline void nav_roll_rad(const float val) {nav_roll_rad_ = val;}
@@ -164,49 +219,81 @@ class MavLinkTelemetry {
   /* Data */
   template<typename T>
   struct CondData {
-    T val;
+    T val = static_cast<T>(0);
     bool set = false;
   };
   /* System */
-  double sys_time_s_ = 0;
-  float cpu_load_ = 0;
+  uint64_t sys_time_us_ = 0;
+  uint32_t frame_time_us_ = 0;
+  uint32_t frame_period_us_ = 0;
+  bool gyro_installed_ = false;
+  bool accel_installed_ = false;
+  bool mag_installed_ = false;
+  bool static_pres_installed_ = false;
   bool diff_pres_installed_ = false;
-  bool imu_healthy_ = false;
+  bool gnss_installed_ = false;
+  bool inceptor_installed_ = false;
+  bool gyro_healthy_ = false;
+  bool accel_healthy_ = false;
+  bool mag_healthy_ = false;
   bool static_pres_healthy_ = false;
   bool diff_pres_healthy_ = false;
   bool gnss_healthy_ = false;
   bool inceptor_healthy_ = false;
   CondData<float> battery_volt_;
   /* IMU */
-  float imu_accel_x_mps2_ = 0, imu_accel_y_mps2_ = 0, imu_accel_z_mps2_ = 0;
-  float imu_gyro_x_radps_ = 0, imu_gyro_y_radps_ = 0, imu_gyro_z_radps_ = 0;
-  float imu_mag_x_ut_ = 0, imu_mag_y_ut_ = 0, imu_mag_z_ut_ = 0;
+  float imu_accel_x_mps2_ = 0.0f;
+  float imu_accel_y_mps2_ = 0.0f;
+  float imu_accel_z_mps2_ = 0.0f;
+  float imu_gyro_x_radps_ = 0.0f;
+  float imu_gyro_y_radps_ = 0.0f;
+  float imu_gyro_z_radps_ = 0.0f;
+  float imu_mag_x_ut_ = 0.0f;
+  float imu_mag_y_ut_ = 0.0f;
+  float imu_mag_z_ut_ = 0.0f;
   CondData<float> imu_die_temp_c_;
   /* Airdata */
   float static_pres_pa_ = 0;
   float diff_pres_pa_ = 0;
   float static_pres_die_temp_c_ = 0;
   /* GNSS */
-  CondData<uint8_t> gnss_num_sv_;
   GnssFix gnss_fix_ = GnssFix::NO_GNSS;
-  double gnss_lat_rad_ = 0, gnss_lon_rad_ = 0;
-  float gnss_alt_msl_m_ = 0, gnss_alt_wgs84_m_ = 0;
-  float gnss_north_vel_mps_ = 0, gnss_east_vel_mps_ = 0;
-  float gnss_down_vel_mps_ = 0;
-  float gnss_horz_acc_m_ = 0, gnss_vert_acc_m_ = 0;
-  float gnss_vel_acc_mps_ = 0;
+  double gnss_lat_rad_ = 0.0;
+  double gnss_lon_rad_ = 0.0;
+  float gnss_alt_msl_m_ = 0.0f;
+  float gnss_alt_wgs84_m_ = 0.0f;
+  float gnss_horz_acc_m_ = 0.0f;
+  float gnss_vert_acc_m_ = 0.0f;
+  float gnss_vel_acc_mps_ = 0.0f;
+  float gnss_track_acc_rad_ = 0.0f;
+  CondData<uint8_t> gnss_num_sv_;
+  CondData<float> gnss_hdop_;
+  CondData<float> gnss_vdop_;
+  CondData<float> gnss_vel_mps_;
+  CondData<float> gnss_track_rad_;
   /* Nav */
-  double nav_lat_rad_ = 0, nav_lon_rad_ = 0;
-  float nav_alt_msl_m_ = 0, nav_alt_agl_m_ = 0;
-  float nav_north_vel_mps_ = 0, nav_east_vel_mps_ = 0, nav_down_vel_mps_ = 0;
-  float nav_ias_mps_ = 0;
-  float nav_pitch_rad_ = 0, nav_roll_rad_ = 0;
+  double nav_lat_rad_ = 0.0f;
+  float nav_lon_rad_ = 0.0f;
+  float nav_alt_msl_m_ = 0.0f;
+  float nav_alt_agl_m_ = 0.0f;
+  float nav_north_pos_m_ = 0.0f;
+  float nav_east_pos_m_ = 0.0f;
+  float nav_down_pos_m_ = 0.0f;
+  float nav_north_vel_mps_ = 0.0f;
+  float nav_east_vel_mps_ = 0.0f;
+  float nav_down_vel_mps_ = 0.0f;
+  float nav_gnd_spd_mps_ = 0.0f;
+  float nav_ias_mps_ = 0.0f;
+  float nav_pitch_rad_ = 0.0f;
+  float nav_roll_rad_ = 0.0f;
+  float nav_gyro_x_radps_ = 0.0f;
+  float nav_gyro_y_radps_ = 0.0f;
+  float nav_gyro_z_radps_ = 0.0f;
   CondData<float> nav_hdg_rad_;
-  float nav_gyro_x_radps_ = 0, nav_gyro_y_radps_ = 0, nav_gyro_z_radps_ = 0;
   /* Effector */
-  std::array<float, 16> effector_ = {0};
+  std::array<float, 16> effector_ = {0.0f};
   /* RC Input */
-  std::array<float, 16> inceptor_ = {0};
+  std::array<float, 16> inceptor_ = {0.0f};
   uint8_t throttle_ch_ = 0;
   /* Telemetry Messages */
   void SendHeartbeat();
@@ -215,7 +302,7 @@ class MavLinkTelemetry {
   /* SRx_EXT_STAT */
   void SRx_EXT_STAT();
   void SendSysStatus();
-  void SendGpsRawInt();
+  void SendBatteryStatus();
   /* SRx_EXTRA1 */
   void SRx_EXTRA1();
   void SendAttitude();
@@ -224,13 +311,14 @@ class MavLinkTelemetry {
   void SendVfrHud();
   /* SRx_EXTRA3 */
   void SRx_EXTRA3();
-  void SendBatteryStatus();
   /* SRx_POSITION */
   void SRx_POSITION();
+  void SendLocalPositionNed();
   void SendGlobalPositionInt();
   /* SRx_RAW_SENS */
   void SRx_RAW_SENS();
   void SendRawImu();
+  void SendGpsRawInt();
   void SendScaledPressure();
   /* SRx_RC_CHAN */
   void SRx_RC_CHAN();
@@ -241,19 +329,20 @@ class MavLinkTelemetry {
   /* SRx_EMPTY */
   void SRx_EMPTY();
   /* Timing */
-  static constexpr int NUM_DATA_STREAMS_ = 13;
-  int data_stream_period_ms_[NUM_DATA_STREAMS_] = {-1, -1, -1, -1, -1, -1, -1,
-                                                   -1, -1, -1, -1, -1, -1};
+  static constexpr int32_t NUM_DATA_STREAMS_ = 13;
+  int32_t data_stream_period_ms_[NUM_DATA_STREAMS_] = {-1, -1, -1, -1, -1, -1,
+                                                       -1, -1, -1, -1, -1, -1,
+                                                       -1};
   elapsedMillis data_stream_timer_ms_[NUM_DATA_STREAMS_];
   /* Data streams */
-  static constexpr int SRx_RAW_SENS_STREAM = 1;
-  static constexpr int SRx_EXT_STAT_STREAM = 2;
-  static constexpr int SRx_RC_CHAN_STREAM = 3;
-  static constexpr int SRx_RAW_CTRL_STREAM = 4;
-  static constexpr int SRx_POSITION_STREAM = 6;
-  static constexpr int SRx_EXTRA1_STREAM = 10;
-  static constexpr int SRx_EXTRA2_STREAM = 11;
-  static constexpr int SRx_EXTRA3_STREAM = 12;
+  static constexpr int32_t SRx_RAW_SENS_STREAM = 1;
+  static constexpr int32_t SRx_EXT_STAT_STREAM = 2;
+  static constexpr int32_t SRx_RC_CHAN_STREAM = 3;
+  static constexpr int32_t SRx_RAW_CTRL_STREAM = 4;
+  static constexpr int32_t SRx_POSITION_STREAM = 6;
+  static constexpr int32_t SRx_EXTRA1_STREAM = 10;
+  static constexpr int32_t SRx_EXTRA2_STREAM = 11;
+  static constexpr int32_t SRx_EXTRA3_STREAM = 12;
   typedef void (MavLinkTelemetry::*DataStream)(void);
   DataStream streams_[NUM_DATA_STREAMS_] = {
     &MavLinkTelemetry::SRx_ALL,

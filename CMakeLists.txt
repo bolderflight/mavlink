@@ -44,7 +44,6 @@ if (DEFINED MCU)
 	FetchContent_MakeAvailable(navigation)
 	# Add the library target
 	add_library(mavlink
-		src/mavlink/mavlink.cc
 		src/mavlink/heartbeat.cc
 		src/mavlink/telemetry.cc
 		src/mavlink/cmd.cc

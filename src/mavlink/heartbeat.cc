@@ -25,7 +25,7 @@
 
 #include "mavlink/heartbeat.h"
 #include "core/core.h"
-#include "mavlink_types.h"
+#include "./mavlink_types.h"
 #include "common/mavlink.h"
 
 namespace bfs {

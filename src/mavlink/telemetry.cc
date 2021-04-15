@@ -26,7 +26,7 @@
 #include <array>
 #include "mavlink/telemetry.h"
 #include "core/core.h"
-#include "mavlink_types.h"
+#include "./mavlink_types.h"
 #include "common/mavlink.h"
 #include "units/units.h"
 #include "navigation/navigation.h"
@@ -39,9 +39,11 @@ void MavLinkTelemetry::Update() {
   * enabled streams and, if their timer is greater than the period, send
   * them and reset the timer.
   */
-  for (std::size_t stream_num = 0; stream_num < NUM_DATA_STREAMS_; stream_num++) {
+  for (std::size_t stream_num = 0; stream_num < NUM_DATA_STREAMS_;
+       stream_num++) {
     if (data_stream_period_ms_[stream_num] > 0) {
-      if (data_stream_timer_ms_[stream_num] > data_stream_period_ms_[stream_num]) {
+      if (data_stream_timer_ms_[stream_num] >
+          data_stream_period_ms_[stream_num]) {
         (this->*(streams_[stream_num]))();
         data_stream_timer_ms_[stream_num] = 0;
       }
@@ -49,7 +51,7 @@ void MavLinkTelemetry::Update() {
   }
 }
 void MavLinkTelemetry::MsgHandler(const mavlink_message_t &ref) {
-  switch(ref.msgid) {
+  switch (ref.msgid) {
     case MAVLINK_MSG_ID_REQUEST_DATA_STREAM: {
       mavlink_request_data_stream_t request_stream;
       mavlink_msg_request_data_stream_decode(&ref, &request_stream);
@@ -70,30 +72,42 @@ void MavLinkTelemetry::SRx_ALL() {
 }
 void MavLinkTelemetry::SRx_EXT_STAT() {
   SendSysStatus();
-  SendGpsRawInt();
+  SendBatteryStatus();
 }
 void MavLinkTelemetry::SendSysStatus() {
-  /* 
-  * Assume IMU, static pressure, GNSS, and RC receiver installed,
-  * check differential pressure.
-  */
   uint32_t sensors_present = 0;
-  sensors_present |= MAV_SYS_STATUS_SENSOR_3D_GYRO;
-  sensors_present |= MAV_SYS_STATUS_SENSOR_3D_ACCEL;
-  sensors_present |= MAV_SYS_STATUS_SENSOR_3D_MAG;
-  sensors_present |= MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE;
-  sensors_present |= MAV_SYS_STATUS_SENSOR_GPS;
-  sensors_present |= MAV_SYS_STATUS_SENSOR_RC_RECEIVER;
+  if (gyro_installed_) {
+    sensors_present |= MAV_SYS_STATUS_SENSOR_3D_GYRO;
+  }
+  if (accel_installed_) {
+    sensors_present |= MAV_SYS_STATUS_SENSOR_3D_ACCEL;
+  }
+  if (mag_installed_) {
+    sensors_present |= MAV_SYS_STATUS_SENSOR_3D_MAG;
+  }
+  if (static_pres_installed_) {
+    sensors_present |= MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE;
+  }
   if (diff_pres_installed_) {
     sensors_present |= MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE;
+  }
+  if (gnss_installed_) {
+    sensors_present |= MAV_SYS_STATUS_SENSOR_GPS;
+  }
+  if (inceptor_installed_) {
+    sensors_present |= MAV_SYS_STATUS_SENSOR_RC_RECEIVER;
   }
   /* All installed sensors are enabled */
   uint32_t sensors_enabled = sensors_present;
   /* Check sensor health */
   uint32_t sensors_healthy = 0;
-  if (imu_healthy_) {
+  if (gyro_healthy_) {
     sensors_healthy |= MAV_SYS_STATUS_SENSOR_3D_GYRO;
+  }
+  if (accel_healthy_) {
     sensors_healthy |= MAV_SYS_STATUS_SENSOR_3D_ACCEL;
+  }
+  if (mag_healthy_) {
     sensors_healthy |= MAV_SYS_STATUS_SENSOR_3D_MAG;
   }
   if (static_pres_healthy_) {
@@ -108,7 +122,8 @@ void MavLinkTelemetry::SendSysStatus() {
   if (inceptor_healthy_) {
     sensors_healthy |= MAV_SYS_STATUS_SENSOR_RC_RECEIVER;
   }
-  uint16_t load = static_cast<uint16_t>(cpu_load_ * 10.0f);
+  uint16_t load = 1000.0f * static_cast<float>(frame_time_us_) /
+                  static_cast<float>(frame_period_us_);
   uint16_t voltage_battery = UINT16_MAX;
   if (battery_volt_.set) {
     voltage_battery = static_cast<uint16_t>(battery_volt_.val * 1000.0f);
@@ -130,18 +145,26 @@ void MavLinkTelemetry::SendSysStatus() {
   bus_->write(msg_buf_, msg_len_);
 }
 void MavLinkTelemetry::SendGpsRawInt() {
-  uint64_t sys_time_us = static_cast<uint64_t>(sys_time_s_ * 1e6);
   uint8_t fix = static_cast<uint8_t>(gnss_fix_);
   int32_t lat_dege7 = static_cast<int32_t>(rad2deg(gnss_lat_rad_) * 1e7);
   int32_t lon_dege7 = static_cast<int32_t>(rad2deg(gnss_lon_rad_) * 1e7);
   int32_t alt_msl_mm = static_cast<int32_t>(gnss_alt_msl_m_ * 1000.0f);
   uint16_t eph = UINT16_MAX, epv = UINT16_MAX;
-  float gnss_gs_mps = std::sqrt(gnss_north_vel_mps_ * gnss_north_vel_mps_ +
-                                gnss_east_vel_mps_ * gnss_east_vel_mps_);
-  uint16_t vel_cmps = static_cast<uint16_t>(100.0f * gnss_gs_mps);
-  float gnss_track_rad = std::atan2(gnss_east_vel_mps_, gnss_north_vel_mps_);
-  uint16_t track_cdeg = static_cast<uint16_t>(
-                        rad2deg(Constrain2Pi(gnss_track_rad)) * 100.0f);
+  if (gnss_hdop_.set) {
+    eph = static_cast<uint16_t>(100.0f * gnss_hdop_.val);
+  }
+  if (gnss_vdop_.set) {
+    epv = static_cast<uint16_t>(100.0f * gnss_vdop_.val);
+  }
+  uint16_t vel_cmps = UINT16_MAX;
+  if (gnss_vel_mps_.set) {
+    vel_cmps = static_cast<uint16_t>(100.0f * gnss_vel_mps_.val);
+  }
+  uint16_t track_cdeg = UINT16_MAX;
+  if (gnss_track_rad_.set) {
+    track_cdeg = static_cast<uint16_t>(100.0f *
+                 rad2deg(Constrain2Pi(gnss_track_rad_.val)));
+  }
   uint8_t num_sv = 255;
   if (gnss_num_sv_.set) {
     num_sv = gnss_num_sv_.val;
@@ -150,12 +173,12 @@ void MavLinkTelemetry::SendGpsRawInt() {
   uint32_t h_acc_mm = static_cast<uint32_t>(gnss_horz_acc_m_ * 1000.0f);
   uint32_t v_acc_mm = static_cast<uint32_t>(gnss_vert_acc_m_ * 1000.0f);
   uint32_t vel_acc_mmps = static_cast<uint32_t>(gnss_vel_acc_mps_ * 1000.0f);
-  /* Not currently supporting heading accuracy */
-  uint32_t hdg_acc_dege5 = 0;
+  uint32_t hdg_acc_dege5 = static_cast<uint32_t>(100000.0f *
+                                                 rad2deg(gnss_track_acc_rad_));
   /* Not currently supporting GNSS yaw */
   uint16_t yaw_cdeg = 0;
   msg_len_ = mavlink_msg_gps_raw_int_pack(sys_id_, comp_id_, &msg_,
-                                          sys_time_us, fix, lat_dege7,
+                                          sys_time_us_, fix, lat_dege7,
                                           lon_dege7, alt_msl_mm, eph, epv,
                                           vel_cmps, track_cdeg, num_sv,
                                           alt_wgs84, h_acc_mm, v_acc_mm,
@@ -168,7 +191,7 @@ void MavLinkTelemetry::SRx_EXTRA1() {
   SendAttitude();
 }
 void MavLinkTelemetry::SendAttitude() {
-  uint32_t sys_time_ms = static_cast<uint32_t>(sys_time_s_ * 1e3);
+  uint32_t sys_time_ms = static_cast<uint32_t>(sys_time_us_ / 1000);
   float yaw_rad = 0;
   if (nav_hdg_rad_.set) {
     yaw_rad = ConstrainPi(nav_hdg_rad_.val);
@@ -185,8 +208,6 @@ void MavLinkTelemetry::SRx_EXTRA2() {
   SendVfrHud();
 }
 void MavLinkTelemetry::SendVfrHud() {
-  float nav_gnd_speed_mps = std::sqrt(nav_north_vel_mps_ * nav_north_vel_mps_ +
-                                      nav_east_vel_mps_ * nav_east_vel_mps_);
   int16_t hdg_deg = 0;
   if (nav_hdg_rad_.set) {
     hdg_deg = static_cast<int16_t>(
@@ -195,21 +216,19 @@ void MavLinkTelemetry::SendVfrHud() {
   uint16_t throttle = static_cast<uint16_t>(inceptor_[throttle_ch_] * 100.0f);
   float climb_mps = -1.0f * nav_down_vel_mps_;
   msg_len_ = mavlink_msg_vfr_hud_pack(sys_id_, comp_id_, &msg_,
-                                      nav_ias_mps_, nav_gnd_speed_mps,
+                                      nav_ias_mps_, nav_gnd_spd_mps_,
                                       hdg_deg, throttle, nav_alt_msl_m_,
                                       climb_mps);
   mavlink_msg_to_send_buffer(msg_buf_, &msg_);
   bus_->write(msg_buf_, msg_len_);
 }
-void MavLinkTelemetry::SRx_EXTRA3() {
-  SendBatteryStatus();
-}
+void MavLinkTelemetry::SRx_EXTRA3() {}
 void MavLinkTelemetry::SendBatteryStatus() {
   uint8_t id = 0;
   uint8_t battery_function = MAV_BATTERY_FUNCTION_UNKNOWN;
   uint8_t type = MAV_BATTERY_TYPE_LIPO;
   int16_t temp = INT16_MAX;
-  uint16_t volt[14] = {};
+  uint16_t volt[14];
   for (std::size_t i = 0; i < 14; i++) {
     volt[i] = UINT16_MAX;
   }
@@ -232,10 +251,24 @@ void MavLinkTelemetry::SendBatteryStatus() {
   bus_->write(msg_buf_, msg_len_);
 }
 void MavLinkTelemetry::SRx_POSITION() {
+  SendLocalPositionNed();
   SendGlobalPositionInt();
 }
+void MavLinkTelemetry::SendLocalPositionNed() {
+  uint32_t sys_time_ms = static_cast<uint32_t>(sys_time_us_ / 1000);
+  msg_len_ = mavlink_msg_local_position_ned_pack(sys_id_, comp_id_, &msg_,
+                                                 sys_time_ms,
+                                                 nav_north_pos_m_,
+                                                 nav_east_pos_m_,
+                                                 nav_down_pos_m_,
+                                                 nav_north_vel_mps_,
+                                                 nav_east_vel_mps_,
+                                                 nav_down_vel_mps_);
+  mavlink_msg_to_send_buffer(msg_buf_, &msg_);
+  bus_->write(msg_buf_, msg_len_);
+}
 void MavLinkTelemetry::SendGlobalPositionInt() {
-  uint32_t sys_time_ms = static_cast<uint32_t>(sys_time_s_ * 1e3);
+  uint32_t sys_time_ms = static_cast<uint32_t>(sys_time_us_ / 1000);
   int32_t lat_dege7 = static_cast<int32_t>(rad2deg(nav_lat_rad_) * 1e7);
   int32_t lon_dege7 = static_cast<int32_t>(rad2deg(nav_lon_rad_) * 1e7);
   int32_t alt_msl_mm = static_cast<int32_t>(nav_alt_msl_m_ * 1000.0f);
@@ -245,8 +278,8 @@ void MavLinkTelemetry::SendGlobalPositionInt() {
   int16_t vz_cmps = static_cast<int16_t>(nav_down_vel_mps_ * 100.0f);
   uint16_t hdg_cdeg = UINT16_MAX;
   if (nav_hdg_rad_.set) {
-    hdg_cdeg = static_cast<uint16_t>(
-      rad2deg(Constrain2Pi(nav_hdg_rad_.val)) * 100.0f);
+    hdg_cdeg = static_cast<uint16_t>(100.0f *
+      rad2deg(Constrain2Pi(nav_hdg_rad_.val)));
   }
   msg_len_ = mavlink_msg_global_position_int_pack(sys_id_, comp_id_, &msg_,
                                                   sys_time_ms, lat_dege7,
@@ -258,10 +291,10 @@ void MavLinkTelemetry::SendGlobalPositionInt() {
 }
 void MavLinkTelemetry::SRx_RAW_SENS() {
   SendRawImu();
+  SendGpsRawInt();
   SendScaledPressure();
 }
 void MavLinkTelemetry::SendRawImu() {
-  uint64_t sys_time_us = static_cast<uint64_t>(sys_time_s_ * 1e6);
   int16_t accel_x_mg = static_cast<int16_t>(convacc(imu_accel_x_mps2_,
                        LinAccUnit::MPS2, LinAccUnit::G) * 1000.0f);
   int16_t accel_y_mg = static_cast<int16_t>(convacc(imu_accel_y_mps2_,
@@ -283,7 +316,7 @@ void MavLinkTelemetry::SendRawImu() {
   }
   uint8_t imu_id = 0;
   msg_len_ = mavlink_msg_raw_imu_pack(sys_id_, comp_id_, &msg_,
-                                      sys_time_us,
+                                      sys_time_us_,
                                       accel_x_mg, accel_y_mg, accel_z_mg,
                                       gyro_x_mradps, gyro_y_mradps,
                                       gyro_z_mradps, mag_x_mgauss,
@@ -293,7 +326,7 @@ void MavLinkTelemetry::SendRawImu() {
   bus_->write(msg_buf_, msg_len_);
 }
 void MavLinkTelemetry::SendScaledPressure() {
-  uint32_t sys_time_ms = static_cast<uint32_t>(sys_time_s_ * 1e3);
+  uint32_t sys_time_ms = static_cast<uint32_t>(sys_time_us_ / 1000);
   float static_pres_hpa = static_pres_pa_ / 100.0f;
   float diff_pres_hpa = diff_pres_pa_ / 100.0f;
   int16_t static_temp_cc =
@@ -311,7 +344,6 @@ void MavLinkTelemetry::SRx_RC_CHAN() {
   SendRcChannels();
 }
 void MavLinkTelemetry::SendServoOutputRaw() {
-  uint32_t sys_time_us = static_cast<uint32_t>(sys_time_s_ * 1e6);
   uint8_t port = 0;
   uint16_t servo_raw[16] = {0};
   /* Transform percent [0 - 1] to PWM value */
@@ -319,7 +351,7 @@ void MavLinkTelemetry::SendServoOutputRaw() {
     servo_raw[i] = static_cast<uint16_t>(effector_[i] * 1000.0f + 1000.0f);
   }
   msg_len_ = mavlink_msg_servo_output_raw_pack(sys_id_, comp_id_, &msg_,
-                                               sys_time_us, port,
+                                               sys_time_us_, port,
                                                servo_raw[0], servo_raw[1],
                                                servo_raw[2], servo_raw[3],
                                                servo_raw[4], servo_raw[5],
@@ -332,7 +364,7 @@ void MavLinkTelemetry::SendServoOutputRaw() {
   bus_->write(msg_buf_, msg_len_);
 }
 void MavLinkTelemetry::SendRcChannels() {
-  uint32_t sys_time_ms = static_cast<uint32_t>(sys_time_s_ * 1e3);
+  uint32_t sys_time_ms = static_cast<uint32_t>(sys_time_us_ / 1000);
   uint8_t chancount = 16;
   uint16_t chan[18] = {0};
   /* RSSI not currently supported */
@@ -357,13 +389,14 @@ void MavLinkTelemetry::SendRcChannels() {
 }
 void MavLinkTelemetry::SRx_RAW_CTRL() {}
 void MavLinkTelemetry::SRx_EMPTY() {}
-void MavLinkTelemetry::ParseRequestDataStream(const mavlink_request_data_stream_t &ref) {
+void MavLinkTelemetry::ParseRequestDataStream(
+                       const mavlink_request_data_stream_t &ref) {
   if ((ref.target_system == sys_id_) &&
       (ref.target_component == comp_id_)) {
     if (ref.start_stop) {
       float msg_period_s = 1.0f / static_cast<float>(ref.req_message_rate);
       data_stream_period_ms_[ref.req_stream_id] =
-        static_cast<int>(msg_period_s * 1000.0f);
+        static_cast<int32_t>(msg_period_s * 1000.0f);
     } else {
       data_stream_period_ms_[ref.req_stream_id] = -1;
     }
