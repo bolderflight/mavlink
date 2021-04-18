@@ -33,20 +33,24 @@
 #include "mavlink/heartbeat.h"
 #include "mavlink/telemetry.h"
 #include "mavlink/parameter.h"
-// #include "mavlink/mission.h"
-// #include "mavlink/cmd.h"
+#include "mavlink/mission.h"
 
 namespace bfs {
 
 template<std::size_t NPARAM>
 class MavLink {
  public:
-  MavLink(HardwareSerial *bus, const VehicleType type) :
+  MavLink(HardwareSerial *bus, const VehicleType type,
+          MissionItem * const mission, MissionItem * const temp,
+          const std::size_t size) :
           bus_(bus), heartbeat_(bus, type), telem_(bus),
-          param_(bus) {}
-  MavLink(HardwareSerial *bus, const VehicleType type, const uint8_t sys_id) :
-          bus_(bus), heartbeat_(bus, type, sys_id), telem_(bus, sys_id),
-          param_(bus, sys_id) {}
+          param_(bus), mission_(bus, mission, temp, size) {}
+  MavLink(HardwareSerial *bus, const VehicleType type, const uint8_t sys_id,
+          MissionItem * const mission, MissionItem * const temp,
+          const std::size_t size) :
+          bus_(bus), sys_id_(sys_id), heartbeat_(bus, type, sys_id),
+          telem_(bus, sys_id), param_(bus, sys_id),
+          mission_(bus, sys_id, mission, temp, size) {}
   void Begin(uint32_t baud) {
     bus_->begin(baud);
   }
@@ -55,13 +59,44 @@ class MavLink {
     heartbeat_.Update();
     telem_.Update();
     param_.Update();
+    mission_.Update();
     /* Check for received messages */
     while (bus_->available()) {
       if (mavlink_frame_char(chan_, bus_->read(), &msg_, &status_)
           != MAVLINK_FRAMING_INCOMPLETE) {
+        /* Items handled by this class */
+        rx_sys_id_ = msg_.sysid; 
+        rx_comp_id_ = msg_.compid;
+        switch (msg_.msgid) {
+          case MAVLINK_MSG_ID_COMMAND_LONG: {
+            mavlink_command_long_t cmd_long;
+            mavlink_msg_command_long_decode(&msg_, &cmd_long);
+            cmd_ = cmd_long.command;
+            switch (cmd_long.command) {
+              case 519: {
+                if ((cmd_long.target_system == sys_id_) &&
+                    (cmd_long.target_component == comp_id_)) {
+                  SendCmdAck(MAV_RESULT_ACCEPTED, 255);
+                  SendProtocolVersion();
+                }
+                break;
+              }
+              case 520: {
+                if ((cmd_long.target_system == sys_id_) &&
+                    (cmd_long.target_component == comp_id_)) {
+                  SendCmdAck(MAV_RESULT_ACCEPTED, 255);
+                  SendAutopilotVersion();
+                }
+                break;
+              }
+            }
+            break;
+          }
+        }
         /* Message handling */
         telem_.MsgHandler(msg_);
         param_.MsgHandler(msg_);
+        mission_.MsgHandler(msg_);
       }
     }
   }
@@ -227,24 +262,88 @@ class MavLink {
   inline float param(const int32_t idx) const {return param_.param(idx);}
   inline int32_t updated_param() const {return param_.updated_param();}
   template<std::size_t NCHAR>
-  inline void SetParamId(const int32_t idx, char const (&name)[NCHAR]) {
-    param_.SetParamId(idx, name);
+  inline void param_id(const int32_t idx, char const (&name)[NCHAR]) {
+    param_.param_id(idx, name);
   }
   inline std::string param_id(const int32_t idx) const {
     return param_.param_id(idx);
   }
+  /* Mission */
+  inline bool waypoints_updated() {return mission_.waypoints_updated();}
+  inline int32_t active_waypoint() const {return mission_.active_waypoint();}
+  inline std::size_t num_waypoints() const {return mission_.num_waypoints();}
+  void AdvanceWaypoint() {mission_.AdvanceWaypoint();}
 
  private:
   /* Serial bus */
   HardwareSerial *bus_;
+  /* Config */
+  const uint8_t sys_id_ = 1;
+  static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+
+  /* Message buffer */
+  mavlink_message_t msg_;
+  uint16_t msg_len_;
+  uint8_t msg_buf_[MAVLINK_MAX_PACKET_LEN];
+  mavlink_status_t status_;
+  uint8_t chan_ = 0;
   /* Child classes */
   MavLinkHeartbeat heartbeat_;
   MavLinkTelemetry telem_;
   MavLinkParameter<NPARAM> param_;
-  /* Message buffer */
-  mavlink_message_t msg_;
-  mavlink_status_t status_;
-  uint8_t chan_ = 0;
+  MavLinkMission mission_;
+  /* Message handlers */
+  uint8_t rx_sys_id_, rx_comp_id_;
+  uint16_t cmd_;
+  /* Emitters */
+  void SendProtocolVersion() {
+    static constexpr uint8_t spec_version_hash[8] = {8};
+    static constexpr uint8_t library_versions_hash[8] = {0};
+    uint16_t version = 230;
+    uint16_t min_version = 100;
+    msg_len_ = mavlink_msg_protocol_version_pack(sys_id_, comp_id_, &msg_,
+                                                 version, min_version, version,
+                                                 spec_version_hash,
+                                                 library_versions_hash);
+    mavlink_msg_to_send_buffer(msg_buf_, &msg_);
+    bus_->write(msg_buf_, msg_len_);
+  }
+  void SendAutopilotVersion() {
+    static constexpr uint32_t flight_sw_version = 0;
+    static constexpr uint32_t middleware_sw_version = 0;
+    static constexpr uint32_t os_sw_version = 0;
+    static constexpr uint32_t board_version = 0;
+    static constexpr uint8_t flight_custom_version[8] = {0};
+    static constexpr uint8_t middleware_custom_version[8] = {0};
+    static constexpr uint8_t os_custom_version[8] = {0};
+    static constexpr uint16_t vendor_id = 0;
+    static constexpr uint16_t product_id = 0;
+    static constexpr uint64_t uid = 0;
+    static constexpr uint8_t uid2[18] = {0};
+    uint64_t capabilities = 0;
+    capabilities |= MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT;
+    capabilities |= MAV_PROTOCOL_CAPABILITY_MISSION_INT;
+    capabilities |= MAV_PROTOCOL_CAPABILITY_MAVLINK2;
+    msg_len_ = mavlink_msg_autopilot_version_pack(sys_id_, comp_id_, &msg_,
+                                                  capabilities,
+                                                  flight_sw_version,
+                                                  middleware_sw_version,
+                                                  os_sw_version, board_version,
+                                                  flight_custom_version,
+                                                  middleware_custom_version,
+                                                  os_custom_version,
+                                                  vendor_id, product_id,
+                                                  uid, uid2);
+    mavlink_msg_to_send_buffer(msg_buf_, &msg_);
+    bus_->write(msg_buf_, msg_len_);
+  }
+  void SendCmdAck(const uint8_t result, const uint8_t progress) {
+    int32_t result_param2 = 0;
+    msg_len_ = mavlink_msg_command_ack_pack(sys_id_, comp_id_, &msg_,
+        cmd_, result, progress, result_param2, rx_sys_id_, rx_comp_id_);
+    mavlink_msg_to_send_buffer(msg_buf_, &msg_);
+    bus_->write(msg_buf_, msg_len_);
+  }
 };
 
 }  // namespace bfs

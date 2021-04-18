@@ -70,12 +70,10 @@ class MavLinkParameter {
     return ret;
   }
   template<std::size_t NCHAR>
-  inline void SetParamId(const int32_t idx, char const (&name)[NCHAR]) {
-    static_assert(N < 18, "Parameter name limited to 16 characters");
+  inline void param_id(const int32_t idx, char const (&name)[NCHAR]) {
+    static_assert(NCHAR < 18, "Parameter name limited to 16 characters");
     if ((idx < 0) || (idx > N)) {return;}
     params_[idx].param_id = name;
-    /* Send the new param back */
-    SendParam(idx);
   }
   inline std::string param_id(const int32_t idx) const {
     if ((idx < 0) || (idx > N)) {

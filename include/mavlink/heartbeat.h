@@ -91,7 +91,7 @@ class MavLinkHeartbeat {
   const uint8_t sys_id_ = 1;
   const VehicleType vehicle_type_;
   static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
-  static const uint8_t autopilot_ = MAV_AUTOPILOT_GENERIC_MISSION_FULL;
+  static const uint8_t autopilot_ = MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY;
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;

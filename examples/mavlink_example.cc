@@ -25,13 +25,48 @@
 
 #include "mavlink/mavlink.h"
 
-bfs::MavLink<50> mavlink(&Serial4, bfs::VehicleType::FIXED_WING);
+std::array<bfs::MissionItem, 10> mission;
+std::array<bfs::MissionItem, 10> temp;
+
+bfs::MavLink<5> mavlink(&Serial4, bfs::VehicleType::FIXED_WING, mission.data(), temp.data(), mission.size());
 
 int main() {
   Serial.begin(115200);
   while (!Serial) {}
+  mavlink.param_id(0, "CONTROL_00");
+  mavlink.param_id(1, "MISSION_00");
+  mavlink.param_id(2, "PARAM_00");
+  mavlink.param_id(3, "FENCE_00");
+  mavlink.param_id(4, "RALLY_00");
   mavlink.Begin(57600);
   while (1) {
     mavlink.Update();
+    if (mavlink.waypoints_updated()) {
+      Serial.println("WAYPOINTS UPDATED");
+      Serial.println(mavlink.num_waypoints());
+      Serial.println(mavlink.active_waypoint());
+      for (int i = 0; i < mavlink.num_waypoints(); i++) {
+        Serial.print(mission[i].autocontinue);
+        Serial.print("\t");
+        Serial.print(static_cast<int>(mission[i].cmd));
+        Serial.print("\t");
+        Serial.print(mission[i].frame);
+        Serial.print("\t");
+        Serial.print(mission[i].param1);
+        Serial.print("\t");
+        Serial.print(mission[i].param2);
+        Serial.print("\t");
+        Serial.print(mission[i].param3);
+        Serial.print("\t");
+        Serial.print(mission[i].param4);
+        Serial.print("\t");
+        Serial.print(mission[i].x);
+        Serial.print("\t");
+        Serial.print(mission[i].y);
+        Serial.print("\t");
+        Serial.print(mission[i].z);
+        Serial.print("\n");
+      }
+    }
   }
 }

@@ -46,6 +46,7 @@ if (DEFINED MCU)
 	add_library(mavlink
 		src/mavlink/heartbeat.cc
 		src/mavlink/telemetry.cc
+		src/mavlink/mission.cc
 		src/mavlink/cmd.cc
 		include/mavlink/mavlink.h
 		include/mavlink/heartbeat.h
