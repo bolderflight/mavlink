@@ -43,13 +43,14 @@ class MavLink {
   MavLink(HardwareSerial *bus, const VehicleType type,
           MissionItem * const mission, MissionItem * const temp,
           const std::size_t size) :
-          bus_(bus), heartbeat_(bus, type), telem_(bus),
+          bus_(bus), util_(bus), heartbeat_(bus, type), telem_(bus),
           param_(bus), mission_(bus, mission, temp, size) {}
   MavLink(HardwareSerial *bus, const VehicleType type, const uint8_t sys_id,
           MissionItem * const mission, MissionItem * const temp,
           const std::size_t size) :
-          bus_(bus), sys_id_(sys_id), heartbeat_(bus, type, sys_id),
-          telem_(bus, sys_id), param_(bus, sys_id),
+          bus_(bus), sys_id_(sys_id), util_(bus, sys_id),
+          heartbeat_(bus, type, sys_id), telem_(bus, sys_id),
+          param_(bus, sys_id),
           mission_(bus, sys_id, mission, temp, size) {}
   void Begin(uint32_t baud) {
     bus_->begin(baud);
@@ -273,6 +274,11 @@ class MavLink {
   inline int32_t active_waypoint() const {return mission_.active_waypoint();}
   inline std::size_t num_waypoints() const {return mission_.num_waypoints();}
   void AdvanceWaypoint() {mission_.AdvanceWaypoint();}
+  /* Status text */
+  template<std::size_t N>
+  void SendStatusText(Severity severity, char const (&msg)[N]) {
+    util_.SendStatusText(severity, msg);
+  }
 
  private:
   /* Serial bus */
@@ -280,7 +286,6 @@ class MavLink {
   /* Config */
   const uint8_t sys_id_ = 1;
   static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
-
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;
@@ -288,6 +293,7 @@ class MavLink {
   mavlink_status_t status_;
   uint8_t chan_ = 0;
   /* Child classes */
+  MavLinkUtil util_;
   MavLinkHeartbeat heartbeat_;
   MavLinkTelemetry telem_;
   MavLinkParameter<NPARAM> param_;
