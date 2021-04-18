@@ -6,7 +6,11 @@ Lint:
   tags:
     - bfs
   script: 
-    - cpplint --verbose=0 src/mavlink/hearbeat.cc
     - cpplint --verbose=0 include/mavlink/heartbeat.h
     - cpplint --verbose=0 include/mavlink/util.h
+    - cpplint --verbose=0 include/mavlink/telemetry.h
+    - cpplint --verbose=0 include/mavlink/mission.h
     - cpplint --verbose=0 include/mavlink/mavlink.h
+    - cpplint --verbose=0 src/mavlink/heartbeat.cc
+    - cpplint --verbose=0 src/mavlink/telemetry.cc
+    - cpplint --verbose=0 src/mavlink/mission.cc

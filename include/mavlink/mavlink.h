@@ -66,7 +66,7 @@ class MavLink {
       if (mavlink_frame_char(chan_, bus_->read(), &msg_, &status_)
           != MAVLINK_FRAMING_INCOMPLETE) {
         /* Items handled by this class */
-        rx_sys_id_ = msg_.sysid; 
+        rx_sys_id_ = msg_.sysid;
         rx_comp_id_ = msg_.compid;
         switch (msg_.msgid) {
           case MAVLINK_MSG_ID_COMMAND_LONG: {
@@ -275,8 +275,7 @@ class MavLink {
   inline std::size_t num_waypoints() const {return mission_.num_waypoints();}
   void AdvanceWaypoint() {mission_.AdvanceWaypoint();}
   /* Status text */
-  template<std::size_t N>
-  void SendStatusText(Severity severity, char const (&msg)[N]) {
+  void SendStatusText(Severity severity, char const *msg) {
     util_.SendStatusText(severity, msg);
   }
 

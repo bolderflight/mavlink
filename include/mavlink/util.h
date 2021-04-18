@@ -53,9 +53,7 @@ class MavLinkUtil {
   inline constexpr uint8_t sys_id() const {return sys_id_;}
   inline constexpr uint8_t comp_id() const {return comp_id_;}
   /* Send status text */
-  template<std::size_t N>
-  void SendStatusText(Severity severity, char const (&msg)[N]) {
-    static_assert(N < 52, "STATUSTEXT message limited to 50 characters");
+  void SendStatusText(Severity severity, char const *msg) {
     uint8_t sev = static_cast<uint8_t>(severity);
     uint16_t id = 0;
     uint8_t chunk_seq = 0;
