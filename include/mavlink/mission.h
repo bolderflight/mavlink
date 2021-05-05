@@ -26,8 +26,6 @@
 #ifndef INCLUDE_MAVLINK_MISSION_H_
 #define INCLUDE_MAVLINK_MISSION_H_
 
-#include <array>
-#include <string>
 #include "core/core.h"
 #include "./mavlink_types.h"
 #include "common/mavlink.h"
@@ -35,32 +33,17 @@
 
 namespace bfs {
 
-/* Coordinate system */
-enum class CoordSys : uint8_t {
-  WGS84_MSL_ALT = 0,
-  NED = 1,
-  MISSION = 2,
-  WGS84_REL_ALT = 3,
-  ENU = 4,
-  WGS84_AGL_ALT = 10,
-  BODY = 12,
-  LOCAL_FRD = 20,
-  LOCAL_FLU = 21
-};
-/* Command */
-enum class MissionCmd : uint16_t {};
-/* Mission item */
 struct MissionItem {
   bool autocontinue;
-  int frame;
-  MissionCmd cmd;
+  uint8_t frame;
+  uint16_t cmd;
   float param1;
   float param2;
   float param3;
   float param4;
   int32_t x;
   int32_t y;
-  int32_t z;
+  float z;
 };
 
 class MavLinkMission {
@@ -105,32 +88,6 @@ class MavLinkMission {
   uint8_t msg_buf_[MAVLINK_MAX_PACKET_LEN];
   /* Util class, for status text */
   MavLinkUtil util_;
-  /* Mission types */
-  enum class MissionType : uint8_t {
-    MISSION = 0,
-    FENCE = 1,
-    RALLY = 2,
-    ALL = 255
-  };
-  /* Mission result */
-  enum class MissionResult : uint8_t {
-    ACCEPTED = 0,
-    ERROR = 1,
-    UNSUPPORTED_FRAME = 2,
-    UNSUPPORTED_CMD = 3,
-    NO_SPACE = 4,
-    INVALID = 5,
-    INVALID_PARAM1 = 6,
-    INVALID_PARAM2 = 7,
-    INVALID_PARAM3 = 8,
-    INVALID_PARAM4 = 9,
-    INVALID_PARAM5 = 10,
-    INVALID_PARAM6 = 11,
-    INVALID_PARAM7 = 12,
-    INVALID_SEQUENCE = 13,
-    DENIED = 14,
-    OPERATION_CANCELLED = 15
-  };
   /* State tracking */
   std::size_t mission_current_count_ = 0;
   std::size_t mission_upload_count_ = 0;
@@ -144,7 +101,6 @@ class MavLinkMission {
   static constexpr std::size_t MAX_RETRIES_ = 5;
   /* Message handlers */
   uint8_t rx_sys_id_, rx_comp_id_;
-  int cmd_ = -1;
   void MessageRequestListHandler(const mavlink_mission_request_list_t &ref);
   void MissionCountHandler(const mavlink_mission_count_t &ref);
   void MissionRequestHandler(const mavlink_mission_request_t &ref);
@@ -154,12 +110,24 @@ class MavLinkMission {
   void MissionSetCurrentHandler(const mavlink_mission_set_current_t &ref);
   void MissionClearAllHandler(const mavlink_mission_clear_all_t &ref);
   /* Message emitters */
-  void SendMissionRequestInt(const std::size_t index, const MissionType type);
-  void SendMissionCount(const std::size_t count, const MissionType type);
-  void SendMissionItemInt(const std::size_t index, const MissionType type);
+  void SendMissionRequestInt(const std::size_t index, const uint8_t type);
+  void SendMissionCount(const std::size_t count, const uint8_t type);
+  void SendMissionItemInt(const std::size_t index, const uint8_t type);
   void SendMissionCurrent(const std::size_t index);
   void SendMissionItemReached(const std::size_t index);
-  void SendMissionAck(const MissionResult result, const MissionType type);
+  void SendMissionAck(const uint8_t result, const uint8_t type);
+  /* Message data */
+  mavlink_mission_count_t mission_count_;
+  mavlink_mission_item_t mission_item_;
+  mavlink_mission_item_int_t mission_item_int_;
+  mavlink_mission_request_list_t mission_request_list_;
+  mavlink_mission_request_t mission_request_;
+  mavlink_mission_request_int_t mission_request_int_;
+  mavlink_mission_set_current_t mission_set_current_;
+  mavlink_mission_clear_all_t mission_clear_all_;
+  /* Mission item */
+  MissionItem item_;
+  bool current_;
 };
 
 }  // namespace bfs

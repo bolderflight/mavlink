@@ -28,23 +28,13 @@
 
 #include <array>
 #include "core/core.h"
+#include "global_defs/global_defs.h"
+#include "gnss/gnss.h"
 #include "./mavlink_types.h"
 #include "common/mavlink.h"
 #include "mavlink/util.h"
 
 namespace bfs {
-
-enum class GnssFix : uint8_t {
-  NO_GNSS = 0,
-  FIX_NONE = 1,
-  FIX_2D = 2,
-  FIX_3D = 3,
-  FIX_DGPS = 4,
-  FIX_RTK_FLOAT = 5,
-  FIX_RTK_FIXED = 6,
-  FIX_STATIC = 7,
-  FIX_PPP = 8
-};
 
 class MavLinkTelemetry {
  public:
@@ -148,6 +138,10 @@ class MavLinkTelemetry {
   inline void static_pres_die_temp_c(const float val) {
     static_pres_die_temp_c_ = val;
   }
+  inline void diff_pres_die_temp_c(const float val) {
+    diff_pres_die_temp_c_.set = true;
+    diff_pres_die_temp_c_.val = val;
+  }
   /* GNSS data */
   inline void gnss_fix(const GnssFix val) {gnss_fix_ = val;}
   inline void gnss_num_sats(const uint8_t val) {
@@ -211,7 +205,7 @@ class MavLinkTelemetry {
   HardwareSerial *bus_;
   /* Config */
   const uint8_t sys_id_ = 1;
-  static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+  static constexpr uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;
@@ -256,8 +250,9 @@ class MavLinkTelemetry {
   float static_pres_pa_ = 0;
   float diff_pres_pa_ = 0;
   float static_pres_die_temp_c_ = 0;
+  CondData<float> diff_pres_die_temp_c_;
   /* GNSS */
-  GnssFix gnss_fix_ = GnssFix::NO_GNSS;
+  GnssFix gnss_fix_ = GnssFix::FIX_NONE;
   double gnss_lat_rad_ = 0.0;
   double gnss_lon_rad_ = 0.0;
   float gnss_alt_msl_m_ = 0.0f;
@@ -296,7 +291,6 @@ class MavLinkTelemetry {
   std::array<float, 16> inceptor_ = {0.0f};
   uint8_t throttle_ch_ = 0;
   /* Telemetry Messages */
-  void SendHeartbeat();
   /* SRx_ALL */
   void SRx_ALL();
   /* SRx_EXT_STAT */
@@ -317,7 +311,7 @@ class MavLinkTelemetry {
   void SendGlobalPositionInt();
   /* SRx_RAW_SENS */
   void SRx_RAW_SENS();
-  void SendRawImu();
+  void SendScaledImu();
   void SendGpsRawInt();
   void SendScaledPressure();
   /* SRx_RC_CHAN */
@@ -361,6 +355,85 @@ class MavLinkTelemetry {
   };
   /* Request data stream */
   void ParseRequestDataStream(const mavlink_request_data_stream_t &ref);
+  /*** Message data ***/
+  mavlink_request_data_stream_t request_stream_;
+  uint32_t sys_time_ms_;
+  /* System status */
+  static constexpr int16_t current_battery_ = -1;
+  static constexpr int8_t battery_remaining_ = -1;
+  static constexpr uint16_t drop_rate_comm_ = 0;
+  static constexpr uint16_t errors_comm_ = 0;
+  static constexpr uint16_t errors_count_[4] = {0};
+  uint32_t sensors_present_;
+  uint32_t sensors_healthy_;
+  uint16_t load_;
+  uint16_t voltage_battery_ = UINT16_MAX;
+  /* GNSS raw */
+  static constexpr uint16_t yaw_cdeg_ = 0;
+  uint8_t fix_;
+  int32_t lat_dege7_;
+  int32_t lon_dege7_;
+  int32_t alt_msl_mm_;
+  uint16_t eph_ = UINT16_MAX, epv_ = UINT16_MAX;
+  uint16_t vel_cmps_ = UINT16_MAX;
+  uint16_t track_cdeg_ = UINT16_MAX;
+  uint8_t num_sv_ = 255;
+  int32_t alt_wgs84_mm_;
+  uint32_t h_acc_mm_;
+  uint32_t v_acc_mm_;
+  uint32_t vel_acc_mmps_;
+  uint32_t hdg_acc_dege5_;
+  /* Attitude */
+  float yaw_rad_ = 0;
+  /* VFR HUD */
+  int16_t hdg_deg_ = 0;
+  uint16_t throttle_;
+  float climb_mps_;
+  /* Battery status */
+  static constexpr uint8_t id_ = 0;
+  static constexpr uint8_t battery_function_ = MAV_BATTERY_FUNCTION_UNKNOWN;
+  static constexpr uint8_t type_ = MAV_BATTERY_TYPE_LIPO;
+  static constexpr int16_t temp_ = INT16_MAX;
+  static constexpr int16_t current_ = -1;
+  static constexpr int32_t current_consumed_ = -1;
+  static constexpr int32_t energy_consumed_ = -1;
+  static constexpr int32_t time_remaining_ = 0;
+  static constexpr uint8_t charge_state_ = MAV_BATTERY_CHARGE_STATE_UNDEFINED;
+  static constexpr uint8_t battery_mode_ = MAV_BATTERY_MODE_UNKNOWN;
+  static constexpr uint32_t fault_bitmask_ = 0;
+  uint16_t volt_[14] = {
+    UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,
+    UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,
+    UINT16_MAX, UINT16_MAX};
+  /* Global position */
+  int32_t alt_agl_mm_;
+  int16_t vx_cmps_;
+  int16_t vy_cmps_;
+  int16_t vz_cmps_;
+  uint16_t hdg_cdeg_ = UINT16_MAX;
+  /* IMU */
+  int16_t accel_x_mg_;
+  int16_t accel_y_mg_;
+  int16_t accel_z_mg_;
+  int16_t gyro_x_mradps_;
+  int16_t gyro_y_mradps_;
+  int16_t gyro_z_mradps_;
+  int16_t mag_x_mgauss_;
+  int16_t mag_y_mgauss_;
+  int16_t mag_z_mgauss_;
+  int16_t temp_cc_ = 0;
+  /* Scaled pressure */
+  float static_pres_hpa_;
+  float diff_pres_hpa_;
+  int16_t static_temp_cc_;
+  int16_t diff_temp_cc_ = 0;
+  /* Servo output */
+  static constexpr uint8_t port_ = 0;
+  uint16_t servo_raw_[16] = {0};
+  /* RC input */
+  static constexpr uint8_t chancount_ = 16;
+  static constexpr uint8_t rssi_ = 255;
+  uint16_t chan_[18] = {0};
 };
 
 }  // namespace bfs

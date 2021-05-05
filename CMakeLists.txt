@@ -18,51 +18,65 @@ if (DEFINED MCU)
 	FetchContent_Declare(
 		core
 		GIT_REPOSITORY https://github.com/bolderflight/core.git
-		GIT_TAG v2.0.4
+		GIT_TAG v2.0.5
 	)
 	FetchContent_MakeAvailable(core)
+	# Fetch global defs
+	FetchContent_Declare(
+		global_defs
+		GIT_REPOSITORY https://github.com/bolderflight/global_defs.git
+		GIT_TAG v2.0.0
+	)
+	FetchContent_MakeAvailable(global_defs)
 	# Fetch mavlink-v2 headers
 	FetchContent_Declare(
 		mavlink_headers_v2
 		GIT_REPOSITORY https://github.com/bolderflight/mavlink_c_library_v2.git
-		GIT_TAG v1.0.0
+		GIT_TAG v1.1.0
 	)
 	FetchContent_MakeAvailable(mavlink_headers_v2)
 	# Fetch units
 	FetchContent_Declare(
 		units
 		GIT_REPOSITORY https://github.com/bolderflight/units.git
-		GIT_TAG v3.1.0
+		GIT_TAG v3.2.0
 	)
 	FetchContent_MakeAvailable(units)
 	# Fetch navigation
 	FetchContent_Declare(
 		navigation
 		GIT_REPOSITORY https://github.com/bolderflight/navigation.git
-		GIT_TAG v2.0.0
+		GIT_TAG v2.0.1
 	)
 	FetchContent_MakeAvailable(navigation)
+	# Fetch gnss
+	FetchContent_Declare(
+		gnss
+		GIT_REPOSITORY https://github.com/bolderflight/gnss.git
+		GIT_TAG v2.1.0
+	)
+	FetchContent_MakeAvailable(gnss)
 	# Add the library target
 	add_library(mavlink
 		src/mavlink/heartbeat.cc
 		src/mavlink/telemetry.cc
 		src/mavlink/mission.cc
-		src/mavlink/cmd.cc
 		include/mavlink/mavlink.h
 		include/mavlink/heartbeat.h
 		include/mavlink/mavlink.h
 		include/mavlink/telemetry.h
 		include/mavlink/parameter.h
 		include/mavlink/mission.h
-		include/mavlink/cmd.h
 	)
 	# Link libraries
 	target_link_libraries(mavlink
 		PUBLIC
 			core
+			global_defs
 			mavlink_headers_v2
 			units
 			navigation
+			gnss
 	)
 	# Setup include directories 
 	target_include_directories(mavlink PUBLIC 

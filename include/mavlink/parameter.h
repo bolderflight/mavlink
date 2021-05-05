@@ -99,21 +99,18 @@ class MavLinkParameter {
   void MsgHandler(const mavlink_message_t &ref) {
     switch (ref.msgid) {
       case MAVLINK_MSG_ID_PARAM_REQUEST_READ: {
-        mavlink_param_request_read_t request_read;
-        mavlink_msg_param_request_read_decode(&ref, &request_read);
-        ParamRequestReadHandler(request_read);
+        mavlink_msg_param_request_read_decode(&ref, &request_read_);
+        ParamRequestReadHandler(request_read_);
         break;
       }
       case MAVLINK_MSG_ID_PARAM_REQUEST_LIST: {
-        mavlink_param_request_list_t request_list;
-        mavlink_msg_param_request_list_decode(&ref, &request_list);
-        ParamRequestListHandler(request_list);
+        mavlink_msg_param_request_list_decode(&ref, &request_list_);
+        ParamRequestListHandler(request_list_);
         break;
       }
       case MAVLINK_MSG_ID_PARAM_SET: {
-        mavlink_param_set_t param_set;
-        mavlink_msg_param_set_decode(&ref, &param_set);
-        ParamSetHandler(param_set);
+        mavlink_msg_param_set_decode(&ref, &param_set_);
+        ParamSetHandler(param_set_);
         break;
       }
     }
@@ -124,7 +121,7 @@ class MavLinkParameter {
   HardwareSerial *bus_;
   /* Config */
   const uint8_t sys_id_ = 1;
-  static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+  static constexpr uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;
@@ -138,7 +135,7 @@ class MavLinkParameter {
     uint16_t param_index;
   };
   /* Currently only supporting float params */
-  static const uint8_t param_type_ = MAV_PARAM_TYPE_REAL32;
+  static constexpr uint8_t param_type_ = MAV_PARAM_TYPE_REAL32;
   /* Array of params, fixed name and index */
   Param params_[N];
   /* Whether the params have been updated */
@@ -174,6 +171,9 @@ class MavLinkParameter {
     bus_->write(msg_buf_, msg_len_);
   }
   /* Message handlers */
+  mavlink_param_request_read_t request_read_;
+  mavlink_param_request_list_t request_list_;
+  mavlink_param_set_t param_set_;
   void ParamRequestReadHandler(const mavlink_param_request_read_t &ref) {
     if ((ref.target_system == sys_id_) &&
        ((ref.target_component == comp_id_) ||

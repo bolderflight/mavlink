@@ -27,60 +27,29 @@
 #define INCLUDE_MAVLINK_HEARTBEAT_H_
 
 #include "core/core.h"
+#include "global_defs/global_defs.h"
 #include "./mavlink_types.h"
 #include "common/mavlink.h"
 
 namespace bfs {
 
-enum class VehicleType : uint8_t {
-  FIXED_WING = 1,
-  QUADROTOR = 2,
-  COAXIAL_HELICOPTER = 3,
-  HELICOPTER = 4,
-  HEXAROTOR = 13,
-  OCTOROTOR = 14,
-  TRICOPTER = 15,
-  VTOL = 21,
-  DODECAROTOR = 29,
-  DECAROTOR = 35
-};
-enum class VehicleMode : uint8_t {
-  MANUAL,
-  STABALIZED,
-  ATTITUDE,
-  AUTO,
-  TEST
-};
-enum class VehicleState : uint8_t {
-  UNINIT = 0,
-  BOOT = 1,
-  CALIBRATING = 2,
-  STANDBY = 3,
-  ACTIVE = 4,
-  CAUTION = 5,
-  EMERGENCY = 6,
-  POWEROFF = 7,
-  FTS = 8
-};
-
 class MavLinkHeartbeat {
  public:
-  MavLinkHeartbeat(HardwareSerial *bus, const VehicleType type) : bus_(bus),
-    vehicle_type_(type) {}
-  MavLinkHeartbeat(HardwareSerial *bus, const VehicleType type,
+  MavLinkHeartbeat(HardwareSerial *bus, const AircraftType type) : bus_(bus),
+                   aircraft_type_(type) {}
+  MavLinkHeartbeat(HardwareSerial *bus, const AircraftType type,
                    const uint8_t sys_id) : bus_(bus),
-                   vehicle_type_(type), sys_id_(sys_id) {}
-  /* Vehicle type, system and component ID getters */
-  inline constexpr VehicleType vehicle_type() const {return vehicle_type_;}
+                   aircraft_type_(type), sys_id_(sys_id) {}
+  /* Aircraft type, system and component ID getters */
+  inline constexpr AircraftType aircraft_type() const {return aircraft_type_;}
   inline constexpr uint8_t sys_id() const {return sys_id_;}
   inline constexpr uint8_t comp_id() const {return comp_id_;}
   /* 
-  * Setters and getters for the throttle enabled flag, vehicle mode,
-  * and vehicle state
+  * Setters for the throttle enabled flag, aircraft mode, and aircraft state
   */
   inline void throttle_enabled(const bool val) {throttle_enabled_ = val;}
-  inline void vehicle_mode(const VehicleMode val) {vehicle_mode_ = val;}
-  inline void vehicle_state(const VehicleState val) {vehicle_state_ = val;}
+  inline void aircraft_mode(const AircraftMode val) {aircraft_mode_ = val;}
+  inline void aircraft_state(const AircraftState val) {aircraft_state_ = val;}
   /* Update method */
   void Update();
 
@@ -89,22 +58,27 @@ class MavLinkHeartbeat {
   HardwareSerial *bus_;
   /* Config */
   const uint8_t sys_id_ = 1;
-  const VehicleType vehicle_type_;
-  static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
-  static const uint8_t autopilot_ = MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY;
+  const AircraftType aircraft_type_;
+  static constexpr uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+  static constexpr uint8_t autopilot_ = MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY;
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;
   uint8_t msg_buf_[MAVLINK_MAX_PACKET_LEN];
   /* Data */
   bool throttle_enabled_ = false;
-  VehicleMode vehicle_mode_ = VehicleMode::MANUAL;
-  VehicleState vehicle_state_ = VehicleState::STANDBY;
+  AircraftMode aircraft_mode_ = AircraftMode::MANUAL;
+  AircraftState aircraft_state_ = AircraftState::INIT;
   /* Timing */
-  static constexpr int HEARTBEAT_PERIOD_MS_ = 1000;
+  static constexpr uint16_t HEARTBEAT_PERIOD_MS_ = 1000;
   elapsedMillis heartbeat_timer_ms_;
   /* Heartbeat */
   void SendHeartbeat();
+  /* Heartbeat variables */
+  static constexpr uint32_t custom_mode_ = 0;
+  uint8_t type_;
+  uint8_t mode_;
+  uint8_t state_;
 };
 
 }  // namespace bfs
