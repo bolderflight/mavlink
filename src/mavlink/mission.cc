@@ -285,7 +285,7 @@ void MavLinkMission::SendMissionItemInt(const std::size_t index,
   }
   msg_len_ = mavlink_msg_mission_item_int_pack(sys_id_, comp_id_, &msg_,
                                                 rx_sys_id_, rx_comp_id_,
-                                                index, 
+                                                index,
                                                 item_.frame,
                                                 item_.cmd,
                                                 current_,
