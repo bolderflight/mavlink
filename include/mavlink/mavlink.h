@@ -40,18 +40,56 @@ namespace bfs {
 template<std::size_t NPARAM>
 class MavLink {
  public:
+
   MavLink(HardwareSerial *bus, const AircraftType type,
-          MissionItem * const mission, MissionItem * const temp,
-          const std::size_t size) :
+          MissionItem * const mission, const std::size_t mission_size,
+          MissionItem * const temp) :
           bus_(bus), util_(bus), heartbeat_(bus, type), telem_(bus),
-          param_(bus), mission_(bus, mission, temp, size) {}
+          param_(bus), mission_(bus, mission, mission_size, temp) {}
   MavLink(HardwareSerial *bus, const AircraftType type, const uint8_t sys_id,
-          MissionItem * const mission, MissionItem * const temp,
-          const std::size_t size) :
+          MissionItem * const mission, const std::size_t mission_size,
+          MissionItem * const temp) :
           bus_(bus), sys_id_(sys_id), util_(bus, sys_id),
           heartbeat_(bus, type, sys_id), telem_(bus, sys_id),
-          param_(bus, sys_id),
-          mission_(bus, sys_id, mission, temp, size) {}
+          param_(bus, sys_id), mission_(bus, sys_id, mission, mission_size,
+                                        temp) {}
+  MavLink(HardwareSerial *bus, const AircraftType type,
+          MissionItem * const mission, const std::size_t mission_size,
+          MissionItem * const fence, const std::size_t fence_size,
+          MissionItem * const temp) :
+          bus_(bus), util_(bus), heartbeat_(bus, type), telem_(bus),
+          param_(bus), mission_(bus, mission, mission_size, fence, fence_size,
+                                temp),
+          fence_supported_(true) {}
+  MavLink(HardwareSerial *bus, const AircraftType type, const uint8_t sys_id,
+          MissionItem * const mission, const std::size_t mission_size,
+          MissionItem * const fence, const std::size_t fence_size,
+          MissionItem * const temp) :
+          bus_(bus), sys_id_(sys_id), util_(bus, sys_id),
+          heartbeat_(bus, type, sys_id), telem_(bus, sys_id),
+          param_(bus, sys_id), mission_(bus, sys_id, mission, mission_size,
+                                        fence, fence_size, temp),
+          fence_supported_(true) {}
+  MavLink(HardwareSerial *bus, const AircraftType type,
+          MissionItem * const mission, const std::size_t mission_size,
+          MissionItem * const fence, const std::size_t fence_size,
+          MissionItem * const rally, const std::size_t rally_size,
+          MissionItem * const temp) :
+          bus_(bus), util_(bus), heartbeat_(bus, type), telem_(bus),
+          param_(bus), mission_(bus, mission, mission_size, fence, fence_size,
+                                rally, rally_size, temp),
+          fence_supported_(true), rally_supported_(true) {}
+  MavLink(HardwareSerial *bus, const AircraftType type, const uint8_t sys_id,
+          MissionItem * const mission, const std::size_t mission_size,
+          MissionItem * const fence, const std::size_t fence_size,
+          MissionItem * const rally, const std::size_t rally_size,
+          MissionItem * const temp) :
+          bus_(bus), sys_id_(sys_id), util_(bus, sys_id),
+          heartbeat_(bus, type, sys_id), telem_(bus, sys_id),
+          param_(bus, sys_id), mission_(bus, sys_id, mission, mission_size,
+                                        fence, fence_size, rally, rally_size,
+                                        temp),
+          fence_supported_(true), rally_supported_(true) {}
   void Begin(uint32_t baud) {
     bus_->begin(baud);
   }
@@ -272,10 +310,16 @@ class MavLink {
     return param_.param_id(idx);
   }
   /* Mission */
-  inline bool waypoints_updated() {return mission_.waypoints_updated();}
-  inline int32_t active_waypoint() const {return mission_.active_waypoint();}
-  inline std::size_t num_waypoints() const {return mission_.num_waypoints();}
-  void AdvanceWaypoint() {mission_.AdvanceWaypoint();}
+  inline bool mission_updated() {return mission_.mission_updated();}
+  inline int32_t active_mission_item() const {return mission_.active_mission_item();}
+  inline std::size_t num_mission_items() const {return mission_.num_mission_items();}
+  void AdvanceMissionItem() {mission_.AdvanceMissionItem();}
+  /* Fence */
+  inline bool fence_updated() {return mission_.fence_updated();}
+  inline std::size_t num_fence_items() const {return mission_.num_fence_items();}
+  /* Rally */
+  inline bool rally_points_updated() {return mission_.rally_points_updated();}
+  inline std::size_t num_rally_points() const {return mission_.num_rally_points();}
   /* Status text */
   void SendStatusText(Severity severity, char const *msg) {
     util_.SendStatusText(severity, msg);
@@ -287,6 +331,8 @@ class MavLink {
   /* Config */
   const uint8_t sys_id_ = 1;
   static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+  const bool fence_supported_ = false;
+  const bool rally_supported_ = false;
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;
@@ -319,10 +365,7 @@ class MavLink {
   static constexpr uint8_t library_versions_hash_[8] = {0};
   static constexpr uint16_t version_ = 230;
   static constexpr uint16_t min_version_ = 100;
-  static constexpr uint64_t capabilities =
-    MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT |
-    MAV_PROTOCOL_CAPABILITY_MISSION_INT |
-    MAV_PROTOCOL_CAPABILITY_MAVLINK2;
+  uint64_t capabilities_;
   static constexpr int32_t result_param2_ = 0;
   /* Emitters */
   void SendProtocolVersion() {
@@ -335,8 +378,18 @@ class MavLink {
     bus_->write(msg_buf_, msg_len_);
   }
   void SendAutopilotVersion() {
+    capabilities_ =
+      MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT |
+      MAV_PROTOCOL_CAPABILITY_MISSION_INT |
+      MAV_PROTOCOL_CAPABILITY_MAVLINK2;
+    if (fence_supported_) {
+      capabilities_ |= MAV_PROTOCOL_CAPABILITY_MISSION_FENCE;
+    }
+    if (rally_supported_) {
+      capabilities_ |= MAV_PROTOCOL_CAPABILITY_MISSION_RALLY;
+    }
     msg_len_ = mavlink_msg_autopilot_version_pack(sys_id_, comp_id_, &msg_,
-                                                  capabilities,
+                                                  capabilities_,
                                                   flight_sw_version_,
                                                   middleware_sw_version_,
                                                   os_sw_version_,

@@ -46,6 +46,34 @@ void MavLinkMission::Update() {
       }
     }
   }
+  if ((fence_upload_index_ >= 0) &&
+      (fence_upload_index_ < fence_upload_count_)) {
+    if (upload_timer_ms_ > UPLOAD_TIMEOUT_MS_) {
+      SendMissionRequestInt(fence_upload_index_, MAV_MISSION_TYPE_FENCE);
+      upload_timer_ms_ = 0;
+      retries_++;
+      if (retries_ > MAX_RETRIES_) {
+        fence_upload_count_ = 0;
+        fence_upload_index_ = -1;
+        retries_ = 0;
+        upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
+      }
+    }
+  }
+  if ((rally_upload_index_ >= 0) &&
+      (rally_upload_index_ < rally_upload_count_)) {
+    if (upload_timer_ms_ > UPLOAD_TIMEOUT_MS_) {
+      SendMissionRequestInt(rally_upload_index_, MAV_MISSION_TYPE_RALLY);
+      upload_timer_ms_ = 0;
+      retries_++;
+      if (retries_ > MAX_RETRIES_) {
+        rally_upload_count_ = 0;
+        rally_upload_index_ = -1;
+        retries_ = 0;
+        upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
+      }
+    }
+  }
 }
 void MavLinkMission::MsgHandler(const mavlink_message_t &ref) {
   rx_sys_id_ = ref.sysid;
@@ -93,7 +121,7 @@ void MavLinkMission::MsgHandler(const mavlink_message_t &ref) {
     }
   }
 }
-void MavLinkMission::AdvanceWaypoint() {
+void MavLinkMission::AdvanceMissionItem() {
   SendMissionItemReached(mission_current_index_);
   if (mission_current_index_ < mission_current_count_ - 1) {
     mission_current_index_++;
@@ -108,16 +136,48 @@ void MavLinkMission::MessageRequestListHandler(
         SendMissionCount(mission_current_count_, ref.mission_type);
         break;
       }
+      case MAV_MISSION_TYPE_FENCE: {
+        SendMissionCount(fence_current_count_, ref.mission_type);
+        break;
+      }
+      case MAV_MISSION_TYPE_RALLY: {
+        SendMissionCount(rally_current_count_, ref.mission_type);
+        break;
+      }
     }
   }
 }
 void MavLinkMission::MissionCountHandler(const mavlink_mission_count_t &ref) {
   if ((ref.target_system == sys_id_) && (ref.target_component == comp_id_)) {
+    /* Ack an empty count */
+    if (ref.count == 0) {
+      SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
+      return;
+    }
+    /* Otherwise set the upload count and start getting mission items */
     switch (ref.mission_type) {
       case MAV_MISSION_TYPE_MISSION: {
         if (ref.count <= mission_size_) {
           mission_upload_count_ = ref.count;
           mission_upload_index_ = 0;
+        } else {
+          SendMissionAck(MAV_MISSION_NO_SPACE, ref.mission_type);
+        }
+        break;
+      }
+      case MAV_MISSION_TYPE_FENCE: {
+        if (ref.count <= fence_size_) {
+          fence_upload_count_ = ref.count;
+          fence_upload_index_ = 0;
+        } else {
+          SendMissionAck(MAV_MISSION_NO_SPACE, ref.mission_type);
+        }
+        break;
+      }
+      case MAV_MISSION_TYPE_RALLY: {
+        if (ref.count <= rally_size_) {
+          rally_upload_count_ = ref.count;
+          rally_upload_index_ = 0;
         } else {
           SendMissionAck(MAV_MISSION_NO_SPACE, ref.mission_type);
         }
@@ -152,12 +212,6 @@ void MavLinkMission::MissionItemHandler(const mavlink_mission_item_t &ref) {
     item_.x = static_cast<int32_t>(ref.x * 10000000.0f);
     item_.y = static_cast<int32_t>(ref.y * 10000000.0f);
     item_.z = ref.z;
-    /* 
-    * Check that the sequence is valid, assign to the correct array,
-    * step the index, and send an ack. If the last item, switch the
-    * active back and reset the upload index, else reset the timeout
-    * to immediately request the next item.
-    */
     switch (ref.mission_type) {
       case MAV_MISSION_TYPE_MISSION: {
         if (ref.seq == mission_upload_index_) {
@@ -167,8 +221,42 @@ void MavLinkMission::MissionItemHandler(const mavlink_mission_item_t &ref) {
             mission_updated_  = true;
             mission_current_index_ = 0;
             mission_current_count_ = mission_upload_count_;
-            memcpy(mission_, temp_, mission_upload_count_);
+            memcpy(mission_, temp_, mission_upload_count_ * sizeof(MissionItem));
             mission_upload_index_ = -1;
+            upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
+            SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
+          }
+        } else {
+          SendMissionAck(MAV_MISSION_INVALID_SEQUENCE, ref.mission_type);
+        }
+        break;
+      }
+      case MAV_MISSION_TYPE_FENCE: {
+        if (ref.seq == fence_upload_index_) {
+          temp_[fence_upload_index_++] = item_;
+          /* Just received the last item */
+          if (fence_upload_index_ == fence_upload_count_) {
+            fence_updated_  = true;
+            fence_current_count_ = fence_upload_count_;
+            memcpy(fence_, temp_, fence_upload_count_ * sizeof(MissionItem));
+            fence_upload_index_ = -1;
+            upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
+            SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
+          }
+        } else {
+          SendMissionAck(MAV_MISSION_INVALID_SEQUENCE, ref.mission_type);
+        }
+        break;
+      }
+      case MAV_MISSION_TYPE_RALLY: {
+        if (ref.seq == rally_upload_index_) {
+          temp_[rally_upload_index_++] = item_;
+          /* Just received the last item */
+          if (rally_upload_index_ == rally_upload_count_) {
+            rally_updated_  = true;
+            rally_current_count_ = rally_upload_count_;
+            memcpy(rally_, temp_, rally_upload_count_ * sizeof(MissionItem));
+            rally_upload_index_ = -1;
             upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
             SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
           }
@@ -195,12 +283,6 @@ void MavLinkMission::MissionItemIntHandler(
     item_.x = ref.x;
     item_.y = ref.y;
     item_.z = ref.z;
-    /* 
-    * Check that the sequence is valid, assign to the correct array,
-    * step the index, and send an ack. If the last item, switch the
-    * active back and reset the upload index, else reset the timeout
-    * to immediately request the next item.
-    */
     switch (ref.mission_type) {
       case MAV_MISSION_TYPE_MISSION: {
         if (ref.seq == mission_upload_index_) {
@@ -210,8 +292,42 @@ void MavLinkMission::MissionItemIntHandler(
             mission_updated_  = true;
             mission_current_index_ = 0;
             mission_current_count_ = mission_upload_count_;
-            memcpy(mission_, temp_, mission_upload_count_);
+            memcpy(mission_, temp_, mission_upload_count_ * sizeof(MissionItem));
             mission_upload_index_ = -1;
+            upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
+            SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
+          }
+        } else {
+          SendMissionAck(MAV_MISSION_INVALID_SEQUENCE, ref.mission_type);
+        }
+        break;
+      }
+      case MAV_MISSION_TYPE_FENCE: {
+        if (ref.seq == fence_upload_index_) {
+          temp_[fence_upload_index_++] = item_;
+          /* Just received the last item */
+          if (fence_upload_index_ == fence_upload_count_) {
+            fence_updated_  = true;
+            fence_current_count_ = fence_upload_count_;
+            memcpy(fence_, temp_, fence_upload_count_ * sizeof(MissionItem));
+            fence_upload_index_ = -1;
+            upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
+            SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
+          }
+        } else {
+          SendMissionAck(MAV_MISSION_INVALID_SEQUENCE, ref.mission_type);
+        }
+        break;
+      }
+      case MAV_MISSION_TYPE_RALLY: {
+        if (ref.seq == rally_upload_index_) {
+          temp_[rally_upload_index_++] = item_;
+          /* Just received the last item */
+          if (rally_upload_index_ == rally_upload_count_) {
+            rally_updated_  = true;
+            rally_current_count_ = rally_upload_count_;
+            memcpy(rally_, temp_, rally_upload_count_ * sizeof(MissionItem));
+            rally_upload_index_ = -1;
             upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
             SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
           }
@@ -244,9 +360,19 @@ void MavLinkMission::MissionClearAllHandler(
         mission_current_count_ = 0;
         break;
       }
+      case MAV_MISSION_TYPE_FENCE: {
+        fence_current_count_ = 0;
+        break;
+      }
+      case MAV_MISSION_TYPE_RALLY: {
+        rally_current_count_ = 0;
+        break;
+      }
       case MAV_MISSION_TYPE_ALL: {
         mission_current_index_ = -1;
         mission_current_count_ = 0;
+        fence_current_count_ = 0;
+        rally_current_count_ = 0;
       }
     }
     SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
@@ -276,6 +402,26 @@ void MavLinkMission::SendMissionItemInt(const std::size_t index,
       if (index < mission_current_count_) {
         item_ = mission_[index];
         current_ = (index == mission_current_index_) ? true : false;
+      } else {
+        SendMissionAck(MAV_MISSION_ERROR, type);
+        return;
+      }
+      break;
+    }
+    case MAV_MISSION_TYPE_FENCE: {
+      if (index < fence_current_count_) {
+        item_ = fence_[index];
+        current_ = false;
+      } else {
+        SendMissionAck(MAV_MISSION_ERROR, type);
+        return;
+      }
+      break;
+    }
+    case MAV_MISSION_TYPE_RALLY: {
+      if (index < rally_current_count_) {
+        item_ = rally_[index];
+        current_ = false;
       } else {
         SendMissionAck(MAV_MISSION_ERROR, type);
         return;
