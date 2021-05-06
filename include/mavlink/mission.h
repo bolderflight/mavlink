@@ -48,7 +48,7 @@ struct MissionItem {
 
 class MavLinkMission {
  public:
-   MavLinkMission(HardwareSerial *bus,
+  MavLinkMission(HardwareSerial *bus,
                  MissionItem * const mission, const std::size_t mission_size,
                  MissionItem * const temp) :
                  bus_(bus),

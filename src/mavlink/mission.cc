@@ -221,7 +221,8 @@ void MavLinkMission::MissionItemHandler(const mavlink_mission_item_t &ref) {
             mission_updated_  = true;
             mission_current_index_ = 0;
             mission_current_count_ = mission_upload_count_;
-            memcpy(mission_, temp_, mission_upload_count_ * sizeof(MissionItem));
+            memcpy(mission_, temp_,
+                   mission_upload_count_ * sizeof(MissionItem));
             mission_upload_index_ = -1;
             upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
             SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
@@ -292,7 +293,8 @@ void MavLinkMission::MissionItemIntHandler(
             mission_updated_  = true;
             mission_current_index_ = 0;
             mission_current_count_ = mission_upload_count_;
-            memcpy(mission_, temp_, mission_upload_count_ * sizeof(MissionItem));
+            memcpy(mission_, temp_,
+                   mission_upload_count_ * sizeof(MissionItem));
             mission_upload_index_ = -1;
             upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
             SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);

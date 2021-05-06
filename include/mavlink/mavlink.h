@@ -40,7 +40,6 @@ namespace bfs {
 template<std::size_t NPARAM>
 class MavLink {
  public:
-
   MavLink(HardwareSerial *bus, const AircraftType type,
           MissionItem * const mission, const std::size_t mission_size,
           MissionItem * const temp) :
@@ -109,25 +108,7 @@ class MavLink {
         switch (msg_.msgid) {
           case MAVLINK_MSG_ID_COMMAND_LONG: {
             mavlink_msg_command_long_decode(&msg_, &cmd_long_);
-            cmd_ = cmd_long_.command;
-            switch (cmd_long_.command) {
-              case 519: {
-                if ((cmd_long_.target_system == sys_id_) &&
-                    (cmd_long_.target_component == comp_id_)) {
-                  SendCmdAck(MAV_RESULT_ACCEPTED, 255);
-                  SendProtocolVersion();
-                }
-                break;
-              }
-              case 520: {
-                if ((cmd_long_.target_system == sys_id_) &&
-                    (cmd_long_.target_component == comp_id_)) {
-                  SendCmdAck(MAV_RESULT_ACCEPTED, 255);
-                  SendAutopilotVersion();
-                }
-                break;
-              }
-            }
+            CommandLongHandler(cmd_long_);
             break;
           }
         }
@@ -311,15 +292,25 @@ class MavLink {
   }
   /* Mission */
   inline bool mission_updated() {return mission_.mission_updated();}
-  inline int32_t active_mission_item() const {return mission_.active_mission_item();}
-  inline std::size_t num_mission_items() const {return mission_.num_mission_items();}
+  inline int32_t active_mission_item() const {
+    return mission_.active_mission_item();
+  }
+  inline std::size_t num_mission_items() const {
+    return mission_.num_mission_items();
+  }
   void AdvanceMissionItem() {mission_.AdvanceMissionItem();}
   /* Fence */
   inline bool fence_updated() {return mission_.fence_updated();}
-  inline std::size_t num_fence_items() const {return mission_.num_fence_items();}
+  inline std::size_t num_fence_items() const {
+    return mission_.num_fence_items();
+  }
   /* Rally */
-  inline bool rally_points_updated() {return mission_.rally_points_updated();}
-  inline std::size_t num_rally_points() const {return mission_.num_rally_points();}
+  inline bool rally_points_updated() {
+    return mission_.rally_points_updated();
+  }
+  inline std::size_t num_rally_points() const {
+    return mission_.num_rally_points();
+  }
   /* Status text */
   void SendStatusText(Severity severity, char const *msg) {
     util_.SendStatusText(severity, msg);
@@ -367,6 +358,24 @@ class MavLink {
   static constexpr uint16_t min_version_ = 100;
   uint64_t capabilities_;
   static constexpr int32_t result_param2_ = 0;
+  void CommandLongHandler(const mavlink_command_long_t &ref) {
+    if ((cmd_long_.target_system == sys_id_) &&
+        (cmd_long_.target_component == comp_id_)) {
+      cmd_ = cmd_long_.command;
+      switch (cmd_long_.command) {
+        case MAV_CMD_REQUEST_PROTOCOL_VERSION: {
+          SendCmdAck(MAV_RESULT_ACCEPTED, 255);
+          SendProtocolVersion();
+          break;
+        }
+        case MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES: {
+          SendCmdAck(MAV_RESULT_ACCEPTED, 255);
+          SendAutopilotVersion();
+          break;
+        }
+      }
+    }
+  }
   /* Emitters */
   void SendProtocolVersion() {
     msg_len_ = mavlink_msg_protocol_version_pack(sys_id_, comp_id_, &msg_,
