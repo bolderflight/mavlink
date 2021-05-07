@@ -364,4 +364,4 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 #### Utility
 
-**void SendStatusText(Severity severity, char const *msg)** Sends a status text given the severity and a message.
+**void SendStatusText(Severity severity, char const &ast;msg)** Sends a status text given the severity and a message.
