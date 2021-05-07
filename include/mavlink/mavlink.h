@@ -139,46 +139,46 @@ class MavLink {
     heartbeat_.aircraft_state(val);
   }
   /* Config data stream rates */
-  inline void raw_sens_stream_period_ms(const int val) {
+  inline void raw_sens_stream_period_ms(const int16_t val) {
     telem_.raw_sens_stream_period_ms(val);
   }
-  inline int raw_sens_stream_period_ms() const {
+  inline int16_t raw_sens_stream_period_ms() const {
     return telem_.raw_sens_stream_period_ms();
   }
-  inline void ext_status_stream_period_ms(const int val) {
+  inline void ext_status_stream_period_ms(const int16_t val) {
     telem_.ext_status_stream_period_ms(val);
   }
-  inline int ext_status_stream_period_ms() const {
+  inline int16_t ext_status_stream_period_ms() const {
     return telem_.ext_status_stream_period_ms();
   }
-  inline void rc_chan_stream_period_ms(const int val) {
+  inline void rc_chan_stream_period_ms(const int16_t val) {
     telem_.rc_chan_stream_period_ms(val);
   }
-  inline int rc_chan_stream_period_ms() const {
+  inline int16_t rc_chan_stream_period_ms() const {
     return telem_.rc_chan_stream_period_ms();
   }
-  inline void pos_stream_period_ms(const int val) {
+  inline void pos_stream_period_ms(const int16_t val) {
     telem_.pos_stream_period_ms(val);
   }
-  inline int pos_stream_period_ms() const {
+  inline int16_t pos_stream_period_ms() const {
     return telem_.pos_stream_period_ms();
   }
-  inline void extra1_stream_period_ms(const int val) {
+  inline void extra1_stream_period_ms(const int16_t val) {
     telem_.extra1_stream_period_ms(val);
   }
-  inline int extra1_stream_period_ms() const {
+  inline int16_t extra1_stream_period_ms() const {
     return telem_.extra1_stream_period_ms();
   }
-  inline void extra2_stream_period_ms(const int val) {
+  inline void extra2_stream_period_ms(const int16_t val) {
     telem_.extra2_stream_period_ms(val);
   }
-  inline int extra2_stream_period_ms() const {
+  inline int16_t extra2_stream_period_ms() const {
     return telem_.extra2_stream_period_ms();
   }
-  inline void extra3_stream_period_ms(const int val) {
+  inline void extra3_stream_period_ms(const int16_t val) {
     telem_.extra3_stream_period_ms(val);
   }
-  inline int extra3_stream_period_ms() const {
+  inline int16_t extra3_stream_period_ms() const {
     return telem_.extra3_stream_period_ms();
   }
   /* System */
