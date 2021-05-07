@@ -323,20 +323,20 @@ class MavLinkTelemetry {
   /* SRx_EMPTY */
   void SRx_EMPTY();
   /* Timing */
-  static constexpr int32_t NUM_DATA_STREAMS_ = 13;
-  int32_t data_stream_period_ms_[NUM_DATA_STREAMS_] = {-1, -1, -1, -1, -1, -1,
+  static constexpr int16_t NUM_DATA_STREAMS_ = 13;
+  int16_t data_stream_period_ms_[NUM_DATA_STREAMS_] = {-1, -1, -1, -1, -1, -1,
                                                        -1, -1, -1, -1, -1, -1,
                                                        -1};
   elapsedMillis data_stream_timer_ms_[NUM_DATA_STREAMS_];
   /* Data streams */
-  static constexpr int32_t SRx_RAW_SENS_STREAM = 1;
-  static constexpr int32_t SRx_EXT_STAT_STREAM = 2;
-  static constexpr int32_t SRx_RC_CHAN_STREAM = 3;
-  static constexpr int32_t SRx_RAW_CTRL_STREAM = 4;
-  static constexpr int32_t SRx_POSITION_STREAM = 6;
-  static constexpr int32_t SRx_EXTRA1_STREAM = 10;
-  static constexpr int32_t SRx_EXTRA2_STREAM = 11;
-  static constexpr int32_t SRx_EXTRA3_STREAM = 12;
+  static constexpr int8_t SRx_RAW_SENS_STREAM = 1;
+  static constexpr int8_t SRx_EXT_STAT_STREAM = 2;
+  static constexpr int8_t SRx_RC_CHAN_STREAM = 3;
+  static constexpr int8_t SRx_RAW_CTRL_STREAM = 4;
+  static constexpr int8_t SRx_POSITION_STREAM = 6;
+  static constexpr int8_t SRx_EXTRA1_STREAM = 10;
+  static constexpr int8_t SRx_EXTRA2_STREAM = 11;
+  static constexpr int8_t SRx_EXTRA3_STREAM = 12;
   typedef void (MavLinkTelemetry::*DataStream)(void);
   DataStream streams_[NUM_DATA_STREAMS_] = {
     &MavLinkTelemetry::SRx_ALL,

@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.2
+- Moved *int* to specific size for better support across different processor architectures
+
 ## v2.0.1
 - Fixed a typo in the README.
 
