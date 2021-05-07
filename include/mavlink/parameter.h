@@ -29,7 +29,7 @@
 #include <array>
 #include <string>
 #include "core/core.h"
-#include "mavlink_types.h"
+#include "./mavlink_types.h"
 #include "common/mavlink.h"
 #include "mavlink/util.h"
 
@@ -39,25 +39,49 @@ template<std::size_t N>
 class MavLinkParameter {
  public:
   static_assert(N < 1000, "Only up to 999 parameters supported");
-  MavLinkParameter(HardwareSerial *bus) : bus_(bus), util_(bus) {
+  explicit MavLinkParameter(HardwareSerial *bus) : bus_(bus), util_(bus) {
     PopulateParams();
   }
   MavLinkParameter(HardwareSerial *bus, const uint8_t sys_id) :
                    bus_(bus), sys_id_(sys_id), util_(bus, sys_id) {
     PopulateParams();
   }
-  /* Getters */
+  /* System and component ID getters */
   inline constexpr uint8_t sys_id() const {return sys_id_;}
   inline constexpr uint8_t comp_id() const {return comp_id_;}
   /* Get parameters */
   static constexpr std::size_t size() {return N;}
-  inline std::array<float, N> parameters() const {
+  inline std::array<float, N> params() const {
     std::array<float, N> ret;
     for (std::size_t i = 0; i < N; i++) {
       ret[i] = params_[i].val;
     }
     return ret;
   }
+  inline float param(const int32_t idx) const {
+    if ((idx < 0) || (idx > N)) {
+      return 0.0f;
+    }
+    return params_[idx].val;
+  }
+  inline int32_t updated_param() const {
+    int32_t ret = updated_index_;
+    updated_index_ = -1;
+    return ret;
+  }
+  template<std::size_t NCHAR>
+  inline void param_id(const int32_t idx, char const (&name)[NCHAR]) {
+    static_assert(NCHAR < 18, "Parameter name limited to 16 characters");
+    if ((idx < 0) || (idx > N)) {return;}
+    params_[idx].param_id = name;
+  }
+  inline std::string param_id(const int32_t idx) const {
+    if ((idx < 0) || (idx > N)) {
+      return std::string();
+    }
+    return params_[idx].param_id;
+  }
+  /* Update and message handler methods */
   void Update() {
     /*
     * Stream parameters, one per PARAM_PERIOD_MS. The param_index is initially
@@ -75,21 +99,18 @@ class MavLinkParameter {
   void MsgHandler(const mavlink_message_t &ref) {
     switch (ref.msgid) {
       case MAVLINK_MSG_ID_PARAM_REQUEST_READ: {
-        mavlink_param_request_read_t request_read;
-        mavlink_msg_param_request_read_decode(&ref, &request_read);
-        ParamRequestReadHandler(request_read);
+        mavlink_msg_param_request_read_decode(&ref, &request_read_);
+        ParamRequestReadHandler(request_read_);
         break;
       }
       case MAVLINK_MSG_ID_PARAM_REQUEST_LIST: {
-        mavlink_param_request_list_t request_list;
-        mavlink_msg_param_request_list_decode(&ref, &request_list);
-        ParamRequestListHandler(request_list);
+        mavlink_msg_param_request_list_decode(&ref, &request_list_);
+        ParamRequestListHandler(request_list_);
         break;
       }
       case MAVLINK_MSG_ID_PARAM_SET: {
-        mavlink_param_set_t param_set;
-        mavlink_msg_param_set_decode(&ref, &param_set);
-        ParamSetHandler(param_set);
+        mavlink_msg_param_set_decode(&ref, &param_set_);
+        ParamSetHandler(param_set_);
         break;
       }
     }
@@ -100,7 +121,7 @@ class MavLinkParameter {
   HardwareSerial *bus_;
   /* Config */
   const uint8_t sys_id_ = 1;
-  static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+  static constexpr uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;
@@ -114,9 +135,11 @@ class MavLinkParameter {
     uint16_t param_index;
   };
   /* Currently only supporting float params */
-  static const uint8_t param_type_ = MAV_PARAM_TYPE_REAL32;
+  static constexpr uint8_t param_type_ = MAV_PARAM_TYPE_REAL32;
   /* Array of params, fixed name and index */
   Param params_[N];
+  /* Whether the params have been updated */
+  int32_t updated_index_ = -1;
   /* Populate parameter names and indices */
   void PopulateParams() {
     for (std::size_t i = 0; i < N; i++) {
@@ -143,12 +166,14 @@ class MavLinkParameter {
                                             params_[i].val,
                                             param_type_,
                                             N,
-                                            params_[i].param_index
-    );
+                                            params_[i].param_index);
     mavlink_msg_to_send_buffer(msg_buf_, &msg_);
     bus_->write(msg_buf_, msg_len_);
   }
   /* Message handlers */
+  mavlink_param_request_read_t request_read_;
+  mavlink_param_request_list_t request_list_;
+  mavlink_param_set_t param_set_;
   void ParamRequestReadHandler(const mavlink_param_request_read_t &ref) {
     if ((ref.target_system == sys_id_) &&
        ((ref.target_component == comp_id_) ||
@@ -191,6 +216,8 @@ class MavLinkParameter {
           params_[i].val = ref.param_value;
           /* Send the new param back */
           SendParam(i);
+          /* Set the updated index */
+          updated_index_ = i;
           return;
         }
       }
@@ -205,9 +232,9 @@ class MavLinkParameter {
   * update param index to 0 to start stream and continue until all
   * parameters are sent.
   */
-  int param_index_ = -1;
+  int32_t param_index_ = -1;
   elapsedMillis param_timer_ms_;
-  static constexpr int PARAM_PERIOD_MS_ = 250;
+  static constexpr int32_t PARAM_PERIOD_MS_ = 250;
 };
 
 }  // namespace bfs

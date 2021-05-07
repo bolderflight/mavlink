@@ -25,7 +25,8 @@
 
 #include "mavlink/heartbeat.h"
 #include "core/core.h"
-#include "mavlink_types.h"
+#include "global_defs/global_defs.h"
+#include "./mavlink_types.h"
 #include "common/mavlink.h"
 
 namespace bfs {
@@ -38,39 +39,80 @@ void MavLinkHeartbeat::Update() {
 }
 
 void MavLinkHeartbeat::SendHeartbeat() {
-  uint8_t type = static_cast<uint8_t>(vehicle_type_);
-  uint8_t mode = 0;
+  switch (aircraft_type_) {
+    case AircraftType::FIXED_WING: {
+      type_ = MAV_TYPE_FIXED_WING;
+      break;
+    }
+    case AircraftType::HELICOPTER: {
+      type_ = MAV_TYPE_HELICOPTER;
+      break;
+    }
+    case AircraftType::MULTIROTOR: {
+      type_ = MAV_TYPE_QUADROTOR;
+      break;
+    }
+    case AircraftType::VTOL: {
+      type_ = MAV_TYPE_VTOL_TILTROTOR;
+      break;
+    }
+  }
+  mode_ = 0;
   if (throttle_enabled_) {
-    mode |= MAV_MODE_FLAG_SAFETY_ARMED;
+    mode_ |= MAV_MODE_FLAG_SAFETY_ARMED;
   }
-  switch (vehicle_mode_) {
-    case VehicleMode::MANUAL: {
-      mode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
+  switch (aircraft_mode_) {
+    case AircraftMode::MANUAL: {
+      mode_ |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
       break;
     }
-    case VehicleMode::STABALIZED: {
-      mode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
+    case AircraftMode::STABALIZED: {
+      mode_ |= MAV_MODE_FLAG_STABILIZE_ENABLED;
       break;
     }
-    case VehicleMode::ATTITUDE: {
-      mode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
+    case AircraftMode::ATTITUDE: {
+      mode_ |= MAV_MODE_FLAG_STABILIZE_ENABLED;
       break;
     }
-    case VehicleMode::AUTO: {
-      mode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
-      mode |= MAV_MODE_FLAG_GUIDED_ENABLED;
+    case AircraftMode::AUTO: {
+      mode_ |= MAV_MODE_FLAG_STABILIZE_ENABLED;
+      mode_ |= MAV_MODE_FLAG_GUIDED_ENABLED;
       break;
     }
-    case VehicleMode::TEST: {
-      mode |= MAV_MODE_FLAG_TEST_ENABLED;
+    case AircraftMode::TEST: {
+      mode_ |= MAV_MODE_FLAG_TEST_ENABLED;
       break;
     }
   }
-  uint32_t custom_mode = 0;
-  uint8_t state = static_cast<uint8_t>(vehicle_state_);
+  switch (aircraft_state_) {
+    case AircraftState::INIT: {
+      state_ = MAV_STATE_BOOT;
+      break;
+    }
+    case AircraftState::STANDBY: {
+      state_ = MAV_STATE_STANDBY;
+      break;
+    }
+    case AircraftState::ACTIVE: {
+      state_ = MAV_STATE_ACTIVE;
+      break;
+    }
+    case AircraftState::CAUTION: {
+      state_ = MAV_STATE_CRITICAL;
+      break;
+    }
+    case AircraftState::EMERGENCY: {
+      state_ = MAV_STATE_EMERGENCY;
+      break;
+    }
+    case AircraftState::FTS: {
+      state_ = MAV_STATE_FLIGHT_TERMINATION;
+      break;
+    }
+  }
   msg_len_ = mavlink_msg_heartbeat_pack(sys_id_, comp_id_, &msg_,
-                                        type, autopilot_, mode,
-                                        custom_mode, state);
+                                        type_, autopilot_, mode_,
+                                        custom_mode_, state_);
   mavlink_msg_to_send_buffer(msg_buf_, &msg_);
   bus_->write(msg_buf_, msg_len_);
 }

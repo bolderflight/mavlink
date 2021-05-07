@@ -1,6 +1,8 @@
 # Changelog
 
 ## v2.0.0
+- Rewritten and updated to improve functionality, should be considered a new baseline
+- Supports the heartbeat, parameter, and mission microservices along with telemetry
 
 ## v1.0.3
 - Updated for core v1.0.3 and global_defs v1.1.2

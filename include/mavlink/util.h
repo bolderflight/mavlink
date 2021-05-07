@@ -28,12 +28,12 @@
 
 #include <string>
 #include "core/core.h"
-#include "mavlink_types.h"
+#include "./mavlink_types.h"
 #include "common/mavlink.h"
 
 namespace bfs {
 
-enum class Severity {
+enum class Severity : uint8_t {
   EMERGENCY = 0,
   ALERT = 1,
   CRITICAL = 2,
@@ -46,22 +46,17 @@ enum class Severity {
 
 class MavLinkUtil {
  public:
-  MavLinkUtil(HardwareSerial *bus) : bus_(bus) {}
+  explicit MavLinkUtil(HardwareSerial *bus) : bus_(bus) {}
   MavLinkUtil(HardwareSerial *bus, const uint8_t sys_id) :
               bus_(bus), sys_id_(sys_id) {}
-  /* Getters */
+  /* System and component ID getters */
   inline constexpr uint8_t sys_id() const {return sys_id_;}
   inline constexpr uint8_t comp_id() const {return comp_id_;}
   /* Send status text */
-  template<std::size_t N>
-  void SendStatusText(Severity severity, char const (&msg)[N]) {
-    static_assert(N < 52, "STATUSTEXT message limited to 50 characters");
-    uint8_t sev = static_cast<uint8_t>(severity);
-    uint16_t id = 0;
-    uint8_t chunk_seq = 0;
+  void SendStatusText(Severity severity, char const *msg) {
     msg_len_ = mavlink_msg_statustext_pack(sys_id_, comp_id_, &msg_,
-                                           sev, msg,
-                                           id, chunk_seq);
+                                           static_cast<uint8_t>(severity), msg,
+                                           id_, chunk_seq_);
     mavlink_msg_to_send_buffer(msg_buf_, &msg_);
     bus_->write(msg_buf_, msg_len_);
   }
@@ -71,11 +66,14 @@ class MavLinkUtil {
   HardwareSerial *bus_;
   /* Config */
   const uint8_t sys_id_ = 1;
-  static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+  static constexpr uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;
   uint8_t msg_buf_[MAVLINK_MAX_PACKET_LEN];
+  /* Status text variables */
+  static constexpr uint16_t id_ = 0;
+  static constexpr uint8_t chunk_seq_ = 0;
 };
 
 }  // namespace bfs

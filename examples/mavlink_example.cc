@@ -25,7 +25,15 @@
 
 #include "mavlink/mavlink.h"
 
-bfs::MavLink<50, 1000, 500, 500> mavlink(&Serial4, bfs::VehicleType::FIXED_WING);
+std::array<bfs::MissionItem, 250> mission;
+std::array<bfs::MissionItem, 250> fence;
+std::array<bfs::MissionItem, 5> rally;
+std::array<bfs::MissionItem, 250> temp;
+
+bfs::MavLink<5> mavlink(&Serial4, bfs::AircraftType::FIXED_WING,
+                        mission.data(), mission.size(),
+                        fence.data(), fence.size(), 
+                        rally.data(), rally.size(), temp.data());
 
 int main() {
   Serial.begin(115200);
@@ -33,5 +41,16 @@ int main() {
   mavlink.Begin(57600);
   while (1) {
     mavlink.Update();
+    if (mavlink.mission_updated()) {
+      Serial.println(mavlink.num_mission_items());
+      for (std::size_t i = 0; i < mavlink.num_mission_items(); i++) {
+        Serial.print(mission[i].x);
+        Serial.print("\t");
+        Serial.print(mission[i].y);
+        Serial.print("\t");
+        Serial.print(mission[i].z);
+        Serial.print("\n");
+      }
+    }
   }
 }
