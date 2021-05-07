@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.1
+- Fixed a typo in the README.
+
 ## v2.0.0
 - Rewritten and updated to improve functionality, should be considered a new baseline
 - Supports the heartbeat, parameter, and mission microservices along with telemetry
