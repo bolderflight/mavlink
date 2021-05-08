@@ -39,12 +39,15 @@ template<std::size_t N>
 class MavLinkParameter {
  public:
   static_assert(N < 1000, "Only up to 999 parameters supported");
-  explicit MavLinkParameter(HardwareSerial *bus) : bus_(bus), util_(bus) {
-    PopulateParams();
+  MavLinkParameter() {PopulateParams();}
+  /* Config */
+  inline void hardware_serial(HardwareSerial *bus) {
+    bus_ = bus;
+    util_.hardware_serial(bus);
   }
-  MavLinkParameter(HardwareSerial *bus, const uint8_t sys_id) :
-                   bus_(bus), sys_id_(sys_id), util_(bus, sys_id) {
-    PopulateParams();
+  inline void sys_id(const uint8_t sys_id) {
+    sys_id_ = sys_id;
+    util_.sys_id(sys_id);
   }
   /* System and component ID getters */
   inline constexpr uint8_t sys_id() const {return sys_id_;}
@@ -120,7 +123,7 @@ class MavLinkParameter {
   /* Serial bus */
   HardwareSerial *bus_;
   /* Config */
-  const uint8_t sys_id_ = 1;
+  uint8_t sys_id_ = 1;
   static constexpr uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   /* Message buffer */
   mavlink_message_t msg_;

@@ -48,54 +48,29 @@ struct MissionItem {
 
 class MavLinkMission {
  public:
-  MavLinkMission(HardwareSerial *bus,
-                 MissionItem * const mission, const std::size_t mission_size,
-                 MissionItem * const temp) :
-                 bus_(bus),
-                 mission_(mission), mission_size_(mission_size),
-                 temp_(temp), util_(bus) {}
-  MavLinkMission(HardwareSerial *bus, uint8_t sys_id,
-                 MissionItem * const mission, const std::size_t mission_size,
-                 MissionItem * const temp) :
-                 bus_(bus), sys_id_(sys_id),
-                 mission_(mission), mission_size_(mission_size),
-                 temp_(temp), util_(bus, sys_id) {}
-  MavLinkMission(HardwareSerial *bus,
-                 MissionItem * const mission, const std::size_t mission_size,
-                 MissionItem * const fence, const std::size_t fence_size,
-                 MissionItem * const temp) :
-                 bus_(bus),
-                 mission_(mission), mission_size_(mission_size),
-                 fence_(fence), fence_size_(fence_size),
-                 temp_(temp), util_(bus) {}
-  MavLinkMission(HardwareSerial *bus, uint8_t sys_id,
-                 MissionItem * const mission, const std::size_t mission_size,
-                 MissionItem * const fence, const std::size_t fence_size,
-                 MissionItem * const temp) :
-                 bus_(bus), sys_id_(sys_id),
-                 mission_(mission), mission_size_(mission_size),
-                 fence_(fence), fence_size_(fence_size),
-                 temp_(temp), util_(bus, sys_id) {}
-  MavLinkMission(HardwareSerial *bus,
-                 MissionItem * const mission, const std::size_t mission_size,
-                 MissionItem * const fence, const std::size_t fence_size,
-                 MissionItem * const rally, const std::size_t rally_size,
-                 MissionItem * const temp) :
-                 bus_(bus),
-                 mission_(mission), mission_size_(mission_size),
-                 fence_(fence), fence_size_(fence_size),
-                 rally_(rally), rally_size_(rally_size),
-                 temp_(temp), util_(bus) {}
-  MavLinkMission(HardwareSerial *bus, uint8_t sys_id,
-                 MissionItem * const mission, const std::size_t mission_size,
-                 MissionItem * const fence, const std::size_t fence_size,
-                 MissionItem * const rally, const std::size_t rally_size,
-                 MissionItem * const temp) :
-                 bus_(bus), sys_id_(sys_id),
-                 mission_(mission), mission_size_(mission_size),
-                 fence_(fence), fence_size_(fence_size),
-                 rally_(rally), rally_size_(rally_size),
-                 temp_(temp), util_(bus, sys_id) {}
+  /* Config */
+  inline void hardware_serial(HardwareSerial *bus) {
+    bus_ = bus;
+    util_.hardware_serial(bus);
+  }
+  inline void sys_id(const uint8_t sys_id) {
+    sys_id_ = sys_id;
+    util_.sys_id(sys_id);
+  }
+  inline void mission(MissionItem * const mission, const std::size_t mission_size,
+                      MissionItem * const temp) {
+    mission_ = mission;
+    mission_size_ = mission_size;
+    temp_ = temp;
+  }
+  inline void fence(MissionItem * const fence, const std::size_t fence_size) {
+    fence_ = fence;
+    fence_size_ = fence_size;
+  }
+  inline void rally(MissionItem * const rally, const std::size_t rally_size) {
+    rally_ = rally;
+    rally_size_ = rally_size;
+  }
   /* System and component ID getters */
   inline constexpr uint8_t sys_id() const {return sys_id_;}
   inline constexpr uint8_t comp_id() const {return comp_id_;}
@@ -130,13 +105,13 @@ class MavLinkMission {
   /* Serial bus */
   HardwareSerial *bus_;
   /* Storage */
-  MissionItem * const mission_, * const temp_;
-  MissionItem * const fence_ = nullptr;
-  MissionItem * const rally_ = nullptr;
-  const std::size_t mission_size_;
-  const std::size_t fence_size_ = 0, rally_size_ = 0;
+  MissionItem * mission_, * temp_;
+  MissionItem * fence_ = nullptr;
+  MissionItem * rally_ = nullptr;
+  std::size_t mission_size_;
+  std::size_t fence_size_ = 0, rally_size_ = 0;
   /* Config */
-  const uint8_t sys_id_ = 1;
+  uint8_t sys_id_ = 1;
   static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   /* Message buffer */
   mavlink_message_t msg_;

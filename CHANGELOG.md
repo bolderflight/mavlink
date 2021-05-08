@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.0.0
+- Moved config items out of constructor.
+
 ## v2.0.2
 - Moved *int* to specific size for better support across different processor architectures
 

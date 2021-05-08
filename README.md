@@ -67,38 +67,46 @@ This library is within the namespace *bfs*
 
 ## MavLink
 
-The MavLink constructor is overloaded to support: using non-standard system id's, enabling fence mission items, and enabling rally point mission items. The constructor is also templated with the number of parameters to support. In the examples below, 5 parameters are supported.
-
-**MavLink(HardwareSerial &ast;bus, const AircraftType type, MissionItem &ast; const mission, const std::size_t mission_size, MissionItem &ast; const temp)** Input a pointer to the serial bus to use and the [Aircraft Type](https://github.com/bolderflight/global_defs#definitions). Also pass a pointer to storage for holding flight plans, the flight plan storage capacity, and a pointer to temporarily hold MissionItems that are being uploaded to the drone. It is assumbed that the temporary storage is at least as large as the mission item storage.
+**MavLink<std::size_t N>** The MavLink constructor is templated with the number of parameters to support.
 
 ```C++
-std::array<bfs::MissionItem, 250> mission;
-std::array<bfs::MissionItem, 250> temp;
-bfs::MavLink<5> mavlink(&Serial4, bfs::AircraftType::FIXED_WING, mission.data(), mission.size(), temp.data());
+/* MavLink object support 5 parameters */
+bfs::MavLink<5> mavlink;
 ```
 
-**MavLink(HardwareSerial &ast;bus, const AircraftType type, const uint8_t sys_id, MissionItem &ast; const mission, const std::size_t mission_size, MissionItem &ast; const temp)** Same as the above constructor, but enables using non-standard system id's.
+## Config
 
-**MavLink(HardwareSerial &ast;bus, const AircraftType type, MissionItem &ast; const mission, const std::size_t mission_size, MissionItem &ast; const fence, const std::size_t fence_size, MissionItem &ast; const temp)** Input a pointer to the serial bus to use and the [Aircraft Type](https://github.com/bolderflight/global_defs#definitions). Also pass a pointer to storage for holding flight plans, the flight plan storage capacity, a pointer for holding fence items, the fence storage capacity, and a pointer to temporarily hold MissionItems that are being uploaded to the drone. It is assumbed that the temporary storage is at least as large as the mission item storage.
+**inline void hardware_serial(HardwareSerial &ast;bus)** Sets the hardware serial bus to use.
 
 ```C++
-std::array<bfs::MissionItem, 250> mission;
-std::array<bfs::MissionItem, 250> fence;
-std::array<bfs::MissionItem, 250> temp;
-bfs::MavLink<5> mavlink(&Serial4, bfs::AircraftType::FIXED_WING, mission.data(), mission.size(), fence.data(), fence.size(), temp.data());
+mavlink.hardware_serial(&Serial4);
 ```
 
-**MavLink(HardwareSerial &ast;bus, const AircraftType type, const uint8_t sys_id, MissionItem &ast; const mission, const std::size_t mission_size, MissionItem &ast; const fence, const std::size_t fence_size, MissionItem &ast; const temp)** Same as the above constructor, but enables using non-standard system id's.
+**inline void aircraft_type(const AircraftType type)** Sets the aircraft type, which the ground control station uses for configuring displays and options (i.e. how the vehicle takes off, the type of icon used to display the vehicle).
 
-**MavLink(HardwareSerial &ast;bus, const AircraftType type, MissionItem &ast; const mission, const std::size_t mission_size, MissionItem &ast; const fence, const std::size_t fence_size, MissionItem &ast; const rally, const std::size_t rally_size, MissionItem &ast; const temp)** Input a pointer to the serial bus to use and the [Aircraft Type](https://github.com/bolderflight/global_defs#definitions). Also pass a pointer to storage for holding flight plans, the flight plan storage capacity, a pointer for holding fence items, the fence storage capacity, a pointer for holding rally points, the rally point storage capacity, and a pointer to temporarily hold MissionItems that are being uploaded to the drone. It is assumbed that the temporary storage is at least as large as the mission item storage.
+```C++
+mavlink.aircraft_type(bfs::FIXED_WING);
+```
+
+**inline void sys_id(const uint8_t sys_id)** Used to set a non-default system id. By default the system id is set to 1. This could be used if other vehicles are connected to the ground control station to avoid conflicting system ids.
+
+**inline void mission(MissionItem &ast; const mission, const std::size_t mission_size, MissionItem &ast; const temp)** Sets storage location for flight plans given a pointer for the data, the number of Mission Items that can be stored, and a pointer for temporary data. The temporary storage location is used while the ground station uploads flight plans, fences, and rally points. Once the upload is complete and verified, it's moved to the correct mission, fence, and rally point storage location. It's assumed that the temporary storage is at least as large as the largest storage location for flight plans, fences, and rally points. For example, if there is enough storage for 250 flight plan mission items, 100 fence points, and 5 rally points, the temporary storage would need at least enough capacity for 250 mission items.
+
+**inline void fence(MissionItem &ast; const fence, const std::size_t fence_size)** Sets the storage location and size for fence points.
+
+**inline void rally(MissionItem &ast; const rally, const std::size_t rally_size)** Sets the storage location and size for rally points.
 
 ```C++
 std::array<bfs::MissionItem, 250> mission;
-std::array<bfs::MissionItem, 250> fence;
+std::array<bfs::MissionItem, 100> fence;
 std::array<bfs::MissionItem, 5> rally;
 std::array<bfs::MissionItem, 250> temp;
-bfs::MavLink<5> mavlink(&Serial4, bfs::AircraftType::FIXED_WING, mission.data(), mission.size(), fence.data(), fence.size(), rally.data(), rally.size(), temp.data());
+mavlink.mission(mission.data(), mission.size(), temp.data());
+mavlink.fence(fence.data(), fence.size());
+mavlink.rally(rally.data(), rally.size());
 ```
+
+## Setup / Update
 
 **void Begin(uint32_t baud)** Initializes communication given a baudrate.
 
@@ -216,7 +224,7 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **inline void battery_volt(const float val)** Sets the battery voltage.
 
-#### IMU Data
+### IMU Data
 
 **inline void imu_accel_x_mps2(const float val)** Sets the IMU x acceleration, m/s/s.
 
@@ -238,7 +246,7 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **inline void imu_die_temp_c(const float val)** Sets the IMU die temperature, C.
 
-#### Airdata
+### Airdata
 
 **inline void static_pres_pa(const float val)** Sets the static pressure data, Pa.
 
@@ -248,7 +256,7 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **inline void diff_pres_die_temp_c(const float val)** Sets the differential pressure die temperature, C.
 
-#### GNSS Data
+### GNSS Data
 
 **inline void gnss_fix(const GnssFix val)** Sets the [GNSS Fix](https://github.com/bolderflight/gnss).
 
@@ -278,7 +286,7 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **inline void gnss_track_acc_rad(const float val)** Sets the estimated ground track accuracy, rad.
 
-#### Navigation Filter Data
+### Navigation Filter Data
 
 **inline void nav_lat_rad(const double val)** Latitude, rad, from the navigation filter.
 
@@ -316,17 +324,17 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **inline void nav_gyro_z_radps(const float val)** Corrected gyro z axis measurement, rad/s.
 
-#### Effector
+### Effector
 
 **inline void effector(const std::array<float, 16> &ref)** Array of effector commands, normalized 0 - 1.
 
-#### Inceptor
+### Inceptor
 
 **inline void inceptor(const std::array<float, 16> &ref)** Array of inceptor commands, normalized 0 - 1.
 
 **inline void throttle_ch(const uint8_t val)** The inceptor channel number for the throttle.
 
-#### Parameters
+## Parameters
 
 **static constexpr std::size_t params_size()** The number of parameters supported.
 
@@ -340,7 +348,7 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **inline std::string param_id(const int32_t idx)** Returns the parameter name given the index.
 
-#### Mission / Flight Plan
+## Mission / Flight Plan
 
 **inline bool mission_updated()** Returns whether the flight plan has been updated.
 
@@ -350,18 +358,18 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **void AdvanceMissionItem()** Advances the flight plan to the next mission item. This should be called, for instance, when the aircraft reaches a waypoint.
 
-#### Fence
+## Fence
 
 **inline bool fence_updated()** Returns whether the fence data has been updated.
 
 **inline std::size_t num_fence_items()** Returns the number of fence items.
 
-#### Rally Points
+## Rally Points
 
 **inline bool rally_points_updated()** Returns whether the rally points have been updated.
 
 **inline std::size_t num_rally_points()** Returns the number of rally points.
 
-#### Utility
+## Utility
 
 **void SendStatusText(Severity severity, char const &ast;msg)** Sends a status text given the severity and a message.
