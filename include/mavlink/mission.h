@@ -57,7 +57,8 @@ class MavLinkMission {
     sys_id_ = sys_id;
     util_.sys_id(sys_id);
   }
-  inline void mission(MissionItem * const mission, const std::size_t mission_size,
+  inline void mission(MissionItem * const mission,
+                      const std::size_t mission_size,
                       MissionItem * const temp) {
     mission_ = mission;
     mission_size_ = mission_size;
