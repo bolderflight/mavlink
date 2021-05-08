@@ -37,58 +37,42 @@
 
 namespace bfs {
 
-template<std::size_t NPARAM>
+template<std::size_t N>
 class MavLink {
  public:
-  MavLink(HardwareSerial *bus, const AircraftType type,
-          MissionItem * const mission, const std::size_t mission_size,
-          MissionItem * const temp) :
-          bus_(bus), util_(bus), heartbeat_(bus, type), telem_(bus),
-          param_(bus), mission_(bus, mission, mission_size, temp) {}
-  MavLink(HardwareSerial *bus, const AircraftType type, const uint8_t sys_id,
-          MissionItem * const mission, const std::size_t mission_size,
-          MissionItem * const temp) :
-          bus_(bus), sys_id_(sys_id), util_(bus, sys_id),
-          heartbeat_(bus, type, sys_id), telem_(bus, sys_id),
-          param_(bus, sys_id), mission_(bus, sys_id, mission, mission_size,
-                                        temp) {}
-  MavLink(HardwareSerial *bus, const AircraftType type,
-          MissionItem * const mission, const std::size_t mission_size,
-          MissionItem * const fence, const std::size_t fence_size,
-          MissionItem * const temp) :
-          bus_(bus), util_(bus), heartbeat_(bus, type), telem_(bus),
-          param_(bus), mission_(bus, mission, mission_size, fence, fence_size,
-                                temp),
-          fence_supported_(true) {}
-  MavLink(HardwareSerial *bus, const AircraftType type, const uint8_t sys_id,
-          MissionItem * const mission, const std::size_t mission_size,
-          MissionItem * const fence, const std::size_t fence_size,
-          MissionItem * const temp) :
-          bus_(bus), sys_id_(sys_id), util_(bus, sys_id),
-          heartbeat_(bus, type, sys_id), telem_(bus, sys_id),
-          param_(bus, sys_id), mission_(bus, sys_id, mission, mission_size,
-                                        fence, fence_size, temp),
-          fence_supported_(true) {}
-  MavLink(HardwareSerial *bus, const AircraftType type,
-          MissionItem * const mission, const std::size_t mission_size,
-          MissionItem * const fence, const std::size_t fence_size,
-          MissionItem * const rally, const std::size_t rally_size,
-          MissionItem * const temp) :
-          bus_(bus), util_(bus), heartbeat_(bus, type), telem_(bus),
-          param_(bus), mission_(bus, mission, mission_size, fence, fence_size,
-                                rally, rally_size, temp),
-          fence_supported_(true), rally_supported_(true) {}
-  MavLink(HardwareSerial *bus, const AircraftType type, const uint8_t sys_id,
-          MissionItem * const mission, const std::size_t mission_size,
-          MissionItem * const fence, const std::size_t fence_size,
-          MissionItem * const rally, const std::size_t rally_size,
-          MissionItem * const temp) :
-          bus_(bus), sys_id_(sys_id), util_(bus, sys_id),
-          heartbeat_(bus, type, sys_id), telem_(bus, sys_id),
-          param_(bus, sys_id), mission_(bus, sys_id, mission, mission_size,
-                                        fence, fence_size, rally, rally_size,
-                                        temp),
-          fence_supported_(true), rally_supported_(true) {}
+  /* Config */
+  inline void hardware_serial(HardwareSerial *bus) {
+    bus_ = bus;
+    heartbeat_.hardware_serial(bus);
+    telem_.hardware_serial(bus);
+    param_.hardware_serial(bus);
+    mission_.hardware_serial(bus);
+    util_.hardware_serial(bus);
+  }
+  inline void aircraft_type(const AircraftType type) {
+    heartbeat_.aircraft_type(type);
+  }
+  inline void sys_id(const uint8_t sys_id) {
+    sys_id_ = sys_id;
+    heartbeat_.sys_id(sys_id);
+    telem_.sys_id(sys_id);
+    param_.sys_id(sys_id);
+    mission_.sys_id(sys_id);
+    util_.sys_id(sys_id);
+  }
+  inline void mission(MissionItem * const mission,
+                      const std::size_t mission_size,
+                      MissionItem * const temp) {
+    mission_.mission(mission, mission_size, temp);
+  }
+  inline void fence(MissionItem * const fence, const std::size_t fence_size) {
+    mission_.fence(fence, fence_size);
+    fence_supported_ = true;
+  }
+  inline void rally(MissionItem * const rally, const std::size_t rally_size) {
+    mission_.rally(rally, rally_size);
+    rally_supported_ = true;
+  }
   void Begin(uint32_t baud) {
     bus_->begin(baud);
   }
@@ -279,8 +263,8 @@ class MavLink {
   }
   inline void throttle_ch(const uint8_t val) {telem_.throttle_ch(val);}
   /* Parameters */
-  static constexpr std::size_t params_size() {return NPARAM;}
-  inline std::array<float, NPARAM> params() const {return param_.params();}
+  static constexpr std::size_t params_size() {return N;}
+  inline std::array<float, N> params() const {return param_.params();}
   inline float param(const int32_t idx) const {return param_.param(idx);}
   inline int32_t updated_param() const {return param_.updated_param();}
   template<std::size_t NCHAR>
@@ -320,10 +304,10 @@ class MavLink {
   /* Serial bus */
   HardwareSerial *bus_;
   /* Config */
-  const uint8_t sys_id_ = 1;
+  uint8_t sys_id_ = 1;
   static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
-  const bool fence_supported_ = false;
-  const bool rally_supported_ = false;
+  bool fence_supported_ = false;
+  bool rally_supported_ = false;
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;
@@ -334,7 +318,7 @@ class MavLink {
   MavLinkUtil util_;
   MavLinkHeartbeat heartbeat_;
   MavLinkTelemetry telem_;
-  MavLinkParameter<NPARAM> param_;
+  MavLinkParameter<N> param_;
   MavLinkMission mission_;
   /* Message handlers */
   uint8_t rx_sys_id_, rx_comp_id_;

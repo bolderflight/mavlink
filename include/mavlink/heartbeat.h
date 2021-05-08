@@ -35,11 +35,10 @@ namespace bfs {
 
 class MavLinkHeartbeat {
  public:
-  MavLinkHeartbeat(HardwareSerial *bus, const AircraftType type) : bus_(bus),
-                   aircraft_type_(type) {}
-  MavLinkHeartbeat(HardwareSerial *bus, const AircraftType type,
-                   const uint8_t sys_id) : bus_(bus),
-                   aircraft_type_(type), sys_id_(sys_id) {}
+  /* Config */
+  inline void hardware_serial(HardwareSerial *bus) {bus_ = bus;}
+  inline void aircraft_type(const AircraftType type) {aircraft_type_ = type;}
+  inline void sys_id(const uint8_t sys_id) {sys_id_ = sys_id;}
   /* Aircraft type, system and component ID getters */
   inline constexpr AircraftType aircraft_type() const {return aircraft_type_;}
   inline constexpr uint8_t sys_id() const {return sys_id_;}
@@ -57,8 +56,8 @@ class MavLinkHeartbeat {
   /* Serial bus */
   HardwareSerial *bus_;
   /* Config */
-  const uint8_t sys_id_ = 1;
-  const AircraftType aircraft_type_;
+  uint8_t sys_id_ = 1;
+  AircraftType aircraft_type_;
   static constexpr uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   static constexpr uint8_t autopilot_ = MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY;
   /* Message buffer */

@@ -30,14 +30,16 @@ std::array<bfs::MissionItem, 250> fence;
 std::array<bfs::MissionItem, 5> rally;
 std::array<bfs::MissionItem, 250> temp;
 
-bfs::MavLink<5> mavlink(&Serial4, bfs::AircraftType::FIXED_WING,
-                        mission.data(), mission.size(),
-                        fence.data(), fence.size(), 
-                        rally.data(), rally.size(), temp.data());
+bfs::MavLink<5> mavlink;
 
 int main() {
   Serial.begin(115200);
   while (!Serial) {}
+  mavlink.hardware_serial(&Serial4);
+  mavlink.aircraft_type(bfs::FIXED_WING);
+  mavlink.mission(mission.data(), mission.size(), temp.data());
+  mavlink.fence(fence.data(), fence.size());
+  mavlink.rally(rally.data(), rally.size());
   mavlink.Begin(57600);
   while (1) {
     mavlink.Update();
