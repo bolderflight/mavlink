@@ -266,7 +266,7 @@ class MavLink {
   static constexpr std::size_t params_size() {return N;}
   inline std::array<float, N> params() const {return param_.params();}
   inline float param(const int32_t idx) const {return param_.param(idx);}
-  inline int32_t updated_param() const {return param_.updated_param();}
+  inline int32_t updated_param() {return param_.updated_param();}
   template<std::size_t NCHAR>
   inline void param_id(const int32_t idx, char const (&name)[NCHAR]) {
     param_.param_id(idx, name);

@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.0.1
+- Constness bug with updated_param
+
 ## v3.0.0
 - Moved config items out of constructor.
 

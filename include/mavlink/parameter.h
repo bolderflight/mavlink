@@ -67,7 +67,7 @@ class MavLinkParameter {
     }
     return params_[idx].val;
   }
-  inline int32_t updated_param() const {
+  inline int32_t updated_param() {
     int32_t ret = updated_index_;
     updated_index_ = -1;
     return ret;
