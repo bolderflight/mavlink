@@ -251,7 +251,7 @@ class MavLinkTelemetry {
   float static_pres_die_temp_c_ = 0;
   CondData<float> diff_pres_die_temp_c_;
   /* GNSS */
-  GnssFix gnss_fix_ = GnssFix::FIX_NONE;
+  GnssFix gnss_fix_ = GNSS_FIX_NONE;
   double gnss_lat_rad_ = 0.0;
   double gnss_lon_rad_ = 0.0;
   float gnss_alt_msl_m_ = 0.0f;
