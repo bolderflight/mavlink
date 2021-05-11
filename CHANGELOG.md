@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.0.4
+- Had to update GnssFix in the mavlink class too.
+
 ## v3.0.3
 - Updated GnssFix to an int8_t
 

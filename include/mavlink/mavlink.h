@@ -216,8 +216,8 @@ class MavLink {
     telem_.diff_pres_die_temp_c(val);
   }
   /* GNSS data */
-  inline void gnss_fix(const GnssFix val) {telem_.gnss_fix(val);}
-  inline void gnss_num_sats(const uint8_t val) {telem_.gnss_num_sats(val);}
+  inline void gnss_fix(const int8_t val) {telem_.gnss_fix(val);}
+  inline void gnss_num_sats(const int8_t val) {telem_.gnss_num_sats(val);}
   inline void gnss_lat_rad(const double val) {telem_.gnss_lat_rad(val);}
   inline void gnss_lon_rad(const double val) {telem_.gnss_lon_rad(val);}
   inline void gnss_alt_msl_m(const float val) {telem_.gnss_alt_msl_m(val);}

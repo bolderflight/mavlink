@@ -143,7 +143,7 @@ class MavLinkTelemetry {
   }
   /* GNSS data */
   inline void gnss_fix(const int8_t val) {gnss_fix_ = val;}
-  inline void gnss_num_sats(const uint8_t val) {
+  inline void gnss_num_sats(const int8_t val) {
     gnss_num_sv_.set = true;
     gnss_num_sv_.val = val;
   }
@@ -197,7 +197,7 @@ class MavLinkTelemetry {
   inline void effector(const std::array<float, 16> &ref) {effector_ = ref;}
   /* Inceptor */
   inline void inceptor(const std::array<float, 16> &ref) {inceptor_ = ref;}
-  inline void throttle_ch(const uint8_t val) {throttle_ch_ = val;}
+  inline void throttle_ch(const int8_t val) {throttle_ch_ = val;}
 
  private:
   /* Serial bus */
@@ -260,7 +260,7 @@ class MavLinkTelemetry {
   float gnss_vert_acc_m_ = 0.0f;
   float gnss_vel_acc_mps_ = 0.0f;
   float gnss_track_acc_rad_ = 0.0f;
-  CondData<uint8_t> gnss_num_sv_;
+  CondData<int8_t> gnss_num_sv_;
   CondData<float> gnss_hdop_;
   CondData<float> gnss_vdop_;
   CondData<float> gnss_vel_mps_;
@@ -288,7 +288,7 @@ class MavLinkTelemetry {
   std::array<float, 16> effector_ = {0.0f};
   /* RC Input */
   std::array<float, 16> inceptor_ = {0.0f};
-  uint8_t throttle_ch_ = 0;
+  int8_t throttle_ch_ = 0;
   /* Telemetry Messages */
   /* SRx_ALL */
   void SRx_ALL();
