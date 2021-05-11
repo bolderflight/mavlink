@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.0.3
+- Updated GnssFix to an int8_t
+
 ## v3.0.2
 - Updated for gnss v2.4.0
 

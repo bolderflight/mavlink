@@ -5,7 +5,7 @@ if (DEFINED MCU)
 endif()
 # Project information
 project(Mavlink
-	VERSION 3.0.2
+	VERSION 3.0.3
 	DESCRIPTION "Mavlink communication protocol interface"
 	LANGUAGES CXX
 )

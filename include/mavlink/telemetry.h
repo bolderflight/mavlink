@@ -142,7 +142,7 @@ class MavLinkTelemetry {
     diff_pres_die_temp_c_.val = val;
   }
   /* GNSS data */
-  inline void gnss_fix(const GnssFix val) {gnss_fix_ = val;}
+  inline void gnss_fix(const int8_t val) {gnss_fix_ = val;}
   inline void gnss_num_sats(const uint8_t val) {
     gnss_num_sv_.set = true;
     gnss_num_sv_.val = val;
@@ -251,7 +251,7 @@ class MavLinkTelemetry {
   float static_pres_die_temp_c_ = 0;
   CondData<float> diff_pres_die_temp_c_;
   /* GNSS */
-  GnssFix gnss_fix_ = GNSS_FIX_NONE;
+  int8_t gnss_fix_ = GNSS_FIX_NONE;
   double gnss_lat_rad_ = 0.0;
   double gnss_lon_rad_ = 0.0;
   float gnss_alt_msl_m_ = 0.0f;
