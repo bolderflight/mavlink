@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.0.2
+- Updated for gnss v2.4.0
+
 ## v3.0.1
 - Constness bug with updated_param
 

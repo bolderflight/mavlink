@@ -5,7 +5,7 @@ if (DEFINED MCU)
 endif()
 # Project information
 project(Mavlink
-	VERSION 3.0.1
+	VERSION 3.0.2
 	DESCRIPTION "Mavlink communication protocol interface"
 	LANGUAGES CXX
 )
@@ -53,7 +53,7 @@ if (DEFINED MCU)
 	FetchContent_Declare(
 		gnss
 		GIT_REPOSITORY https://github.com/bolderflight/gnss.git
-		GIT_TAG v2.1.0
+		GIT_TAG v2.4.0
 	)
 	FetchContent_MakeAvailable(gnss)
 	# Add the library target

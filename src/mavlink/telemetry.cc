@@ -140,27 +140,27 @@ void MavLinkTelemetry::SendSysStatus() {
 }
 void MavLinkTelemetry::SendGpsRawInt() {
   switch (gnss_fix_) {
-    case GnssFix::FIX_NONE: {
+    case GNSS_FIX_NONE: {
       fix_ = GPS_FIX_TYPE_NO_FIX;
       break;
     }
-    case GnssFix::FIX_2D: {
+    case GNSS_FIX_2D: {
       fix_ = GPS_FIX_TYPE_2D_FIX;
       break;
     }
-    case GnssFix::FIX_3D: {
+    case GNSS_FIX_3D: {
       fix_ = GPS_FIX_TYPE_3D_FIX;
       break;
     }
-    case GnssFix::FIX_DGNSS: {
+    case GNSS_FIX_DGNSS: {
       fix_ = GPS_FIX_TYPE_DGPS;
       break;
     }
-    case GnssFix::FIX_RTK_FLOAT: {
+    case GNSS_FIX_RTK_FLOAT: {
       fix_ = GPS_FIX_TYPE_RTK_FLOAT;
       break;
     }
-    case GnssFix::FIX_RTK_FIXED: {
+    case GNSS_FIX_RTK_FIXED: {
       fix_ = GPS_FIX_TYPE_RTK_FIXED;
       break;
     }
