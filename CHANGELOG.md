@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.0
+- Pulling mission item from global defs
+
 ## v3.0.4
 - Had to update GnssFix in the mavlink class too.
 

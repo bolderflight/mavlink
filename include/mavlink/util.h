@@ -53,9 +53,14 @@ class MavLinkUtil {
   inline constexpr uint8_t sys_id() const {return sys_id_;}
   inline constexpr uint8_t comp_id() const {return comp_id_;}
   /* Send status text */
-  void SendStatusText(Severity severity, char const *msg) {
+  template<std::size_t N>
+  void SendStatusText(Severity severity, const char(&msg)[N]) {
+    static_assert(N < 51, "Maximum message length is 50");
+    char text[50] = {0};
+    memcpy(text, msg, N);
     msg_len_ = mavlink_msg_statustext_pack(sys_id_, comp_id_, &msg_,
-                                           static_cast<uint8_t>(severity), msg,
+                                           static_cast<uint8_t>(severity),
+                                           text,
                                            id_, chunk_seq_);
     mavlink_msg_to_send_buffer(msg_buf_, &msg_);
     bus_->write(msg_buf_, msg_len_);

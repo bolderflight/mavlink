@@ -5,7 +5,7 @@ if (DEFINED MCU)
 endif()
 # Project information
 project(Mavlink
-	VERSION 3.0.4
+	VERSION 3.1.0
 	DESCRIPTION "Mavlink communication protocol interface"
 	LANGUAGES CXX
 )
@@ -25,7 +25,7 @@ if (DEFINED MCU)
 	FetchContent_Declare(
 		global_defs
 		GIT_REPOSITORY https://github.com/bolderflight/global_defs.git
-		GIT_TAG v2.0.0
+		GIT_TAG v2.1.0
 	)
 	FetchContent_MakeAvailable(global_defs)
 	# Fetch mavlink-v2 headers

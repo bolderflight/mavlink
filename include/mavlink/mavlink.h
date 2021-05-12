@@ -49,7 +49,7 @@ class MavLink {
     mission_.hardware_serial(bus);
     util_.hardware_serial(bus);
   }
-  inline void aircraft_type(const AircraftType type) {
+  inline void aircraft_type(const int8_t type) {
     heartbeat_.aircraft_type(type);
   }
   inline void sys_id(const uint8_t sys_id) {
@@ -104,7 +104,7 @@ class MavLink {
     }
   }
   /* Vehicle type, system and component ID getters */
-  inline constexpr AircraftType aircraft_type() const {
+  inline constexpr int8_t aircraft_type() const {
     return heartbeat_.aircraft_type();
   }
   inline constexpr uint8_t sys_id() const {return heartbeat_.sys_id();}
@@ -116,10 +116,10 @@ class MavLink {
   inline void throttle_enabled(const bool val) {
     heartbeat_.throttle_enabled(val);
   }
-  inline void aircraft_mode(const AircraftMode val) {
+  inline void aircraft_mode(const int8_t val) {
     heartbeat_.aircraft_mode(val);
   }
-  inline void aircraft_state(const AircraftState val) {
+  inline void aircraft_state(const int8_t val) {
     heartbeat_.aircraft_state(val);
   }
   /* Config data stream rates */
@@ -296,7 +296,8 @@ class MavLink {
     return mission_.num_rally_points();
   }
   /* Status text */
-  void SendStatusText(Severity severity, char const *msg) {
+  template<std::size_t NCHAR>
+  void SendStatusText(Severity severity, const char(&msg)[NCHAR]) {
     util_.SendStatusText(severity, msg);
   }
 
