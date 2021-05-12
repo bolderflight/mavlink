@@ -27,24 +27,12 @@
 #define INCLUDE_MAVLINK_MISSION_H_
 
 #include "core/core.h"
+#include "global_defs/global_defs.h"
 #include "./mavlink_types.h"
 #include "common/mavlink.h"
 #include "mavlink/util.h"
 
 namespace bfs {
-
-struct MissionItem {
-  bool autocontinue;
-  uint8_t frame;
-  uint16_t cmd;
-  float param1;
-  float param2;
-  float param3;
-  float param4;
-  int32_t x;
-  int32_t y;
-  float z;
-};
 
 class MavLinkMission {
  public:
