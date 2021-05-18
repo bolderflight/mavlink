@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.1
+- If a mission item is received out of order, re-request the item in the correct order instead of just sending an error.
+
 ## v3.1.0
 - Pulling mission item from global defs
 
