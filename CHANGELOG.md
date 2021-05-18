@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.1.2
+- Fixed indices used to re-request items in v3.1.1
+
 ## v3.1.1
 - If a mission item is received out of order, re-request the item in the correct order instead of just sending an error.
 
