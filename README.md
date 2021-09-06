@@ -224,6 +224,14 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **inline void battery_volt(const float val)** Sets the battery voltage.
 
+**inline void battery_current_ma(const float val)** Sets the measured battery current, mA.
+
+**inline void battery_consumed_mah(const float val)** Sets the battery current consumed, mAh.
+
+**inline void battery_remaining_prcnt(const float val)** Sets the battery capacity remaining, % (i.e. 75 for 75%).
+
+**inline void battery_remaining_time_s(const float val)** Sets the estimated battery time remaining, s.
+
 ### IMU Data
 
 **inline void imu_accel_x_mps2(const float val)** Sets the IMU x acceleration, m/s/s.

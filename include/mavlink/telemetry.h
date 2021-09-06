@@ -117,6 +117,22 @@ class MavLinkTelemetry {
     battery_volt_.set = true;
     battery_volt_.val = val;
   }
+  inline void battery_current_ma(const float val) {
+    battery_current_ma_.set = true;
+    battery_current_ma_.val = val;
+  }
+  inline void battery_consumed_mah(const float val) {
+    battery_consumed_mah_.set = true;
+    battery_consumed_mah_.val = val;
+  }
+  inline void battery_remaining_prcnt(const float val) {
+    battery_remaining_prcnt_.set = true;
+    battery_remaining_prcnt_.val = val;
+  }
+  inline void battery_remaining_time_s(const float val) {
+    battery_remaining_time_s_.set = true;
+    battery_remaining_time_s_.val = val;
+  }
   /* IMU data */
   inline void imu_accel_x_mps2(const float val) {imu_accel_x_mps2_ = val;}
   inline void imu_accel_y_mps2(const float val) {imu_accel_y_mps2_ = val;}
@@ -234,6 +250,10 @@ class MavLinkTelemetry {
   bool gnss_healthy_ = false;
   bool inceptor_healthy_ = false;
   CondData<float> battery_volt_;
+  CondData<float> battery_current_ma_;
+  CondData<float> battery_consumed_mah_;
+  CondData<float> battery_remaining_prcnt_;
+  CondData<float> battery_remaining_time_s_;
   /* IMU */
   float imu_accel_x_mps2_ = 0.0f;
   float imu_accel_y_mps2_ = 0.0f;
@@ -358,8 +378,6 @@ class MavLinkTelemetry {
   mavlink_request_data_stream_t request_stream_;
   uint32_t sys_time_ms_;
   /* System status */
-  static constexpr int16_t current_battery_ = -1;
-  static constexpr int8_t battery_remaining_ = -1;
   static constexpr uint16_t drop_rate_comm_ = 0;
   static constexpr uint16_t errors_comm_ = 0;
   static constexpr uint16_t errors_count_[4] = {0};
@@ -367,6 +385,8 @@ class MavLinkTelemetry {
   uint32_t sensors_healthy_;
   uint16_t load_;
   uint16_t voltage_battery_ = UINT16_MAX;
+  int16_t current_battery_ = -1;
+  int8_t battery_remaining_ = -1;
   /* GNSS raw */
   static constexpr uint16_t yaw_cdeg_ = 0;
   uint8_t fix_;
@@ -393,10 +413,7 @@ class MavLinkTelemetry {
   static constexpr uint8_t battery_function_ = MAV_BATTERY_FUNCTION_UNKNOWN;
   static constexpr uint8_t type_ = MAV_BATTERY_TYPE_LIPO;
   static constexpr int16_t temp_ = INT16_MAX;
-  static constexpr int16_t current_ = -1;
-  static constexpr int32_t current_consumed_ = -1;
   static constexpr int32_t energy_consumed_ = -1;
-  static constexpr int32_t time_remaining_ = 0;
   static constexpr uint8_t charge_state_ = MAV_BATTERY_CHARGE_STATE_UNDEFINED;
   static constexpr uint8_t battery_mode_ = MAV_BATTERY_MODE_UNKNOWN;
   static constexpr uint32_t fault_bitmask_ = 0;
@@ -404,6 +421,10 @@ class MavLinkTelemetry {
     UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,
     UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,
     UINT16_MAX, UINT16_MAX};
+  int16_t current_ = -1;
+  int32_t current_consumed_ = -1;
+  int32_t time_remaining_ = 0;
+
   /* Global position */
   int32_t alt_agl_mm_;
   int16_t vx_cmps_;
