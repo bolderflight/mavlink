@@ -126,7 +126,12 @@ void MavLinkTelemetry::SendSysStatus() {
   if (battery_volt_.set) {
     voltage_battery_ = static_cast<uint16_t>(battery_volt_.val * 1000.0f);
   }
-
+  if (battery_current_ma_.set) {
+    current_battery_ = static_cast<int16_t>(battery_current_ma_.val * 0.1f);
+  }
+  if (battery_remaining_prcnt_.set) {
+    battery_remaining_ = static_cast<int8_t>(battery_remaining_prcnt_.val);
+  }
   msg_len_ = mavlink_msg_sys_status_pack(sys_id_, comp_id_, &msg_,
                                          sensors_present_, sensors_present_,
                                          sensors_healthy_, load_,
@@ -237,6 +242,18 @@ void MavLinkTelemetry::SRx_EXTRA3() {}
 void MavLinkTelemetry::SendBatteryStatus() {
   if (battery_volt_.set) {
     volt_[0] = static_cast<uint16_t>(battery_volt_.val * 1000.0f);
+  }
+  if (battery_current_ma_.set) {
+    current_ = static_cast<int16_t>(battery_current_ma_.val * 0.1f);
+  }
+  if (battery_consumed_mah_.set) {
+    current_consumed_ = static_cast<int32_t>(battery_consumed_mah_.val);
+  }
+  if (battery_remaining_prcnt_.set) {
+    battery_remaining_ = static_cast<int8_t>(battery_remaining_prcnt_.val);
+  }
+  if (battery_remaining_time_s_.set) {
+    time_remaining_ = static_cast<int32_t>(battery_remaining_time_s_.val);
   }
   msg_len_ = mavlink_msg_battery_status_pack(sys_id_, comp_id_, &msg_,
                                              id_, battery_function_, type_,

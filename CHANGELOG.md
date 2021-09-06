@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.2.0
+- Added battery current, battery consumed, battery remaining (percent), and battery remaining (time, s) telemetry messages
+
 ## v3.1.2
 - Fixed indices used to re-request items in v3.1.1
 
