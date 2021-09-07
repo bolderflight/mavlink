@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.2.1
+- Fix to add the methods from v3.2.0 to the MavLink object.
+
 ## v3.2.0
 - Added battery current, battery consumed, battery remaining (percent), and battery remaining (time, s) telemetry messages
 

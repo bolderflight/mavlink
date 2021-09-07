@@ -195,6 +195,18 @@ class MavLink {
   inline void inceptor_healthy(const bool val) {telem_.inceptor_healthy(val);}
   /* Battery */
   inline void battery_volt(const float val) {telem_.battery_volt(val);}
+  inline void battery_current_ma(const float val) {
+    telem_.battery_current_ma(val);
+  }
+  inline void battery_consumed_mah(const float val) {
+    telem_.battery_consumed_mah(val);
+  }
+  inline void battery_remaining_prcnt(const float val) {
+    telem_.battery_remaining_prcnt(val);
+  }
+  inline void battery_remaining_time_s(const float val) {
+    telem_.battery_remaining_time_s(val);
+  }
   /* IMU data */
   inline void imu_accel_x_mps2(const float val) {telem_.imu_accel_x_mps2(val);}
   inline void imu_accel_y_mps2(const float val) {telem_.imu_accel_y_mps2(val);}
