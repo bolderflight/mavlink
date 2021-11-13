@@ -346,7 +346,11 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **static constexpr std::size_t params_size()** The number of parameters supported.
 
+**inline void params(const std::array<float, N> &val)** Sets parameter values given an array. Should be called before the *Begin* method so parameter values are correctly sent to the ground station.
+
 **inline std::array<float, NPARAM> params()** An array of parameter values.
+
+**inline void param(const int32_t idx, const float val)** Sets a single parameter value, given the index and the value. Should be called before the *Begin* method so parameter values are correctly sent to the ground station.
 
 **inline float param(const int32_t idx)** A single parameter value given the index.
 

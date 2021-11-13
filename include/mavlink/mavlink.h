@@ -276,7 +276,9 @@ class MavLink {
   inline void throttle_ch(const uint8_t val) {telem_.throttle_ch(val);}
   /* Parameters */
   static constexpr std::size_t params_size() {return N;}
+  inline void params(const std::array<float, N> &val) {param_.params(val);}
   inline std::array<float, N> params() const {return param_.params();}
+  inline void param(const int32_t i, const float val) {param_.param(i, val);}
   inline float param(const int32_t idx) const {return param_.param(idx);}
   inline int32_t updated_param() {return param_.updated_param();}
   template<std::size_t NCHAR>
