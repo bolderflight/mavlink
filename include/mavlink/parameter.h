@@ -54,12 +54,23 @@ class MavLinkParameter {
   inline constexpr uint8_t comp_id() const {return comp_id_;}
   /* Get parameters */
   static constexpr std::size_t size() {return N;}
+  inline void params(const std::array<float, N> &val) {
+    for (std::size_t i = 0; i < N; i++) {
+      params_[i].val = val[i];
+    }
+  }
   inline std::array<float, N> params() const {
     std::array<float, N> ret;
     for (std::size_t i = 0; i < N; i++) {
       ret[i] = params_[i].val;
     }
     return ret;
+  }
+  inline void param(const int32_t idx, const float val) {
+    if ((idx < 0) || (idx > N)) {
+      return;
+    }
+    params_[idx].val = val;
   }
   inline float param(const int32_t idx) const {
     if ((idx < 0) || (idx > N)) {
@@ -123,6 +134,7 @@ class MavLinkParameter {
   /* Serial bus */
   HardwareSerial *bus_;
   /* Config */
+  bool configured_ = false;
   uint8_t sys_id_ = 1;
   static constexpr uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   /* Message buffer */
