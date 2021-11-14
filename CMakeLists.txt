@@ -5,7 +5,7 @@ if (DEFINED MCU)
 endif()
 # Project information
 project(Mavlink
-	VERSION 3.3.0
+	VERSION 3.4.0
 	DESCRIPTION "Mavlink communication protocol interface"
 	LANGUAGES CXX
 )
@@ -67,6 +67,7 @@ if (DEFINED MCU)
 		include/mavlink/telemetry.h
 		include/mavlink/parameter.h
 		include/mavlink/mission.h
+		include/mavlink/rtk.h
 	)
 	# Link libraries
 	target_link_libraries(mavlink

@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.4.0
+- Added the UTM microservice
+
 ## v3.3.0
 - Added ability to set the parameter value from code; this is useful if parameters are stored in EEPROM or SD for the microcontroller to read them and set to the stored values.
 
