@@ -43,16 +43,16 @@ int main() {
   mavlink.Begin(57600);
   while (1) {
     mavlink.Update();
-    // if (mavlink.mission_updated()) {
-    //   Serial.println(mavlink.num_mission_items());
-    //   for (std::size_t i = 0; i < mavlink.num_mission_items(); i++) {
-    //     Serial.print(mission[i].x);
-    //     Serial.print("\t");
-    //     Serial.print(mission[i].y);
-    //     Serial.print("\t");
-    //     Serial.print(mission[i].z);
-    //     Serial.print("\n");
-    //   }
-    // }
+    if (mavlink.mission_updated()) {
+      Serial.println(mavlink.num_mission_items());
+      for (std::size_t i = 0; i < mavlink.num_mission_items(); i++) {
+        Serial.print(mission[i].x);
+        Serial.print("\t");
+        Serial.print(mission[i].y);
+        Serial.print("\t");
+        Serial.print(mission[i].z);
+        Serial.print("\n");
+      }
+    }
   }
 }

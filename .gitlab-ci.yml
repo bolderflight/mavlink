@@ -12,6 +12,8 @@ Lint:
     - cpplint --verbose=0 include/mavlink/telemetry.h
     - cpplint --verbose=0 include/mavlink/mission.h
     - cpplint --verbose=0 include/mavlink/mavlink.h
+    - cpplint --verbose=0 include/mavlink/rtcm.h
     - cpplint --verbose=0 src/mavlink/heartbeat.cc
     - cpplint --verbose=0 src/mavlink/telemetry.cc
     - cpplint --verbose=0 src/mavlink/mission.cc
+    - cpplint --verbose=0 src/mavlink/rtcm.cc

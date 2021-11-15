@@ -34,7 +34,7 @@
 #include "mavlink/telemetry.h"
 #include "mavlink/parameter.h"
 #include "mavlink/mission.h"
-#include "mavlink/rtk.h"
+#include "mavlink/rtcm.h"
 
 namespace bfs {
 
@@ -49,7 +49,7 @@ class MavLink {
     param_.hardware_serial(bus);
     mission_.hardware_serial(bus);
     util_.hardware_serial(bus);
-    rtk_.hardware_serial(bus);
+    rtcm_.hardware_serial(bus);
   }
   inline void aircraft_type(const int8_t type) {
     heartbeat_.aircraft_type(type);
@@ -102,7 +102,7 @@ class MavLink {
         telem_.MsgHandler(msg_);
         param_.MsgHandler(msg_);
         mission_.MsgHandler(msg_);
-        rtk_.MsgHandler(msg_);
+        rtcm_.MsgHandler(msg_);
       }
     }
   }
@@ -112,6 +112,8 @@ class MavLink {
   }
   inline constexpr uint8_t sys_id() const {return heartbeat_.sys_id();}
   inline constexpr uint8_t comp_id() const {return heartbeat_.comp_id();}
+  /* Pass pointer to GNSS serial to provide RTCM corrections */
+  inline void gnss_serial(HardwareSerial *bus) {rtcm_.gnss_serial(bus);}
   /* 
   * Setters and getters for the throttle enabled flag, vehicle mode,
   * and vehicle state
@@ -338,7 +340,7 @@ class MavLink {
   MavLinkTelemetry telem_;
   MavLinkParameter<N> param_;
   MavLinkMission mission_;
-  MavLinkRtk<2> rtk_;
+  MavLinkRtcm rtcm_;
   /* Message handlers */
   uint8_t rx_sys_id_, rx_comp_id_;
   uint16_t cmd_;

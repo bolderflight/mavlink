@@ -61,13 +61,14 @@ if (DEFINED MCU)
 		src/mavlink/heartbeat.cc
 		src/mavlink/telemetry.cc
 		src/mavlink/mission.cc
+		src/mavlink/rtcm.cc
 		include/mavlink/mavlink.h
 		include/mavlink/heartbeat.h
 		include/mavlink/mavlink.h
 		include/mavlink/telemetry.h
 		include/mavlink/parameter.h
 		include/mavlink/mission.h
-		include/mavlink/rtk.h
+		include/mavlink/rtcm.h
 	)
 	# Link libraries
 	target_link_libraries(mavlink
