@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.5.1
+- Pulling raw PWM and SBUS to mavlink object.
+
 ## v3.5.0
 - Added ability to use raw PWM and SBUS values for inceptor and effector telemetry.
 
