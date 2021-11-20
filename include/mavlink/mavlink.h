@@ -274,11 +274,20 @@ class MavLink {
   inline void effector(const std::array<float, 16> &ref) {
     telem_.effector(ref);
   }
+  inline void effector(const std::array<int16_t, 16> &ref) {
+    telem_.effector(ref);
+  }
   /* Inceptor */
   inline void inceptor(const std::array<float, 16> &ref) {
     telem_.inceptor(ref);
   }
+  inline void inceptor(const std::array<int16_t, 16> &ref) {
+    telem_.inceptor(ref);
+  }
   inline void throttle_ch(const uint8_t val) {telem_.throttle_ch(val);}
+  inline void throttle_prcnt(const float val) {
+    telem_.throttle_prcnt(val);
+  }
   /* Parameters */
   static constexpr std::size_t params_size() {return N;}
   inline void params(const std::array<float, N> &val) {param_.params(val);}
