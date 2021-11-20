@@ -338,11 +338,17 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **inline void effector(const std::array<float, 16> &ref)** Array of effector commands, normalized 0 - 1.
 
+**inline void effector(const std::array<int16_t, 16> &ref)** Array of effector commands, raw values.
+
 ### Inceptor
 
 **inline void inceptor(const std::array<float, 16> &ref)** Array of inceptor commands, normalized 0 - 1.
 
+**inline void inceptor(const std::array<int16_t, 16> &ref)** Array of inceptor commands, raw values.
+
 **inline void throttle_ch(const uint8_t val)** The inceptor channel number for the throttle.
+
+**inline void throttle_prcnt(const float val)** Throttle percent.
 
 ## Parameters
 

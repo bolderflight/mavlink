@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.5.0
+- Added ability to use raw PWM and SBUS values for inceptor and effector telemetry.
+
 ## v3.4.0
 - Added RTCM corrections
 
