@@ -211,9 +211,21 @@ class MavLinkTelemetry {
   inline void nav_gyro_z_radps(const float val) {nav_gyro_z_radps_ = val;}
   /* Effector */
   inline void effector(const std::array<float, 16> &ref) {effector_ = ref;}
+  inline void effector(const std::array<int16_t, 16> &ref) {
+    use_raw_effector_ = true;
+    effector_raw_ = ref;
+  }
   /* Inceptor */
   inline void inceptor(const std::array<float, 16> &ref) {inceptor_ = ref;}
+  inline void inceptor(const std::array<int16_t, 16> &ref) {
+    use_raw_inceptor_ = true;
+    inceptor_raw_ = ref;
+  }
   inline void throttle_ch(const int8_t val) {throttle_ch_ = val;}
+  inline void throttle_prcnt(const float val) {
+    use_throttle_prcnt_ = true;
+    throttle_prcnt_ = val;
+  }
 
  private:
   /* Serial bus */
@@ -306,9 +318,15 @@ class MavLinkTelemetry {
   CondData<float> nav_hdg_rad_;
   /* Effector */
   std::array<float, 16> effector_ = {0.0f};
+  bool use_raw_effector_ = false;
+  std::array<int16_t, 16> effector_raw_ = {0};
   /* RC Input */
   std::array<float, 16> inceptor_ = {0.0f};
+  bool use_raw_inceptor_ = false;
+  std::array<int16_t, 16> inceptor_raw_ = {0};
   int8_t throttle_ch_ = 0;
+  float throttle_prcnt_;
+  bool use_throttle_prcnt_ = false;
   /* Telemetry Messages */
   /* SRx_ALL */
   void SRx_ALL();

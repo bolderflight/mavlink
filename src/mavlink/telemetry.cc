@@ -229,7 +229,11 @@ void MavLinkTelemetry::SendVfrHud() {
     hdg_deg_ = static_cast<int16_t>(
       rad2deg(Constrain2Pi(nav_hdg_rad_.val)));
   }
-  throttle_ = static_cast<uint16_t>(inceptor_[throttle_ch_] * 100.0f);
+  if (!use_throttle_prcnt_) {
+    throttle_ = static_cast<uint16_t>(inceptor_[throttle_ch_] * 100.0f);
+  } else {
+    throttle_ = throttle_prcnt_;
+  }
   climb_mps_ = -1.0f * nav_down_vel_mps_;
   msg_len_ = mavlink_msg_vfr_hud_pack(sys_id_, comp_id_, &msg_,
                                       nav_ias_mps_, nav_gnd_spd_mps_,
@@ -368,8 +372,14 @@ void MavLinkTelemetry::SRx_RC_CHAN() {
 }
 void MavLinkTelemetry::SendServoOutputRaw() {
   /* Transform percent [0 - 1] to PWM value */
-  for (std::size_t i = 0; i < 16; i++) {
-    servo_raw_[i] = static_cast<uint16_t>(effector_[i] * 1000.0f + 1000.0f);
+  if (!use_raw_effector_) {
+    for (std::size_t i = 0; i < 16; i++) {
+      servo_raw_[i] = static_cast<uint16_t>(effector_[i] * 1000.0f + 1000.0f);
+    }
+  } else {
+    for (std::size_t i = 0; i < 16; i++) {
+      servo_raw_[i] = effector_[i];
+    }
   }
   msg_len_ = mavlink_msg_servo_output_raw_pack(sys_id_, comp_id_, &msg_,
                                                sys_time_us_, port_,
@@ -387,8 +397,14 @@ void MavLinkTelemetry::SendServoOutputRaw() {
 void MavLinkTelemetry::SendRcChannels() {
   sys_time_ms_ = static_cast<uint32_t>(sys_time_us_ / 1000);
   /* Transform percent [0 - 1] to PWM value */
-  for (std::size_t i = 0; i < chancount_; i++) {
-    chan_[i] = static_cast<uint16_t>(inceptor_[i] * 1000.0f + 1000.0f);
+  if (!use_raw_inceptor_) {
+    for (std::size_t i = 0; i < chancount_; i++) {
+      chan_[i] = static_cast<uint16_t>(inceptor_[i] * 1000.0f + 1000.0f);
+    }
+  } else {
+    for (std::size_t i = 0; i < chancount_; i++) {
+      chan_[i] = inceptor_[i];
+    }
   }
   msg_len_ = mavlink_msg_rc_channels_pack(sys_id_, comp_id_, &msg_,
                                           sys_time_ms_, chancount_,
