@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.0.0
+- Updating to support both Arduino and CMake build systems
+
 ## v3.5.1
 - Pulling raw PWM and SBUS to mavlink object.
 
