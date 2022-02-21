@@ -6,14 +6,14 @@ Lint:
   tags:
     - bfs
   script: 
-    - cpplint --verbose=0 include/mavlink/heartbeat.h
-    - cpplint --verbose=0 include/mavlink/util.h
-    - cpplint --verbose=0 include/mavlink/parameter.h
-    - cpplint --verbose=0 include/mavlink/telemetry.h
-    - cpplint --verbose=0 include/mavlink/mission.h
-    - cpplint --verbose=0 include/mavlink/mavlink.h
-    - cpplint --verbose=0 include/mavlink/rtcm.h
-    - cpplint --verbose=0 src/mavlink/heartbeat.cc
-    - cpplint --verbose=0 src/mavlink/telemetry.cc
-    - cpplint --verbose=0 src/mavlink/mission.cc
-    - cpplint --verbose=0 src/mavlink/rtcm.cc
+    - cpplint --verbose=0 src/heartbeat.h
+    - cpplint --verbose=0 src/util.h
+    - cpplint --verbose=0 src/parameter.h
+    - cpplint --verbose=0 src/telemetry.h
+    - cpplint --verbose=0 src/mission.h
+    - cpplint --verbose=0 src/mavlink.h
+    - cpplint --verbose=0 src/rtcm.h
+    - cpplint --verbose=0 src/heartbeat.cpp
+    - cpplint --verbose=0 src/telemetry.cpp
+    - cpplint --verbose=0 src/mission.cpp
+    - cpplint --verbose=0 src/rtcm.cpp
