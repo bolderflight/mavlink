@@ -26,10 +26,14 @@
 #ifndef INCLUDE_MAVLINK_UTIL_H_
 #define INCLUDE_MAVLINK_UTIL_H_
 
-#include <string>
+#if defined(ARDUINO)
+#include "Arduino.h"
+#else
 #include "core/core.h"
-#include "./mavlink_types.h"
-#include "common/mavlink.h"
+#endif
+#include <string>
+#include "mavlink/mavlink_types.h"
+#include "mavlink/common/mavlink.h"
 
 namespace bfs {
 
@@ -50,8 +54,8 @@ class MavLinkUtil {
   inline void hardware_serial(HardwareSerial *bus) {bus_ = bus;}
   inline void sys_id(const uint8_t sys_id) {sys_id_ = sys_id;}
   /* System and component ID getters */
-  inline constexpr uint8_t sys_id() const {return sys_id_;}
-  inline constexpr uint8_t comp_id() const {return comp_id_;}
+  inline uint8_t sys_id() const {return sys_id_;}
+  inline uint8_t comp_id() const {return comp_id_;}
   /* Send status text */
   template<std::size_t N>
   void SendStatusText(Severity severity, const char(&msg)[N]) {

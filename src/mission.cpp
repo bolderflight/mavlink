@@ -23,11 +23,15 @@
 * IN THE SOFTWARE.
 */
 
-#include "mavlink/mission.h"
+#if defined(ARDUINO)
+#include "Arduino.h"
+#else
 #include "core/core.h"
-#include "./mavlink_types.h"
-#include "common/mavlink.h"
-#include "mavlink/util.h"
+#endif
+#include "mission.h"
+#include "mavlink/mavlink_types.h"
+#include "mavlink/common/mavlink.h"
+#include "util.h"
 
 namespace bfs {
 

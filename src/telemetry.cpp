@@ -23,15 +23,17 @@
 * IN THE SOFTWARE.
 */
 
-#include <array>
-#include "mavlink/telemetry.h"
+#if defined(ARDUINO)
+#include "Arduino.h"
+#else
 #include "core/core.h"
-#include "global_defs/global_defs.h"
-#include "gnss/gnss.h"
-#include "./mavlink_types.h"
-#include "common/mavlink.h"
-#include "units/units.h"
-#include "navigation/navigation.h"
+#endif
+#include <array>
+#include "telemetry.h"
+#include "mavlink/mavlink_types.h"
+#include "mavlink/common/mavlink.h"
+#include "units.h"
+#include "navigation.h"
 
 namespace bfs {
 
@@ -184,7 +186,7 @@ void MavLinkTelemetry::SendGpsRawInt() {
   }
   if (gnss_track_rad_.set) {
     track_cdeg_ = static_cast<uint16_t>(100.0f *
-                 rad2deg(Constrain2Pi(gnss_track_rad_.val)));
+                 rad2deg(WrapTo2Pi(gnss_track_rad_.val)));
   }
   if (gnss_num_sv_.set) {
     num_sv_ = gnss_num_sv_.val;
@@ -211,7 +213,7 @@ void MavLinkTelemetry::SRx_EXTRA1() {
 void MavLinkTelemetry::SendAttitude() {
   sys_time_ms_ = static_cast<uint32_t>(sys_time_us_ / 1000);
   if (nav_hdg_rad_.set) {
-    yaw_rad_ = ConstrainPi(nav_hdg_rad_.val);
+    yaw_rad_ = WrapToPi(nav_hdg_rad_.val);
   }
   msg_len_ = mavlink_msg_attitude_pack(sys_id_, comp_id_, &msg_,
                                        sys_time_ms_, nav_roll_rad_,
@@ -227,7 +229,7 @@ void MavLinkTelemetry::SRx_EXTRA2() {
 void MavLinkTelemetry::SendVfrHud() {
   if (nav_hdg_rad_.set) {
     hdg_deg_ = static_cast<int16_t>(
-      rad2deg(Constrain2Pi(nav_hdg_rad_.val)));
+      rad2deg(WrapTo2Pi(nav_hdg_rad_.val)));
   }
   if (!use_throttle_prcnt_) {
     throttle_ = static_cast<uint16_t>(inceptor_[throttle_ch_] * 100.0f);
@@ -299,7 +301,7 @@ void MavLinkTelemetry::SendGlobalPositionInt() {
   vz_cmps_ = static_cast<int16_t>(nav_down_vel_mps_ * 100.0f);
   if (nav_hdg_rad_.set) {
     hdg_cdeg_ = static_cast<uint16_t>(100.0f *
-      rad2deg(Constrain2Pi(nav_hdg_rad_.val)));
+      rad2deg(WrapTo2Pi(nav_hdg_rad_.val)));
   }
   msg_len_ = mavlink_msg_global_position_int_pack(sys_id_, comp_id_, &msg_,
                                                   sys_time_ms_, lat_dege7_,

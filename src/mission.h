@@ -26,13 +26,29 @@
 #ifndef INCLUDE_MAVLINK_MISSION_H_
 #define INCLUDE_MAVLINK_MISSION_H_
 
+#if defined(ARDUINO)
+#include "Arduino.h"
+#else
 #include "core/core.h"
-#include "global_defs/global_defs.h"
-#include "./mavlink_types.h"
-#include "common/mavlink.h"
-#include "mavlink/util.h"
+#endif
+#include "mavlink/mavlink_types.h"
+#include "mavlink/common/mavlink.h"
+#include "util.h"
 
 namespace bfs {
+
+struct MissionItem {
+  bool autocontinue;
+  uint8_t frame;
+  uint16_t cmd;
+  float param1;
+  float param2;
+  float param3;
+  float param4;
+  int32_t x;
+  int32_t y;
+  float z;
+};
 
 class MavLinkMission {
  public:
@@ -61,8 +77,8 @@ class MavLinkMission {
     rally_size_ = rally_size;
   }
   /* System and component ID getters */
-  inline constexpr uint8_t sys_id() const {return sys_id_;}
-  inline constexpr uint8_t comp_id() const {return comp_id_;}
+  inline uint8_t sys_id() const {return sys_id_;}
+  inline uint8_t comp_id() const {return comp_id_;}
   /* Update and message handler methods */
   void Update();
   void MsgHandler(const mavlink_message_t &ref);

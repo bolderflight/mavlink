@@ -26,12 +26,16 @@
 #ifndef INCLUDE_MAVLINK_PARAMETER_H_
 #define INCLUDE_MAVLINK_PARAMETER_H_
 
+#if defined(ARDUINO)
+#include "Arduino.h"
+#else
+#include "core/core.h"
+#endif
 #include <array>
 #include <string>
-#include "core/core.h"
-#include "./mavlink_types.h"
-#include "common/mavlink.h"
-#include "mavlink/util.h"
+#include "mavlink/mavlink_types.h"
+#include "mavlink/common/mavlink.h"
+#include "util.h"
 
 namespace bfs {
 
@@ -50,8 +54,8 @@ class MavLinkParameter {
     util_.sys_id(sys_id);
   }
   /* System and component ID getters */
-  inline constexpr uint8_t sys_id() const {return sys_id_;}
-  inline constexpr uint8_t comp_id() const {return comp_id_;}
+  inline uint8_t sys_id() const {return sys_id_;}
+  inline uint8_t comp_id() const {return comp_id_;}
   /* Get parameters */
   static constexpr std::size_t size() {return N;}
   inline void params(const std::array<float, N> &val) {
@@ -155,6 +159,10 @@ class MavLinkParameter {
   Param params_[N];
   /* Whether the params have been updated */
   int32_t updated_index_ = -1;
+  #if defined(ARDUINO)
+  /* Buffer for itoa */
+  char itoa_buf_[10];
+  #endif
   /* Populate parameter names and indices */
   void PopulateParams() {
     for (std::size_t i = 0; i < N; i++) {
@@ -164,7 +172,12 @@ class MavLinkParameter {
       } else if (i < 100) {
         params_[i].param_id += "0";
       }
+      #if defined(ARDUINO)
+      itoa(i, itoa_buf_, 10);
+      params_[i].param_id += std::string(itoa_buf_);
+      #else
       params_[i].param_id += std::to_string(i);
+      #endif
       params_[i].param_index = i;
     }
   }

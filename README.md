@@ -1,3 +1,7 @@
+[![Pipeline](https://gitlab.com/bolderflight/software/mavlink/badges/main/pipeline.svg)](https://gitlab.com/bolderflight/software/mavlink/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![Bolder Flight Systems Logo](img/logo-words_75.png) &nbsp; &nbsp; ![Arduino Logo](img/arduino_logo_75.png)
+
 # mavlink
 This library supports the [MAVLink](https://mavlink.io/) protocol, which is a common protocol for interfacing with ground control stations (i.e. [Mission Planner](https://ardupilot.org/planner/) and [QGroundControl](http://qgroundcontrol.com/)). This library has been specifically built for drone / UAS applications and tested against [QGroundControl](http://qgroundcontrol.com/).
    * [License](LICENSE.md)
@@ -17,10 +21,20 @@ The MAVLink protocol is massive and documentation is sometimes sparse with respe
 This library has been tested extensively against [QGroundControl](http://qgroundcontrol.com/). If functionality appears to be missing or implemented incorrectly, please submit an issue detailing the observed behavior, the expected behavior, and the ground control station used.
 
 # Installation
+## Arduino
+Simply clone or download and extract the zipped library into your Arduino/libraries folder. In addition to this library, the [Bolder Flight Systems Units library](https://github.com/bolderflight/units) and the the [Bolder Flight Systems Navigation library](https://github.com/bolderflight/navigation) must be installed. The library is added as:
+
+```C++
+#include "mavlink.h"
+```
+
+An example is located in *examples/arduino/mavlink_example/mavlink_example.ino*. This library is tested with Teensy 3.x, 4.x, and LC devices and is expected to work with other Arduino ARM devices. It is **not** expected to work with AVR devices.
+
+## CMake
 CMake is used to build this library, which is exported as a library target called *mavlink*. The header is added as:
 
-```
-#include "mavlink/mavlink.h"
+```C++
+#include "mavlink.h"
 ```
 
 The library can also be compiled stand-alone using the CMake idiom of creating a build directory and then, from within that directory, issuing:
@@ -30,7 +44,7 @@ cmake .. -DMCU=MK66FX1M0
 make
 ```
 
-This will build the library and an example executable called *mavlink_example*. The example executable source files are located at *examples/mavlink_example.cc*. Notice that the *cmake* command includes a define specifying the microcontroller the code is being compiled for. This is required to correctly configure the code, CPU frequency, and compile/linker options. The available MCUs are:
+This will build the library and an example executable called *mavlink_example*. The example executable source files are located at *examples/cmake/mavlink_example.cc*. Notice that the *cmake* command includes a define specifying the microcontroller the code is being compiled for. This is required to correctly configure the code, CPU frequency, and compile/linker options. The available MCUs are:
    * MK20DX128
    * MK20DX256
    * MK64FX512
@@ -41,7 +55,7 @@ This will build the library and an example executable called *mavlink_example*. 
 
 These are known to work with the same packages used in Teensy products. Also switching packages is known to work well, as long as it's only a package change.
 
-The *i2c_example* and *spi_example* targets create executables for communicating with the sensor using I2C or SPI communication, respectively. Each target also has a *_hex* for creating the hex file to upload to the microcontroller. 
+The *mavlink_example* target also has a *_hex* for creating the hex file and an *_upload* for using the [Teensy CLI Uploader](https://www.pjrc.com/teensy/loader_cli.html) to flash the Teensy. Please note that the CMake build tooling is expected to be run under Linux or WSL, instructions for setting up your build environment can be found in our [build-tools repo](https://github.com/bolderflight/build-tools).
 
 # Namespace
 This library is within the namespace *bfs*
@@ -87,6 +101,14 @@ mavlink.hardware_serial(&Serial4);
 ```C++
 mavlink.aircraft_type(bfs::FIXED_WING);
 ```
+
+Available aircraft types are:
+| Enum               | Value (int8_t) | Description |
+| ------------------ | ----- | -------------------  |
+| FIXED_WING         | 0     | Fixed-wing aircraft  |
+| HELICOPTER         | 1     | Helicopter           |
+| MULTIROTOR         | 2     | Multirotor           |
+| VTOL               | 3     | VTOL aircraft        |
 
 **inline void sys_id(const uint8_t sys_id)** Used to set a non-default system id. By default the system id is set to 1. This could be used if other vehicles are connected to the ground control station to avoid conflicting system ids.
 
@@ -134,9 +156,26 @@ while (1) {
 
 **inline void throttle_enabled(const bool val)** Sets whether the motors are enabled.
 
-**inline void aircraft_mode(const AircraftMode val)** Sets the [AircraftMode](https://github.com/bolderflight/global_defs#definitions).
+**inline void aircraft_mode(const AircraftMode val)** Sets the aircraft mode. Available modes are:
 
-**inline void aircraft_state(const AircraftState val)** Sets the [AircraftState](https://github.com/bolderflight/global_defs#definitions)
+| Enum       | Value (int8_t) | Description            |
+| ---------- | ----- | ------------------------------- |
+| MANUAL     | 0     | Manual flight mode              |
+| STABALIZED | 1     | Stability augmented flight mode |
+| ATTITUDE   | 2     | Attitude feedback flight mode   |
+| AUTO       | 3     | Autonomous flight mode          | 
+| TEST       | 4     | Test point                      |
+
+**inline void aircraft_state(const AircraftState val)** Sets the aircraft state. Available states are:
+
+| Enum      | Value (int8_t) | Description                         |
+| --------- | ----- | -------------------------------------------- |
+| INIT      | 0     | System is initializing                       |
+| STANDBY   | 1     | Ready to fly, motors are not enabled         |
+| ACTIVE    | 2     | Flying, motors are enabled                   |
+| CAUTION   | 3     | Off-nominal condition, still able to operate |
+| EMERGENCY | 4     | Emergency condition, not able to operate     |
+| FTS       | 5     | Flight Termination System has been activated |
 
 ### Data Streams
 Telemetry data is grouped into [Data Streams](https://mavlink.io/en/messages/common.html#MAV_DATA_STREAM). For our library, the following stream and packet associations are defined:
@@ -268,7 +307,16 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 ### GNSS Data
 
-**inline void gnss_fix(const GnssFix val)** Sets the [GNSS Fix](https://github.com/bolderflight/gnss).
+**inline void gnss_fix(const GnssFix val)** Sets the GNSS Fix. Available fix types are:
+
+| Description | Enum |
+| --- | --- |
+| No fix | GNSS_FIX_NONE |
+| 2D fix | GNSS_FIX_2D |
+| 3D fix | GNSS_FIX_3D |
+| 3D fix with differential GNSS corrections applied | GNSS_FIX_DGNSS |
+| 3D fix with RTK float integer ambiguity | GNSS_FIX_RTK_FLOAT |
+| 3D fix with RTK fixed integer ambiguity | GNSS_FIX_RTK_FIXED |
 
 **inline void gnss_num_sats(const uint8_t val)** Sets the number of satellites used in the GNSS solution.
 

@@ -26,12 +26,39 @@
 #ifndef INCLUDE_MAVLINK_HEARTBEAT_H_
 #define INCLUDE_MAVLINK_HEARTBEAT_H_
 
+#if defined(ARDUINO)
+#include "Arduino.h"
+#else
 #include "core/core.h"
-#include "global_defs/global_defs.h"
-#include "./mavlink_types.h"
-#include "common/mavlink.h"
+#endif
+#include "mavlink/mavlink_types.h"
+#include "mavlink/common/mavlink.h"
 
 namespace bfs {
+
+enum AircraftType : int8_t {
+  FIXED_WING = 0,
+  HELICOPTER = 1,
+  MULTIROTOR = 2,
+  VTOL = 3
+};
+
+enum AircraftState : int8_t {
+  INIT = 0,
+  STANDBY = 1,
+  ACTIVE = 2,
+  CAUTION = 3,
+  EMERGENCY = 4,
+  FTS = 5
+};
+
+enum AircraftMode : int8_t {
+  MANUAL = 0,
+  STABALIZED = 1,
+  ATTITUDE = 2,
+  AUTO = 3,
+  TEST = 4
+};
 
 class MavLinkHeartbeat {
  public:
@@ -40,9 +67,9 @@ class MavLinkHeartbeat {
   inline void aircraft_type(const int8_t type) {aircraft_type_ = type;}
   inline void sys_id(const uint8_t sys_id) {sys_id_ = sys_id;}
   /* Aircraft type, system and component ID getters */
-  inline constexpr int8_t aircraft_type() const {return aircraft_type_;}
-  inline constexpr uint8_t sys_id() const {return sys_id_;}
-  inline constexpr uint8_t comp_id() const {return comp_id_;}
+  inline int8_t aircraft_type() const {return aircraft_type_;}
+  inline uint8_t sys_id() const {return sys_id_;}
+  inline uint8_t comp_id() const {return comp_id_;}
   /* 
   * Setters for the throttle enabled flag, aircraft mode, and aircraft state
   */

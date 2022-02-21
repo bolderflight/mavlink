@@ -26,14 +26,25 @@
 #ifndef INCLUDE_MAVLINK_TELEMETRY_H_
 #define INCLUDE_MAVLINK_TELEMETRY_H_
 
-#include <array>
+#if defined(ARDUINO)
+#include "Arduino.h"
+#else
 #include "core/core.h"
-#include "global_defs/global_defs.h"
-#include "gnss/gnss.h"
-#include "./mavlink_types.h"
-#include "common/mavlink.h"
+#endif
+#include <array>
+#include "mavlink/mavlink_types.h"
+#include "mavlink/common/mavlink.h"
 
 namespace bfs {
+
+enum GnssFix : int8_t {
+  GNSS_FIX_NONE = 1,
+  GNSS_FIX_2D = 2,
+  GNSS_FIX_3D = 3,
+  GNSS_FIX_DGNSS = 4,
+  GNSS_FIX_RTK_FLOAT = 5,
+  GNSS_FIX_RTK_FIXED = 6
+};
 
 class MavLinkTelemetry {
  public:
@@ -44,8 +55,8 @@ class MavLinkTelemetry {
   void Update();
   void MsgHandler(const mavlink_message_t &ref);
   /* System and component ID getters */
-  inline constexpr uint8_t sys_id() const {return sys_id_;}
-  inline constexpr uint8_t comp_id() const {return comp_id_;}
+  inline uint8_t sys_id() const {return sys_id_;}
+  inline uint8_t comp_id() const {return comp_id_;}
   /* Config data stream rates */
   inline void raw_sens_stream_period_ms(const int32_t val) {
     data_stream_period_ms_[SRx_RAW_SENS_STREAM] = val;
@@ -317,13 +328,13 @@ class MavLinkTelemetry {
   float nav_gyro_z_radps_ = 0.0f;
   CondData<float> nav_hdg_rad_;
   /* Effector */
-  std::array<float, 16> effector_ = {0.0f};
+  std::array<float, 16> effector_;
   bool use_raw_effector_ = false;
-  std::array<int16_t, 16> effector_raw_ = {0};
+  std::array<int16_t, 16> effector_raw_;
   /* RC Input */
-  std::array<float, 16> inceptor_ = {0.0f};
+  std::array<float, 16> inceptor_;
   bool use_raw_inceptor_ = false;
-  std::array<int16_t, 16> inceptor_raw_ = {0};
+  std::array<int16_t, 16> inceptor_raw_;
   int8_t throttle_ch_ = 0;
   float throttle_prcnt_;
   bool use_throttle_prcnt_ = false;

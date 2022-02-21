@@ -25,25 +25,18 @@ if (DEFINED MCU)
     GIT_TAG v3.0.2
   )
   FetchContent_MakeAvailable(core)
-  # Fetch mavlink-v2 headers
-  FetchContent_Declare(
-    mavlink_headers_v2
-    GIT_REPOSITORY https://github.com/bolderflight/mavlink_c_library_v2.git
-    GIT_TAG v1.1.0
-  )
-  FetchContent_MakeAvailable(mavlink_headers_v2)
   # Fetch units
   FetchContent_Declare(
     units
-    GIT_REPOSITORY 	https://github.com/bolderflight/units.git
-    GIT_TAG v4.0.3
+    GIT_REPOSITORY https://github.com/bolderflight/units.git
+    GIT_TAG v4.1.0
   )
   FetchContent_MakeAvailable(units)
   # Fetch navigation
   FetchContent_Declare(
     navigation
     GIT_REPOSITORY https://github.com/bolderflight/navigation.git
-    GIT_TAG v2.0.1
+    GIT_TAG v4.0.0
   )
   FetchContent_MakeAvailable(navigation)
   # Add the library target
@@ -64,7 +57,6 @@ if (DEFINED MCU)
   target_link_libraries(mavlink
     PUBLIC
       core
-      mavlink_headers_v2
       units
       navigation
   )
@@ -90,6 +82,6 @@ if (DEFINED MCU)
     )
     # Add hex and upload targets
     include(${mcu_support_SOURCE_DIR}/cmake/flash_mcu.cmake)
-    FlashMcu(sub ${MCU} ${mcu_support_SOURCE_DIR})
+    FlashMcu(mavlink_example ${MCU} ${mcu_support_SOURCE_DIR})
   endif()
 endif()

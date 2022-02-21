@@ -23,11 +23,14 @@
 * IN THE SOFTWARE.
 */
 
-#include "mavlink/heartbeat.h"
+#if defined(ARDUINO)
+#include "Arduino.h"
+#else
 #include "core/core.h"
-#include "global_defs/global_defs.h"
-#include "./mavlink_types.h"
-#include "common/mavlink.h"
+#endif
+#include "heartbeat.h"
+#include "mavlink/mavlink_types.h"
+#include "mavlink/common/mavlink.h"
 
 namespace bfs {
 

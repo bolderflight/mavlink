@@ -26,15 +26,19 @@
 #ifndef INCLUDE_MAVLINK_MAVLINK_H_
 #define INCLUDE_MAVLINK_MAVLINK_H_
 
-#include <string>
+#if defined(ARDUINO)
+#include "Arduino.h"
+#else
 #include "core/core.h"
-#include "./mavlink_types.h"
-#include "common/mavlink.h"
-#include "mavlink/heartbeat.h"
-#include "mavlink/telemetry.h"
-#include "mavlink/parameter.h"
-#include "mavlink/mission.h"
-#include "mavlink/rtcm.h"
+#endif
+#include <string>
+#include "mavlink/mavlink_types.h"
+#include "mavlink/common/mavlink.h"
+#include "heartbeat.h"
+#include "telemetry.h"
+#include "parameter.h"
+#include "mission.h"
+#include "rtcm.h"
 
 namespace bfs {
 
@@ -107,11 +111,11 @@ class MavLink {
     }
   }
   /* Vehicle type, system and component ID getters */
-  inline constexpr int8_t aircraft_type() const {
+  inline int8_t aircraft_type() const {
     return heartbeat_.aircraft_type();
   }
-  inline constexpr uint8_t sys_id() const {return heartbeat_.sys_id();}
-  inline constexpr uint8_t comp_id() const {return heartbeat_.comp_id();}
+  inline uint8_t sys_id() const {return heartbeat_.sys_id();}
+  inline uint8_t comp_id() const {return heartbeat_.comp_id();}
   /* Pass pointer to GNSS serial to provide RTCM corrections */
   inline void gnss_serial(HardwareSerial *bus) {rtcm_.gnss_serial(bus);}
   /* 
@@ -355,21 +359,21 @@ class MavLink {
   uint16_t cmd_;
   /* Message data */
   mavlink_command_long_t cmd_long_;
-  static constexpr uint32_t flight_sw_version_ = 0;
-  static constexpr uint32_t middleware_sw_version_ = 0;
-  static constexpr uint32_t os_sw_version_ = 0;
-  static constexpr uint32_t board_version_ = 0;
-  static constexpr uint8_t flight_custom_version_[8] = {0};
-  static constexpr uint8_t middleware_custom_version_[8] = {0};
-  static constexpr uint8_t os_custom_version_[8] = {0};
-  static constexpr uint16_t vendor_id_ = 0;
-  static constexpr uint16_t product_id_ = 0;
-  static constexpr uint64_t uid_ = 0;
-  static constexpr uint8_t uid2_[18] = {0};
-  static constexpr uint8_t spec_version_hash_[8] = {8};
-  static constexpr uint8_t library_versions_hash_[8] = {0};
-  static constexpr uint16_t version_ = 230;
-  static constexpr uint16_t min_version_ = 100;
+  uint32_t flight_sw_version_ = 0;
+  uint32_t middleware_sw_version_ = 0;
+  uint32_t os_sw_version_ = 0;
+  uint32_t board_version_ = 0;
+  uint8_t flight_custom_version_[8];
+  uint8_t middleware_custom_version_[8];
+  uint8_t os_custom_version_[8];
+  uint16_t vendor_id_ = 0;
+  uint16_t product_id_ = 0;
+  uint64_t uid_ = 0;
+  uint8_t uid2_[18];
+  uint8_t spec_version_hash_[8];
+  uint8_t library_versions_hash_[8];
+  uint16_t version_ = 230;
+  uint16_t min_version_ = 100;
   uint64_t capabilities_;
   static constexpr int32_t result_param2_ = 0;
   void CommandLongHandler(const mavlink_command_long_t &ref) {

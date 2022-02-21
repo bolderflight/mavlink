@@ -23,10 +23,14 @@
 * IN THE SOFTWARE.
 */
 
-#include "mavlink/rtcm.h"
+#if defined(ARDUINO)
+#include "Arduino.h"
+#else
 #include "core/core.h"
-#include "./mavlink_types.h"
-#include "common/mavlink.h"
+#endif
+#include "rtcm.h"
+#include "mavlink/mavlink_types.h"
+#include "mavlink/common/mavlink.h"
 
 namespace bfs {
 
