@@ -2,7 +2,7 @@
 * Brian R Taylor
 * brian.taylor@bolderflight.com
 * 
-* Copyright (c) 2021 Bolder Flight Systems Inc
+* Copyright (c) 2022 Bolder Flight Systems Inc
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the “Software”), to
@@ -25,26 +25,40 @@
 
 #include "mavlink.h"
 
+/*
+* Storage for mission items (i.e. flight plans), fence vertices, rally points,
+* and temporary storage, which is used to hold items during upload from the
+* GCS and before the upload is verified good.
+*/
 std::array<bfs::MissionItem, 250> mission;
 std::array<bfs::MissionItem, 250> fence;
 std::array<bfs::MissionItem, 5> rally;
 std::array<bfs::MissionItem, 250> temp;
 
+/*
+* A MavLink object with 5 parameters that can be tuned in real-time from the GCS
+*/
 bfs::MavLink<5> mavlink;
 
 void setup() {
+  /* Starting serial to print results */
   Serial.begin(115200);
   while (!Serial) {}
+  /* Configuring MavLink serial port and aircraft type */
   mavlink.hardware_serial(&Serial4);
   mavlink.aircraft_type(bfs::FIXED_WING);
+  /* Passing info about where to store mission data */
   mavlink.mission(mission.data(), mission.size(), temp.data());
   mavlink.fence(fence.data(), fence.size());
   mavlink.rally(rally.data(), rally.size());
+  /* Starting communication on the serial port */
   mavlink.Begin(57600);
 }
 
 void loop() {
+  /* Needed to send and receive MavLink data */
   mavlink.Update();
+  /* Check to see if the mission has been updated and print mission items */
   if (mavlink.mission_updated()) {
     Serial.println(mavlink.num_mission_items());
     for (std::size_t i = 0; i < mavlink.num_mission_items(); i++) {
