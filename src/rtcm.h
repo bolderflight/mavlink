@@ -2,7 +2,7 @@
 * Brian R Taylor
 * brian.taylor@bolderflight.com
 * 
-* Copyright (c) 2021 Bolder Flight Systems Inc
+* Copyright (c) 2022 Bolder Flight Systems Inc
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the “Software”), to
@@ -23,8 +23,8 @@
 * IN THE SOFTWARE.
 */
 
-#ifndef INCLUDE_MAVLINK_RTCM_H_
-#define INCLUDE_MAVLINK_RTCM_H_
+#ifndef MAVLINK_SRC_RTCM_H_  // NOLINT
+#define MAVLINK_SRC_RTCM_H_
 
 #if defined(ARDUINO)
 #include "Arduino.h"
@@ -73,4 +73,4 @@ class MavLinkRtcm {
 
 }  // namespace bfs
 
-#endif  // INCLUDE_MAVLINK_RTCM_H_
+#endif  // MAVLINK_SRC_RTCM_H_ NOLINT

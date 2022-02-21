@@ -2,7 +2,7 @@
 * Brian R Taylor
 * brian.taylor@bolderflight.com
 * 
-* Copyright (c) 2021 Bolder Flight Systems Inc
+* Copyright (c) 2022 Bolder Flight Systems Inc
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the “Software”), to
@@ -28,7 +28,7 @@
 #else
 #include "core/core.h"
 #endif
-#include "heartbeat.h"
+#include "heartbeat.h"  // NOLINT
 #include "mavlink/mavlink_types.h"
 #include "mavlink/common/mavlink.h"
 
