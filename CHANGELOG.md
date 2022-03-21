@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.0.1
+- Updated to pull in Navigation v4.0.1, which fixed some inline-ness issues
+
 ## v4.0.0
 - Updating to support both Arduino and CMake build systems
 
