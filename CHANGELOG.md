@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.0.2
+- Updated to pull in new MAV Link messages
+
 ## v4.0.1
 - Updated to pull in Navigation v4.0.1, which fixed some inline-ness issues
 

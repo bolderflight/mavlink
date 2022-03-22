@@ -141,7 +141,10 @@ void MavLinkTelemetry::SendSysStatus() {
                                          battery_remaining_, drop_rate_comm_,
                                          errors_comm_, errors_count_[0],
                                          errors_count_[1], errors_count_[2],
-                                         errors_count_[3]);
+                                         errors_count_[3],
+                                         onboard_control_sensors_present_ext_,
+                                         onboard_control_sensors_present_ext_,
+                                         onboard_control_sensors_present_ext_);
   mavlink_msg_to_send_buffer(msg_buf_, &msg_);
   bus_->write(msg_buf_, msg_len_);
 }
