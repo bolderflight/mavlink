@@ -410,6 +410,7 @@ class MavLinkTelemetry {
   static constexpr uint16_t drop_rate_comm_ = 0;
   static constexpr uint16_t errors_comm_ = 0;
   static constexpr uint16_t errors_count_[4] = {0};
+  static constexpr uint32_t onboard_control_sensors_present_ext_ = 0;
   uint32_t sensors_present_;
   uint32_t sensors_healthy_;
   uint16_t load_;
