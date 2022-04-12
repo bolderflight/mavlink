@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.1.0
+- Added a method to indicate whether communication has been established with a GCS
+- Added a method to indicate whether the link has been lost with a GCS
+- Added methods to set and get the link lost timeout
+
 ## v4.0.2
 - Updated to pull in new MAV Link messages
 

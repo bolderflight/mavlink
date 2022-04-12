@@ -146,6 +146,17 @@ while (1) {
 }
 ```
 
+## GCS Link
+
+**bool gcs_link_established()** Returns true if communication has been established with a GCS.
+
+**bool gcs_link_lost()** Returns true if communication has been established with a GCS and a heartbeat from the GCS has not been received in *gcs_timeout_ms* time.
+
+**void gcs_lost_link_timeout_ms(const int32_t val)** Sets the GCS link lost timeout threshold, ms. The default is 5000 ms.
+
+**int32_t gcs_lost_link_timeout_ms()** Returns the GCS link lost timeout threshold, ms.
+
+
 ## Heartbeat data
 
 **inline constexpr AircraftType aircraft_type()** Returns the aircraft type.

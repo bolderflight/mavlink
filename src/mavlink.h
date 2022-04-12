@@ -96,6 +96,10 @@ class MavLink {
         rx_sys_id_ = msg_.sysid;
         rx_comp_id_ = msg_.compid;
         switch (msg_.msgid) {
+          case MAVLINK_MSG_ID_HEARTBEAT: {
+            mavlink_msg_heartbeat_decode(&msg_, &heartbeat_msg_);
+            HeartbeatHandler(heartbeat_msg_);
+          }
           case MAVLINK_MSG_ID_COMMAND_LONG: {
             mavlink_msg_command_long_decode(&msg_, &cmd_long_);
             CommandLongHandler(cmd_long_);
@@ -116,6 +120,21 @@ class MavLink {
   }
   inline uint8_t sys_id() const {return heartbeat_.sys_id();}
   inline uint8_t comp_id() const {return heartbeat_.comp_id();}
+  /* Link established */
+  inline void gcs_lost_link_timeout_ms(const int32_t val) {
+    gcs_lost_link_timeout_ms_ = val;
+  }
+  inline int32_t gcs_lost_link_timeout_ms() const {
+    return gcs_lost_link_timeout_ms_;
+  }
+  inline bool gcs_link_established() const {return gcs_link_established_;}
+  inline bool gcs_link_lost() const {
+    if (gcs_link_established_) {
+      return (gcs_link_timer_ms_ > gcs_lost_link_timeout_ms_);
+    } else {
+      return false;
+    }
+  }
   /* Pass pointer to GNSS serial to provide RTCM corrections */
   inline void gnss_serial(HardwareSerial *bus) {rtcm_.gnss_serial(bus);}
   /* 
@@ -376,6 +395,23 @@ class MavLink {
   uint16_t min_version_ = 100;
   uint64_t capabilities_;
   static constexpr int32_t result_param2_ = 0;
+  /* GCS link status */
+  mavlink_heartbeat_t heartbeat_msg_;
+  bool gcs_link_latch_ = false;
+  bool gcs_link_established_ = false;
+  elapsedMillis gcs_link_timer_ms_;
+  int32_t gcs_lost_link_timeout_ms_ = 5000;
+  void HeartbeatHandler(const mavlink_heartbeat_t &ref) {
+    if (ref.type == MAV_TYPE_GCS) {
+      /* Established contact with GCS */
+      if (!gcs_link_latch_) {
+        gcs_link_established_ = true;
+        gcs_link_latch_ = true;
+      }
+      /* Reset timer */
+      gcs_link_timer_ms_ = 0;
+    }
+  }
   void CommandLongHandler(const mavlink_command_long_t &ref) {
     if ((cmd_long_.target_system == sys_id_) &&
         (cmd_long_.target_component == comp_id_)) {

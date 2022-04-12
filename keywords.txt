@@ -139,3 +139,6 @@ param4	KEYWORD2
 x	KEYWORD2
 y	KEYWORD2
 z	KEYWORD2
+gcs_lost_link_timeout_ms	KEYWORD2
+gcs_link_established	KEYWORD2
+gcs_link_lost	KEYWORD2
