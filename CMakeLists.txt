@@ -52,6 +52,7 @@ if (DEFINED MCU)
     src/parameter.h
     src/mission.h
     src/rtcm.h
+    src/utm.h
   )
   # Link libraries
   target_link_libraries(mavlink

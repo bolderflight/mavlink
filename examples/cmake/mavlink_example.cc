@@ -24,6 +24,7 @@
 */
 
 #include "mavlink.h"
+#include "utm.h"
 
 /*
 * Storage for mission items (i.e. flight plans), fence vertices, rally points,
