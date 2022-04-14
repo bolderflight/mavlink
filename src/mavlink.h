@@ -316,6 +316,65 @@ class MavLink {
   inline void throttle_prcnt(const float val) {
     telem_.throttle_prcnt(val);
   }
+  /* RX IMU */
+  inline optional<float> imu_accel_x_mps2() {return telem_.imu_accel_x_mps2();}
+  inline optional<float> imu_accel_y_mps2() {return telem_.imu_accel_y_mps2();}
+  inline optional<float> imu_accel_z_mps2() {return telem_.imu_accel_z_mps2();}
+  inline optional<float> imu_gyro_x_radps() {return telem_.imu_gyro_x_radps();}
+  inline optional<float> imu_gyro_y_radps() {return telem_.imu_gyro_y_radps();}
+  inline optional<float> imu_gyro_z_radps() {return telem_.imu_gyro_z_radps();}
+  inline optional<float> imu_mag_x_ut() {return telem_.imu_mag_x_ut();}
+  inline optional<float> imu_mag_y_ut() {return telem_.imu_mag_y_ut();}
+  inline optional<float> imu_mag_z_ut() {return telem_.imu_mag_z_ut();}
+  inline optional<float> imu_die_temp_c() {return telem_.imu_die_temp_c();}
+  /* RX air data */
+  inline optional<float> static_pres_pa() {return telem_.static_pres_pa();}
+  inline optional<float> diff_pres_pa() {return telem_.diff_pres_pa();}
+  inline optional<float> static_pres_die_temp_c() {
+    return telem_.static_pres_die_temp_c();
+  }
+  inline optional<float> diff_pres_die_temp_c() {
+    return telem_.diff_pres_die_temp_c();
+  }
+  /* RX GNSS */
+  inline optional<int8_t> gnss_fix() {return telem_.gnss_fix();}
+  inline optional<int8_t> gnss_num_sats() {return telem_.gnss_num_sats();}
+  inline optional<double> gnss_lat_rad() {return telem_.gnss_lat_rad();}
+  inline optional<double> gnss_lon_rad() {return telem_.gnss_lon_rad();}
+  inline optional<float> gnss_alt_msl_m() {return telem_.gnss_alt_msl_m();}
+  inline optional<float> gnss_alt_wgs84_m() {return telem_.gnss_alt_wgs84_m();}
+  inline optional<float> gnss_hdop() {return telem_.gnss_hdop();}
+  inline optional<float> gnss_vdop() {return telem_.gnss_vdop();}
+  inline optional<float> gnss_track_rad() {return telem_.gnss_track_rad();}
+  inline optional<float> gnss_spd_mps() {return telem_.gnss_spd_mps();}
+  inline optional<float> gnss_horz_acc_m() {return telem_.gnss_horz_acc_m();}
+  inline optional<float> gnss_vert_acc_m() {return telem_.gnss_vert_acc_m();}
+  inline optional<float> gnss_vel_acc_mps() {return telem_.gnss_vel_acc_mps();}
+  inline optional<float> gnss_track_acc_rad() {
+    return telem_.gnss_track_acc_rad();
+  }
+  inline optional<float> gnss_yaw_rad() {return telem_.gnss_yaw_rad();}
+  /* RX navigation filter */
+  inline optional<double> nav_lat_rad() {return telem_.nav_lat_rad();}
+  inline optional<double> nav_lon_rad() {return telem_.nav_lon_rad();}
+  inline optional<float> nav_alt_msl_m() {return telem_.nav_alt_msl_m();}
+  inline optional<float> nav_alt_agl_m() {return telem_.nav_alt_agl_m();}
+  inline optional<float> nav_north_pos_m() {return telem_.nav_north_pos_m();}
+  inline optional<float> nav_east_pos_m() {return telem_.nav_east_pos_m();}
+  inline optional<float> nav_down_pos_m() {return telem_.nav_down_pos_m();}
+  inline optional<float> nav_north_vel_mps() {
+    return telem_.nav_north_vel_mps();
+  }
+  inline optional<float> nav_east_vel_mps() {return telem_.nav_east_vel_mps();}
+  inline optional<float> nav_down_vel_mps() {return telem_.nav_down_vel_mps();}
+  inline optional<float> nav_gnd_spd_mps() {return telem_.nav_gnd_spd_mps();}
+  inline optional<float> nav_ias_mps() {return telem_.nav_ias_mps();}
+  inline optional<float> nav_pitch_rad() {return telem_.nav_pitch_rad();}
+  inline optional<float> nav_roll_rad() {return telem_.nav_roll_rad();}
+  inline optional<float> nav_hdg_rad() {return telem_.nav_hdg_rad();}
+  inline optional<float> nav_gyro_x_radps() {return telem_.nav_gyro_x_radps();}
+  inline optional<float> nav_gyro_y_radps() {return telem_.nav_gyro_y_radps();}
+  inline optional<float> nav_gyro_z_radps() {return telem_.nav_gyro_z_radps();}
   /* Parameters */
   static constexpr std::size_t params_size() {return N;}
   inline void params(const std::array<float, N> &val) {param_.params(val);}

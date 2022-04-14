@@ -12,7 +12,7 @@ This library supports the [MAVLink](https://mavlink.io/) protocol, which is a co
 MAVLink is a messaging protocol for communicating between drone components, located both on and off the vehicle. The protocol consists of many message and microservice definitions and [C headers](https://github.com/bolderflight/mavlink_c_library_v2) are available for packing, unpacking, sending, and parsing messages. This library implements each microservice as a class and then wraps all of them into a parent class for easier integration with vehicle software. The supported microservices are:
    * [Heartbeat](https://mavlink.io/en/services/heartbeat.html): establishes communication with other MAVLink components and relays information on vehicle type and status.
    * Utility: sends status texts to the ground station.
-   * Telemetry: sends sensor and estimation data for display on a ground station or use in a MAVLink component.
+   * Telemetry: sends sensor and estimation data for display on a ground station or use in a MAVLink component. Can also receive SCALED_IMU, SCALED_PRESSURE, GPS_RAW_INT, ATTITUDE, VFR_HUD, LOCAL_POSITION_NED, and GLOBAL_POSITION_NED messages and output the received data.
    * [Parameter](https://mavlink.io/en/services/parameter.html): defines parameters whose values can be set by other MAVLink components, such as ground stations. Useful for defining on-board excitations, tunable control law gains, etc. Only floating point types are currently supported.
    * [Mission](https://mavlink.io/en/services/mission.html): enables Mission Items to be sent to the drone from a ground station. These can include flight plans, fences, and rally points.
    * [UTM](http://mavlink.io/en/services/traffic_management.html): implements the UAS Traffic Management (UTM) microservice, broadcasting the UTM data from the drone and receiving UTM data from other nearby drones.
@@ -409,6 +409,111 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 **inline void throttle_ch(const uint8_t val)** The inceptor channel number for the throttle.
 
 **inline void throttle_prcnt(const float val)** Throttle percent.
+
+## Receiving Telemetry Data
+
+### IMU
+
+**optional<float> imu_accel_x_mps2()** Returns the IMU x accelerometer data, m/s/s, if it has been updated since the last time this method was called.
+
+**optional<float> imu_accel_y_mps2()** Returns the IMU y accelerometer data, m/s/s, if it has been updated since the last time this method was called.
+
+**optional<float> imu_accel_z_mps2()** Returns the IMU z accelerometer data, m/s/s, if it has been updated since the last time this method was called.
+
+**optional<float> imu_gyro_x_radps()** Returns the IMU x gyro data, rad/s, if it has been updated since the last time this method was called.
+
+**optional<float> imu_gyro_y_radps()** Returns the IMU y gyro data, rad/s, if it has been updated since the last time this method was called.
+
+**optional<float> imu_gyro_z_radps()** Returns the IMU z gyro data, rad/s, if it has been updated since the last time this method was called.
+
+**optional<float> imu_mag_x_ut()** Returns the IMU x magnetometer data, uT, if it has been updated since the last time this method was called.
+
+**optional<float> imu_mag_y_ut()** Returns the IMU y magnetometer data, uT, if it has been updated since the last time this method was called.
+
+**optional<float> imu_mag_z_ut()** Returns the IMU z magnetometer data, uT, if it has been updated since the last time this method was called.
+
+**optional<float> imu_die_temp_c()** Returns the IMU die temperature, C, if it has been updated since the last time this method was called.
+
+### Air Data
+
+**optional<float> static_pres_pa()** Returns the static pressure, Pa, if it has been updated since the last time this method was called.
+
+**optional<float> diff_pres_pa()** Returns the differential pressure, Pa, if it has been updated since the last time this method was called.
+
+**optional<float> static_pres_die_temp_c()** Returns the static pressure die temperature, C, if it has been updated since the last time this method was called.
+
+**optional<float> diff_pres_die_temp_c()** Returns the differential pressure die temperature, C, if it has been updated since the last time this method was called.
+
+### GNSS
+
+**optional<int8_t> gnss_fix()** Returns the GNSS fix, if it has been updated since the last time this method was called.
+
+**optional<int8_t> gnss_num_sats()** Returns the number of satellites used in the GNSS solution, if it has been updated since the last time this method was called.
+
+**optional<double> gnss_lat_rad()** Returns the latitude, rad, if it has been updated since the last time this method was called.
+
+**optional<double> gnss_lon_rad()** Returns the longitude, rad, if it has been updated since the last time this method was called.
+
+**optional<float> gnss_alt_msl_m()** Returns the altitude above mean sea level, m, if it has been updated since the last time this method was called.
+
+**optional<float> gnss_alt_wgs84_m()** Returns the altitude above the WGS84 ellipsoid, m, if it has been updated since the last time this method was called.
+
+**optional<float> gnss_hdop()** Returns the horizontal dilution of precision if it has been updated since the last time this method was called.
+
+**optional<float> gnss_vdop()** Returns the vertical dilution of precision if it has been updated since the last time this method was called.
+
+**optional<float> gnss_track_rad()** Returns the GNSS ground track, rad, if it has been updated since the last time this method was called.
+
+**optional<float> gnss_spd_mps()** Returns the GNSS estimated ground speed, m/s, if it has been updated since the last time this method was called.
+
+**optional<float> gnss_horz_acc_m()** Returns the GNSS estimated horizontal position accuracy, m, if it has been updated since the last time this method was called.
+
+**optional<float> gnss_vert_acc_m()** Returns the GNSS estimated vertical position accuracy, m, if it has been updated since the last time this method was called.
+
+**optional<float> gnss_vel_acc_mps()** Returns the GNSS estimated velocity accuracy, m/s, if it has been updated since the last time this method was called.
+
+**optional<float> gnss_track_acc_rad()** Returns the GNSS estimated track accuracy, rad, if it has been updated since the last time this method was called.
+
+**optional<float> gnss_yaw_rad()** Returns the GNSS yaw, rad, if it has been updated since the last time this method was called.
+
+### Navigation Filter
+
+**optional<double> nav_lat_rad()** Returns the latitude, rad, from the navigation filter, if it has been updated since the last time this method was called.
+
+**optional<double> nav_lon_rad()** Returns the longitude, rad, from the navigation filter, if it has been updated since the last time this method was called.
+
+**optional<float> nav_alt_msl_m()** Returns the altitude above mean sea level, m, if it has been updated since the last time this method was called.
+
+**optional<float> nav_alt_agl_m()** Returns the altitude above ground level, m, if it has been updated since the last time this method was called.
+
+**optional<float> nav_north_pos_m()** Returns the position north of the home position, m, if it has been updated since the last time this method was called.
+
+**optional<float> nav_east_pos_m()** Returns the position east of the home position, m, if it has been updated since the last time this method was called.
+
+**optional<float> nav_down_pos_m()** Returns the position down from the home position, m, if it has been updated since the last time this method was called.
+
+**optional<float> nav_north_vel_mps()** Returns the vehicle velocity in the north direction, m/s, if it has been updated since the last time this method was called.
+
+**optional<float> nav_east_vel_mps()** Returns the vehicle velocity in the east direction, m/s, if it has been updated since the last time this method was called.
+
+**optional<float> nav_down_vel_mps()** Returns the vehicle velocity in the down direction, m/s, if it has been updated since the last time this method was called.
+
+**optional<float> nav_gnd_spd_mps()** Returns the vehicle ground speed, m/s, if it has been updated since the last time this method was called.
+
+**optional<float> nav_ias_mps()** Returns the indicated airspeed, m/s, if it has been updated since the last time this method was called.
+
+**optional<float> nav_pitch_rad()** Returns the pitch angle, rad, if it has been updated since the last time this method was called.
+
+**optional<float> nav_roll_rad()** Returns the roll angle, rad, if it has been updated since the last time this method was called.
+
+**optional<float> nav_hdg_rad()** Returns the vehicle heading, rad, if it has been updated since the last time this method was called.
+
+**optional<float> nav_gyro_x_radps()** Returns the corrected gyro x measurement, rad/s, if it has been updated since the last time this method was called.
+
+**optional<float> nav_gyro_y_radps()** Returns the corrected gyro y measurement, rad/s, if it has been updated since the last time this method was called.
+
+**optional<float> nav_gyro_z_radps()** Returns the corrected gyro z measurement, rad/s, if it has been updated since the last time this method was called.
+
 
 ## Parameters
 
