@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.2.0
+- Added UTM microservice
+
 ## v4.1.0
 - Added a method to indicate whether communication has been established with a GCS
 - Added a method to indicate whether the link has been lost with a GCS

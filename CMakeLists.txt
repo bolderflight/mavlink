@@ -11,7 +11,7 @@ if (DEFINED MCU)
   set(CMAKE_TOOLCHAIN_FILE "${mcu_support_SOURCE_DIR}/cmake/cortex.cmake")
   # Project information
   project(Mavlink
-    VERSION 4.1.0
+    VERSION 4.2.0
     DESCRIPTION "Mavlink communication protocol interface"
     LANGUAGES CXX
   )
@@ -52,6 +52,7 @@ if (DEFINED MCU)
     src/parameter.h
     src/mission.h
     src/rtcm.h
+    src/utm.h
   )
   # Link libraries
   target_link_libraries(mavlink

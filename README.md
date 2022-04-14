@@ -15,6 +15,7 @@ MAVLink is a messaging protocol for communicating between drone components, loca
    * Telemetry: sends sensor and estimation data for display on a ground station or use in a MAVLink component.
    * [Parameter](https://mavlink.io/en/services/parameter.html): defines parameters whose values can be set by other MAVLink components, such as ground stations. Useful for defining on-board excitations, tunable control law gains, etc. Only floating point types are currently supported.
    * [Mission](https://mavlink.io/en/services/mission.html): enables Mission Items to be sent to the drone from a ground station. These can include flight plans, fences, and rally points.
+   * [UTM](http://mavlink.io/en/services/traffic_management.html): implements the UAS Traffic Management (UTM) microservice, broadcasting the UTM data from the drone and receiving UTM data from other nearby drones.
 
 The MAVLink protocol is massive and documentation is sometimes sparse with respect to *how* components should communicate with each other (the order of messages, what actions the drone or ground control station should take on receiving each message). Further, ground control stations often only use a subset of MAVLink. This library attempts to simplify MAVLink usage by providing an intuitive interface and abstracting away the microservice details.
 
@@ -81,11 +82,11 @@ This library is within the namespace *bfs*
 
 ## MavLink
 
-**MavLink<std::size_t N>** The MavLink constructor is templated with the number of parameters to support.
+**MavLink<std::size_t N, std::size_t M>** The MavLink constructor is templated with the number of parameters to support and the number of received UTM messages.
 
 ```C++
-/* MavLink object support 5 parameters */
-bfs::MavLink<5> mavlink;
+/* MavLink object support 5 parameters and up to 10 simultaneous UTM broadcasts received */
+bfs::MavLink<5, 10> mavlink;
 ```
 
 ## Config
@@ -452,3 +453,93 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 ## Utility
 
 **void SendStatusText(Severity severity, char const &ast;msg)** Sends a status text given the severity and a message.
+
+## UAS Traffic Management (UTM)
+
+### Config
+
+**void utm_update_period_s(const float val)** Sets the update rate for broadcasting UTM messages.
+
+**constexpr std::size_t UTM_UAS_ID_LEN** The length of the UAS ID.
+
+**void utm_uas_id(const std::array<uint8_t, UTM_UAS_ID_LEN> &id)** Sets the UTM UAS ID.
+
+### Broadcast Data
+
+**void utm_unix_time_us(const uint64_t val)** Time since the unix epoch, us.
+
+**void utm_lat_rad(const double val)** Latitude, rad.
+
+**void utm_lon_rad(const double val)** Longitude, rad.
+
+**void utm_alt_wgs84_m(const float val)** Altitude above the WGS84 ellipsoid, m.
+
+**void utm_rel_alt_m(const float val)** Altitude above ground, m.
+
+**void utm_north_vel_mps(const float val)** North velocity, m/s.
+
+**void utm_east_vel_mps(const float val)** East velocity, m/s.
+
+**void utm_down_vel_mps(const float val)** Down velocity, m/s.
+
+**void utm_horz_acc_m(const float val)** Horizontal position accuracy, m.
+
+**void utm_vert_acc_m(const float val)** Vertical position accuracy, m.
+
+**void utm_vel_acc_mps(const float val)** Velocity accuracy, m/s.
+
+**void utm_next_lat_rad(const double val)** Latitude of the next waypoint, rad.
+
+**void utm_next_lon_rad(const double val)** Longitude of the next waypoint, rad.
+
+**void utm_next_alt_wgs84_m(const float val)** Altitude above the WGS84 ellipsoid of the next waypoint, m.
+
+**void utm_flight_state(const FlightState val)** UTM flight state, which is an enum:
+
+| Enum | Description |
+| --- | --- |
+| FLIGHT_STATE_UNKNOWN | The flight state can't be determined |
+| FLIGHT_STATE_GROUND | UAS on ground |
+| FLIGHT_STATE_AIRBORNE | UAS airborne |
+| FLIGHT_STATE_EMERGENCY | UAS is in an emergency flight state |
+| FLIGHT_STATE_NOCTRL | UAS has no active controls |
+
+### Receive Data
+
+**std::size_t utm_num_rx()** Number of UTM broadcasts received.
+
+**void UtmClearRx()** Clear the received data.
+
+**optional<uint64_t> utm_unix_time_us(const std::size_t idx)** Returns the received unix time (if available) from the given UTM broadcast index.
+
+**optional<std::array<uint8_t, UTM_UAS_ID_LEN>> utm_uas_id** Returns the received UAS ID (if available) from the given UTM broadcast index.
+
+**optional<double> utm_lat_rad(const std::size_t idx)** Returns the received latitude, rad (if available) from the given UTM broadcast index.
+
+**optional<double> utm_lon_rad(const std::size_t idx)** Returns the received longitude, rad (if available) from the given UTM broadcast index.
+
+**optional<float> utm_alt_wgs84_m(const std::size_t idx)** Returns the received altitude above the WGS84 ellipsoid, m (if available) from the given UTM broadcast index.
+
+**optional<float> utm_rel_alt_m(const std::size_t idx)** Returns the received altitude above ground, m (if available) from the given UTM broadcast index.
+
+**optional<float> utm_north_vel_mps(const std::size_t idx)** Returns the received north velocity, m/s (if available) from the given UTM broadcast index.
+
+**optional<float> utm_east_vel_mps(const std::size_t idx)** Returns the received east velocity, m/s (if available) from the given UTM broadcast index.
+
+**optional<float> utm_down_vel_mps(const std::size_t idx)** Returns the received down velocity, m/s (if available) from the given UTM broadcast index.
+
+**optional<float> utm_horz_acc_m(const std::size_t idx)** Returns the received horizontal position accuracy, m (if available) from the given UTM broadcast index.
+
+**optional<float> utm_vert_acc_m(const std::size_t idx)** Returns the received vertical position accuracy, m (if available) from the given UTM broadcast index.
+
+**optional<float> utm_vel_acc_mps(const std::size_t idx)** Returns the received velocity accuracy, m/s (if available) from the given UTM broadcast index.
+
+**optional<double> utm_next_lat_rad(const std::size_t idx)** Returns the received latitude of the next waypoint, rad (if available) from the given UTM broadcast index.
+
+**optional<double> utm_next_lon_rad(const std::size_t idx)** Returns the received longitude of the next waypoint, rad (if available) from the given UTM broadcast index.
+
+**optional<float> utm_next_alt_wgs84_m(const std::size_t idx)** Returns the received altitude above the WGS84 ellipsoid of the next waypoint, m (if available) from the given UTM broadcast index.
+
+**float utm_update_period_s(const std::size_t idx)** Returns the received update period, s from the given UTM broadcast index.
+
+**FlightState utm_flight_state(const std::size_t idx)** Returns the received UTM flight state from the given UTM broadcast index.

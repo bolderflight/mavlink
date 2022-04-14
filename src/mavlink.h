@@ -39,10 +39,11 @@
 #include "parameter.h"  // NOLINT
 #include "mission.h"  // NOLINT
 #include "rtcm.h"  // NOLINT
+#include "utm.h"  // NOLINT
 
 namespace bfs {
 
-template<std::size_t N>
+template<std::size_t N, std::size_t M>
 class MavLink {
  public:
   /* Config */
@@ -54,6 +55,7 @@ class MavLink {
     mission_.hardware_serial(bus);
     util_.hardware_serial(bus);
     rtcm_.hardware_serial(bus);
+    utm_.hardware_serial(bus);
   }
   inline void aircraft_type(const int8_t type) {
     heartbeat_.aircraft_type(type);
@@ -65,6 +67,7 @@ class MavLink {
     param_.sys_id(sys_id);
     mission_.sys_id(sys_id);
     util_.sys_id(sys_id);
+    utm_.sys_id(sys_id);
   }
   inline void mission(MissionItem * const mission,
                       const std::size_t mission_size,
@@ -88,6 +91,7 @@ class MavLink {
     telem_.Update();
     param_.Update();
     mission_.Update();
+    utm_.Update();
     /* Check for received messages */
     while (bus_->available()) {
       if (mavlink_frame_char(chan_, bus_->read(), &msg_, &status_)
@@ -111,6 +115,7 @@ class MavLink {
         param_.MsgHandler(msg_);
         mission_.MsgHandler(msg_);
         rtcm_.MsgHandler(msg_);
+        utm_.MsgHandler(msg_);
       }
     }
   }
@@ -351,6 +356,83 @@ class MavLink {
   void SendStatusText(Severity severity, const char(&msg)[NCHAR]) {
     util_.SendStatusText(severity, msg);
   }
+  /* UTM */
+  static constexpr std::size_t UTM_UAS_ID_LEN = 18;
+  inline void utm_update_period_s(const float val) {utm_.update_period_s(val);}
+  inline void utm_unix_time_us(const uint64_t val) {utm_.unix_time_us(val);}
+  inline void utm_uas_id(const std::array<uint8_t, UTM_UAS_ID_LEN> &id) {
+    utm_.uas_id(id);
+  }
+  inline void utm_lat_rad(const double val) {utm_.lat_rad(val);}
+  inline void utm_lon_rad(const double val) {utm_.lon_rad(val);}
+  inline void utm_alt_wgs84_m(const float val) {utm_.alt_wgs84_m(val);}
+  inline void utm_rel_alt_m(const float val) {utm_.rel_alt_m(val);}
+  inline void utm_north_vel_mps(const float val) {utm_.north_vel_mps(val);}
+  inline void utm_east_vel_mps(const float val) {utm_.east_vel_mps(val);}
+  inline void utm_down_vel_mps(const float val) {utm_.down_vel_mps(val);}
+  inline void utm_horz_acc_m(const float val) {utm_.horz_acc_m(val);}
+  inline void utm_vert_acc_m(const float val) {utm_.vert_acc_m(val);}
+  inline void utm_vel_acc_mps(const float val) {utm_.vel_acc_mps(val);}
+  inline void utm_next_lat_rad(const double val) {utm_.next_lat_rad(val);}
+  inline void utm_next_lon_rad(const double val) {utm_.nex_lon_rad(val);}
+  inline void utm_next_alt_wgs84_m(const float val) {
+    utm_.next_alt_wgs84_m(val);
+  }
+  inline void utm_flight_state(const FlightState val) {utm_.flight_state(val);}
+  inline std::size_t utm_num_rx() const {return utm_.num_rx();}
+  inline void UtmClearRx() {utm_.ClearRx();}
+  inline optional<uint64_t> utm_unix_time_us(const std::size_t idx) const {
+    return utm_.unix_time_us(idx);
+  }
+  inline optional<std::array<uint8_t, UTM_UAS_ID_LEN>> utm_uas_id(
+                                                  const std::size_t idx) const {
+    return utm_.uas_id(idx);
+  }
+  inline optional<double> utm_lat_rad(const std::size_t idx) const {
+    return utm_.lat_rad(idx);
+  }
+  inline optional<double> utm_lon_rad(const std::size_t idx) const {
+    return utm_.lon_rad(idx);
+  }
+  inline optional<float> utm_alt_wgs84_m(const std::size_t idx) const {
+    return utm_.alt_wgs84_m(idx);
+  }
+  inline optional<float> utm_rel_alt_m(const std::size_t idx) const {
+    return utm_.rel_alt_m(idx);
+  }
+  inline optional<float> utm_north_vel_mps(const std::size_t idx) const {
+    return utm_.north_vel_mps(idx);
+  }
+  inline optional<float> utm_east_vel_mps(const std::size_t idx) const {
+    return utm_.east_vel_mps(idx);
+  }
+  inline optional<float> utm_down_vel_mps(const std::size_t idx) const {
+    return utm_.down_vel_mps(idx);
+  }
+  inline optional<float> utm_horz_acc_m(const std::size_t idx) const {
+    return utm_.horz_acc_m(idx);
+  }
+  inline optional<float> utm_vert_acc_m(const std::size_t idx) const {
+    return utm_.vert_acc_m(idx);
+  }
+  inline optional<float> utm_vel_acc_mps(const std::size_t idx) const {
+    return utm_.vel_acc_mps(idx);
+  }
+  inline optional<double> utm_next_lat_rad(const std::size_t idx) const {
+    return utm_.next_lat_rad(idx);
+  }
+  inline optional<double> utm_next_lon_rad(const std::size_t idx) const {
+    return utm_.next_lon_rad(idx);
+  }
+  inline optional<float> utm_next_alt_wgs84_m(const std::size_t idx) const {
+    return utm_.next_alt_wgs84_m(idx);
+  }
+  inline float utm_update_period_s(const std::size_t idx) const {
+    return utm_.update_period_s(idx);
+  }
+  inline FlightState utm_flight_state(const std::size_t idx) const {
+    return utm_.utm_flight_state(idx);
+  }
 
  private:
   /* Serial bus */
@@ -373,6 +455,7 @@ class MavLink {
   MavLinkParameter<N> param_;
   MavLinkMission mission_;
   MavLinkRtcm rtcm_;
+  MavLinkUtm<M> utm_;
   /* Message handlers */
   uint8_t rx_sys_id_, rx_comp_id_;
   uint16_t cmd_;
