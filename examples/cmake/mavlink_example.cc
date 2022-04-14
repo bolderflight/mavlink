@@ -24,7 +24,6 @@
 */
 
 #include "mavlink.h"
-#include "utm.h"
 
 /*
 * Storage for mission items (i.e. flight plans), fence vertices, rally points,
@@ -38,8 +37,9 @@ std::array<bfs::MissionItem, 250> temp;
 
 /*
 * A MavLink object with 5 parameters that can be tuned in real-time from the GCS
+* and up to 10 simultaneous UTM messages received
 */
-bfs::MavLink<5> mavlink;
+bfs::MavLink<5, 10> mavlink;
 
 int main() {
   /* Starting serial to print results */
