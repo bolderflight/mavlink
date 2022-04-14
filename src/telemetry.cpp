@@ -490,7 +490,7 @@ void MavLinkTelemetry::ParseScaledImu(const mavlink_scaled_imu_t &ref) {
   rx_imu_mag_z_ut_ = static_cast<float>(ref.zmag) / 10.0f;
   if (ref.temperature != 0) {
     rx_imu_die_temp_c_ = static_cast<float>(ref.temperature) / 100.0f;
-  } 
+  }
 }
 void MavLinkTelemetry::ParseScaledPres(const mavlink_scaled_pressure_t &ref) {
   rx_static_pres_pa_ = convpres(ref.press_abs, PresUnit::HPA, PresUnit::PA);
@@ -527,7 +527,7 @@ void MavLinkTelemetry::ParseGpsRawInt(const mavlink_gps_raw_int_t &ref) {
   rx_gnss_vel_acc_mps_ = static_cast<float>(ref.vel_acc) / 1000.0f;
   rx_gnss_track_acc_rad_ = deg2rad(static_cast<float>(ref.hdg_acc) / 100000.0f);
   if ((ref.yaw != 0) && (ref.yaw != UINT16_MAX)) {
-    rx_gnss_yaw_ = deg2rad(static_cast<float>(ref.yaw) / 100.0f); 
+    rx_gnss_yaw_ = deg2rad(static_cast<float>(ref.yaw) / 100.0f);
   }
 }
 void MavLinkTelemetry::ParseAttitude(const mavlink_attitude_t &ref) {
