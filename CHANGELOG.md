@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.3.0
+- Added capability to receive SCALED_IMU, SCALED_PRESSURE, GPS_RAW_INT, ATTITUDE, VFR_HUD, LOCAL_POSITION_NED, and GLOBAL_POSITION_NED messages and output the data
+
 ## v4.2.0
 - Added UTM microservice
 
