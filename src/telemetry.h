@@ -240,6 +240,15 @@ class MavLinkTelemetry {
     use_throttle_prcnt_ = true;
     throttle_prcnt_ = val;
   }
+  /* Wind Covariance */
+  inline void wind_north_vel_mps(const float val) {wind_x_mps_ = val;}
+  inline void wind_east_vel_mps(const float val) {wind_y_mps_ = val;}
+  inline void wind_down_vel_mps(const float val) {wind_z_mps_ = val;}
+  inline void wind_var_horz_mps(const float val) {wind_var_horz_mps_ = val;}
+  inline void wind_var_vert_mps(const float val) {wind_var_vert_mps_ = val;}
+  inline void wind_meas_alt_m(const float val) {wind_alt_m_ = val;}
+  inline void wind_horz_acc_mps(const float val) {wind_horz_acc_mps_ = val;}
+  inline void wind_vert_acc_mps(const float val) {wind_vert_acc_mps_ = val;}
   /* Receive IMU data */
   inline optional<float> imu_accel_x_mps2() {
     optional<float> ret = rx_imu_accel_x_mps2_;
@@ -580,6 +589,15 @@ class MavLinkTelemetry {
   int8_t throttle_ch_ = 0;
   float throttle_prcnt_;
   bool use_throttle_prcnt_ = false;
+  /* Wind */
+  float wind_x_mps_ = 0.0f;
+  float wind_y_mps_ = 0.0f;
+  float wind_z_mps_ = 0.0f;
+  float wind_var_horz_mps_ = 0.0f;
+  float wind_var_vert_mps_ = 0.0f;
+  float wind_alt_m_ = 0.0f;
+  float wind_horz_acc_mps_ = 0.0f;
+  float wind_vert_acc_mps_ = 0.0f;
   /* RX Data - IMU */
   mavlink_scaled_imu_t scaled_imu_;
   optional<float> rx_imu_accel_x_mps2_;
@@ -660,6 +678,7 @@ class MavLinkTelemetry {
   void SendVfrHud();
   /* SRx_EXTRA3 */
   void SRx_EXTRA3();
+  void SendWindCov();
   /* SRx_POSITION */
   void SRx_POSITION();
   void SendLocalPositionNed();

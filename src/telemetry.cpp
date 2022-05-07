@@ -282,7 +282,20 @@ void MavLinkTelemetry::SendVfrHud() {
   mavlink_msg_to_send_buffer(msg_buf_, &msg_);
   bus_->write(msg_buf_, msg_len_);
 }
-void MavLinkTelemetry::SRx_EXTRA3() {}
+void MavLinkTelemetry::SRx_EXTRA3() {
+  SendWindCov();
+}
+
+void MavLinkTelemetry::SendWindCov() {
+  msg_len_ = mavlink_msg_wind_cov_pack(sys_id_, comp_id_, &msg_, sys_time_us_,
+                                       wind_x_mps_, wind_y_mps_, wind_z_mps_,
+                                       wind_var_horz_mps_, wind_var_vert_mps_,
+                                       wind_alt_m_, wind_horz_acc_mps_,
+                                       wind_vert_acc_mps_);
+  mavlink_msg_to_send_buffer(msg_buf_, &msg_);
+  bus_->write(msg_buf_, msg_len_);
+}
+
 void MavLinkTelemetry::SendBatteryStatus() {
   if (battery_volt_.set) {
     volt_[0] = static_cast<uint16_t>(battery_volt_.val * 1000.0f);
