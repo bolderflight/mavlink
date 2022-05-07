@@ -316,6 +316,29 @@ class MavLink {
   inline void throttle_prcnt(const float val) {
     telem_.throttle_prcnt(val);
   }
+  /* Wind */
+  inline void wind_north_vel_mps(const float val) {
+    telem_.wind_north_vel_mps(val);
+  }
+  inline void wind_east_vel_mps(const float val) {
+    telem_.wind_east_vel_mps(val);
+  }
+  inline void wind_down_vel_mps(const float val) {
+    telem_.wind_down_vel_mps(val);
+  }
+  inline void wind_var_horz_mps(const float val) {
+    telem_.wind_var_horz_mps(val);
+  }
+  inline void wind_var_vert_mps(const float val) {
+    telem_.wind_var_vert_mps(val);
+  }
+  inline void wind_meas_alt_m(const float val) {telem_.wind_meas_alt_m(val);}
+  inline void wind_horz_acc_mps(const float val) {
+    telem_.wind_horz_acc_mps(val);
+  }
+  inline void wind_vert_acc_mps(const float val) {
+    telem_.wind_vert_acc_mps(val);
+  }
   /* RX IMU */
   inline optional<float> imu_accel_x_mps2() {return telem_.imu_accel_x_mps2();}
   inline optional<float> imu_accel_y_mps2() {return telem_.imu_accel_y_mps2();}

@@ -167,3 +167,11 @@ FLIGHT_STATE_GROUND	LITERAL1
 FLIGHT_STATE_AIRBORNE	LITERAL1
 FLIGHT_STATE_EMERGENCY	LITERAL1
 FLIGHT_STATE_NOCTRL	LITERAL1
+wind_north_vel_mps	KEYWORD2
+wind_east_vel_mps	KEYWORD2
+wind_down_vel_mps	KEYWORD2
+wind_var_horz_mps	KEYWORD2
+wind_var_vert_mps	KEYWORD2
+wind_meas_alt_m	KEYWORD2
+wind_horz_acc_mps	KEYWORD2
+wind_vert_acc_mps	KEYWORD2

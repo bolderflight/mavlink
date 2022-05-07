@@ -410,6 +410,25 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **inline void throttle_prcnt(const float val)** Throttle percent.
 
+### Wind
+
+**inline void wind_north_vel_mps(const float val)** Wind in X (NED) direction, m/s
+
+**inline void wind_east_vel_mps(const float val)** Wind in Y (NED) direction, m/s
+
+**inline void wind_down_vel_mps(const float val)** Wind in Z (NED) direction, m/s
+
+**inline void wind_var_horz_mps(const float val)** Variability of the wind in XY. RMS of a 1 Hz lowpassed wind estimate, m/s.
+
+**inline void wind_var_vert_mps(const float val)** Variability of the wind in Z. RMS of a 1 Hz lowpassed wind estimate, m/s.
+
+**inline void wind_meas_alt_m(const float val)** Altitude (MSL) that this measurement was taken at, m.
+
+**inline void wind_horz_acc_mps(const float val)** Horizontal speed 1-STD accuracy, m/s.
+
+**inline void wind_vert_acc_mps(const float val)** Vertical speed 1-STD accuracy, m/s.
+
+
 ## Receiving Telemetry Data
 
 ### IMU
