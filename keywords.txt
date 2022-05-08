@@ -175,3 +175,4 @@ wind_var_vert_mps	KEYWORD2
 wind_meas_alt_m	KEYWORD2
 wind_horz_acc_mps	KEYWORD2
 wind_vert_acc_mps	KEYWORD2
+unix_time_us	KEYWORD2

@@ -339,6 +339,8 @@ class MavLink {
   inline void wind_vert_acc_mps(const float val) {
     telem_.wind_vert_acc_mps(val);
   }
+  /* Unix Time */
+  inline void unix_time_us(const uint64_t val) {telem_.unix_time_us(val);}
   /* RX IMU */
   inline optional<float> imu_accel_x_mps2() {return telem_.imu_accel_x_mps2();}
   inline optional<float> imu_accel_y_mps2() {return telem_.imu_accel_y_mps2();}

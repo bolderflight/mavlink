@@ -249,6 +249,8 @@ class MavLinkTelemetry {
   inline void wind_meas_alt_m(const float val) {wind_alt_m_ = val;}
   inline void wind_horz_acc_mps(const float val) {wind_horz_acc_mps_ = val;}
   inline void wind_vert_acc_mps(const float val) {wind_vert_acc_mps_ = val;}
+  /* Unix time */
+  inline void unix_time_us(const uint64_t val) {unix_time_us_ = val;}
   /* Receive IMU data */
   inline optional<float> imu_accel_x_mps2() {
     optional<float> ret = rx_imu_accel_x_mps2_;
@@ -507,6 +509,7 @@ class MavLinkTelemetry {
   };
   /* System */
   uint64_t sys_time_us_ = 0;
+  uint64_t unix_time_us_ = 0;
   uint32_t frame_time_us_ = 0;
   uint32_t frame_period_us_ = 0;
   bool gyro_installed_ = false;
@@ -679,6 +682,7 @@ class MavLinkTelemetry {
   /* SRx_EXTRA3 */
   void SRx_EXTRA3();
   void SendWindCov();
+  void SendSystemTime();
   /* SRx_POSITION */
   void SRx_POSITION();
   void SendLocalPositionNed();
