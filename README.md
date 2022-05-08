@@ -201,7 +201,7 @@ Telemetry data is grouped into [Data Streams](https://mavlink.io/en/messages/com
 | Position | [Local Position NED](https://mavlink.io/en/messages/common.html#LOCAL_POSITION_NED), [Global Position](https://mavlink.io/en/messages/common.html#GLOBAL_POSITION_INT) |
 | Extra 1 | [Attitude](https://mavlink.io/en/messages/common.html#ATTITUDE) |
 | Extra 2 | [VFR HUD](https://mavlink.io/en/messages/common.html#VFR_HUD) |
-| Extra 3 | - |
+| Extra 3 | [Wind Covariance](http://mavlink.io/en/messages/common.html#WIND_COV), [System Time](http://mavlink.io/en/messages/common.html#SYSTEM_TIME) |
 
 Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) will request data stream rates from the autopilot, which this library will correctly handle. Other ground stations, such as [QGroundControl](http://qgroundcontrol.com/) do not request data stream rates and they must be set by the autopilot. The following methods enable getting and setting the data stream rates.
 
@@ -428,6 +428,9 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **inline void wind_vert_acc_mps(const float val)** Vertical speed 1-STD accuracy, m/s.
 
+### Unix Time
+
+**inline void unix_time_us(const uint64_t val)** Timestamp (UNIX epoch time), us.
 
 ## Receiving Telemetry Data
 

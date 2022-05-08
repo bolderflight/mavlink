@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.5.0
+- Added system time transmit message
+
 # v4.4.0
 - Added wind covariance transmit message
 

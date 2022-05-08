@@ -284,6 +284,7 @@ void MavLinkTelemetry::SendVfrHud() {
 }
 void MavLinkTelemetry::SRx_EXTRA3() {
   SendWindCov();
+  SendSystemTime();
 }
 
 void MavLinkTelemetry::SendWindCov() {
@@ -292,6 +293,14 @@ void MavLinkTelemetry::SendWindCov() {
                                        wind_var_horz_mps_, wind_var_vert_mps_,
                                        wind_alt_m_, wind_horz_acc_mps_,
                                        wind_vert_acc_mps_);
+  mavlink_msg_to_send_buffer(msg_buf_, &msg_);
+  bus_->write(msg_buf_, msg_len_);
+}
+
+void MavLinkTelemetry::SendSystemTime() {
+  sys_time_ms_ = static_cast<uint32_t>(sys_time_us_ / 1000);
+  msg_len_ = mavlink_msg_system_time_pack(sys_id_, comp_id_, &msg_,
+                                          unix_time_us_, sys_time_ms_);
   mavlink_msg_to_send_buffer(msg_buf_, &msg_);
   bus_->write(msg_buf_, msg_len_);
 }
