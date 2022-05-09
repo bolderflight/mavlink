@@ -341,6 +341,11 @@ class MavLink {
   }
   /* Unix Time */
   inline void unix_time_us(const uint64_t val) {telem_.unix_time_us(val);}
+  /* Home position */
+  inline void home_lat_rad(const double val) {telem_.home_lat_rad(val);}
+  inline void home_lon_rad(const double val) {telem_.home_lon_rad(val);}
+  inline void home_alt_m(const float val) {telem_.home_alt_m_(val);}
+  inline void SendHomePos() {telem_.SendHomePos();}
   /* RX IMU */
   inline optional<float> imu_accel_x_mps2() {return telem_.imu_accel_x_mps2();}
   inline optional<float> imu_accel_y_mps2() {return telem_.imu_accel_y_mps2();}

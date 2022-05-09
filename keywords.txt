@@ -176,3 +176,7 @@ wind_meas_alt_m	KEYWORD2
 wind_horz_acc_mps	KEYWORD2
 wind_vert_acc_mps	KEYWORD2
 unix_time_us	KEYWORD2
+home_lat_rad	KEYWORD2
+home_lon_rad	KEYWORD2
+home_alt_m	KEYWORD2
+SendHomePos	KEYWORD2

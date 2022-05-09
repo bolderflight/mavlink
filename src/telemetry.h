@@ -251,6 +251,11 @@ class MavLinkTelemetry {
   inline void wind_vert_acc_mps(const float val) {wind_vert_acc_mps_ = val;}
   /* Unix time */
   inline void unix_time_us(const uint64_t val) {unix_time_us_ = val;}
+  /* Home position */
+  inline void home_lat_rad(const double val) {home_lat_rad_ = val;}
+  inline void home_lon_rad(const double val) {home_lon_rad_ = val;}
+  inline void home_alt_m(const float val) {home_alt_m_ = val;}
+  void SendHomePos();
   /* Receive IMU data */
   inline optional<float> imu_accel_x_mps2() {
     optional<float> ret = rx_imu_accel_x_mps2_;
@@ -507,6 +512,9 @@ class MavLinkTelemetry {
     T val = static_cast<T>(0);
     bool set = false;
   };
+  /* Home */
+  double home_lat_rad_, home_lon_rad_;
+  float home_alt_m_;
   /* System */
   uint64_t sys_time_us_ = 0;
   uint64_t unix_time_us_ = 0;

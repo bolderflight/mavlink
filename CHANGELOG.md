@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.6.0
+- Added home position transmit message
+
 # v4.5.0
 - Added system time transmit message
 
