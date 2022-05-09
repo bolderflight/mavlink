@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.7.2
+- Fixed bug in sending home position data
+
 # v4.7.1
 - Fixed bug in setting home position altitude
 
