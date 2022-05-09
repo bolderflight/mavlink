@@ -432,6 +432,17 @@ Some ground stations, such as [Mission Planner](https://ardupilot.org/planner/) 
 
 **inline void unix_time_us(const uint64_t val)** Timestamp (UNIX epoch time), us.
 
+### Home Position
+Sends the home position latitude (rad), longitude (rad), and altitude (m).
+
+**inline void home_lat_rad(const double val)** Sets the home position latitude, rad.
+
+**inline void home_lon_rad(const double val)** Sets the home position longitude, rad.
+
+**inline void home_alt_m(const float val)** Sets the home position altitude, m.
+
+**inline void SendHomePos()** Sends the home position data.
+
 ## Receiving Telemetry Data
 
 ### IMU

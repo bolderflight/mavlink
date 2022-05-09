@@ -584,5 +584,18 @@ void MavLinkTelemetry::ParseGlobalPosInt(
   rx_nav_down_vel_mps_ = static_cast<float>(ref.vz) /100.0f;
 }
 
+void MavLinkTelemetry::SendHomePos() {
+  lat_dege7_ = static_cast<int32_t>(rad2deg(home_lat_rad_) * 1e7);
+  lon_dege7_ = static_cast<int32_t>(rad2deg(home_lon_rad_) * 1e7);
+  alt_msl_mm_ = static_cast<int32_t>(home_alt_m_ * 1000.0f);
+  float q[4];
+  msg_len_ = mavlink_msg_home_position_pack(sys_id_, comp_id_, &msg_,
+                                            lat_dege7_, lon_dege7_,
+                                            alt_agl_mm_, 0, 0, 0,
+                                            q, 0, 0, 0, 0);
+  mavlink_msg_to_send_buffer(msg_buf_, &msg_);
+  bus_->write(msg_buf_, msg_len_);
+}
+
 
 }  // namespace bfs
