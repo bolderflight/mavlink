@@ -344,7 +344,7 @@ class MavLink {
   /* Home position */
   inline void home_lat_rad(const double val) {telem_.home_lat_rad(val);}
   inline void home_lon_rad(const double val) {telem_.home_lon_rad(val);}
-  inline void home_alt_m(const float val) {telem_.home_alt_m_(val);}
+  inline void home_alt_m(const float val) {telem_.home_alt_m(val);}
   inline void SendHomePos() {telem_.SendHomePos();}
     /* Receive home position */
   inline optional<double> home_lat_rad() {return telem_.home_lat_rad();}
