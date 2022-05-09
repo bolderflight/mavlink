@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.7.0
+- Added home position reception
+
 # v4.6.0
 - Added home position transmit message
 

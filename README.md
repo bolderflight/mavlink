@@ -548,6 +548,14 @@ Sends the home position latitude (rad), longitude (rad), and altitude (m).
 **optional<float> nav_gyro_z_radps()** Returns the corrected gyro z measurement, rad/s, if it has been updated since the last time this method was called.
 
 
+### Home Position
+
+**optional<double> home_lat_rad()** Returns the home position latitude, rad, if it has been updated since the last time this method was called.
+
+**optional<double> home_lon_rad()** Returns the home position longitude, rad, if it has been updated since the last time this method was called.
+
+**optional<float> home_alt_m()** Returns the home position altitude, m, if it has been updated since the last time this method was called.
+
 ## Parameters
 
 **static constexpr std::size_t params_size()** The number of parameters supported.
@@ -681,3 +689,5 @@ Sends the home position latitude (rad), longitude (rad), and altitude (m).
 **float utm_update_period_s(const std::size_t idx)** Returns the received update period, s from the given UTM broadcast index.
 
 **FlightState utm_flight_state(const std::size_t idx)** Returns the received UTM flight state from the given UTM broadcast index.
+
+

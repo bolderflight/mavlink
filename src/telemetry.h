@@ -256,6 +256,22 @@ class MavLinkTelemetry {
   inline void home_lon_rad(const double val) {home_lon_rad_ = val;}
   inline void home_alt_m(const float val) {home_alt_m_ = val;}
   void SendHomePos();
+  /* Receive home position */
+  inline optional<double> home_lat_rad() {
+    optional<double> ret = rx_home_lat_rad_;
+    rx_home_lat_rad_.reset();
+    return ret;
+  }
+  inline optional<double> home_lon_rad() {
+    optional<double> ret = rx_home_lon_rad_;
+    rx_home_lon_rad_.reset();
+    return ret;
+  }
+  inline optional<float> home_alt_m() {
+    optional<float> ret = rx_home_alt_m_;
+    rx_home_alt_m_.reset();
+    return ret;
+  }
   /* Receive IMU data */
   inline optional<float> imu_accel_x_mps2() {
     optional<float> ret = rx_imu_accel_x_mps2_;
@@ -515,6 +531,10 @@ class MavLinkTelemetry {
   /* Home */
   double home_lat_rad_, home_lon_rad_;
   float home_alt_m_;
+  mavlink_home_position_t home_pos_;
+  optional<double> rx_home_lat_rad_, rx_home_lon_rad_;
+  optional<float> rx_home_alt_m_;
+  void ParseHomePosition(const mavlink_home_position_t &ref);
   /* System */
   uint64_t sys_time_us_ = 0;
   uint64_t unix_time_us_ = 0;
