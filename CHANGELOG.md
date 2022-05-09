@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.7.1
+- Fixed bug in setting home position altitude
+
 # v4.7.0
 - Added home position reception
 
