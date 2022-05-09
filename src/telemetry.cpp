@@ -61,6 +61,11 @@ void MavLinkTelemetry::MsgHandler(const mavlink_message_t &ref) {
       ParseRequestDataStream(request_stream_);
       break;
     }
+    case MAVLINK_MSG_ID_HOME_POSITION: {
+      mavlink_msg_home_position_decode(&ref, &home_pos_);
+      ParseHomePosition(home_pos_);
+      break;
+    }
     case MAVLINK_MSG_ID_SCALED_IMU: {
       mavlink_msg_scaled_imu_decode(&ref, &scaled_imu_);
       ParseScaledImu(scaled_imu_);
@@ -597,5 +602,10 @@ void MavLinkTelemetry::SendHomePos() {
   bus_->write(msg_buf_, msg_len_);
 }
 
+void MavLinkTelemetry::ParseHomePosition(const mavlink_home_position_t &ref) {
+  rx_home_lat_rad_ = deg2rad(static_cast<double>(ref.latitude) / 1e7);
+  rx_home_lon_rad_ = deg2rad(static_cast<double>(ref.longitude) / 1e7);
+  rx_home_alt_m_ = static_cast<float>(ref.altitude) / 1000.0f;
+}
 
 }  // namespace bfs

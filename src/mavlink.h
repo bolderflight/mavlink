@@ -346,6 +346,10 @@ class MavLink {
   inline void home_lon_rad(const double val) {telem_.home_lon_rad(val);}
   inline void home_alt_m(const float val) {telem_.home_alt_m_(val);}
   inline void SendHomePos() {telem_.SendHomePos();}
+    /* Receive home position */
+  inline optional<double> home_lat_rad() {return telem_.home_lat_rad();}
+  inline optional<double> home_lon_rad() {return telem_.home_lon_rad();}
+  inline optional<float> home_alt_m() {return telem_.home_alt_m();}
   /* RX IMU */
   inline optional<float> imu_accel_x_mps2() {return telem_.imu_accel_x_mps2();}
   inline optional<float> imu_accel_y_mps2() {return telem_.imu_accel_y_mps2();}
