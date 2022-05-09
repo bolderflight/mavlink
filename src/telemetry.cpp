@@ -596,7 +596,7 @@ void MavLinkTelemetry::SendHomePos() {
   float q[4];
   msg_len_ = mavlink_msg_home_position_pack(sys_id_, comp_id_, &msg_,
                                             lat_dege7_, lon_dege7_,
-                                            alt_agl_mm_, 0, 0, 0,
+                                            alt_msl_mm_, 0, 0, 0,
                                             q, 0, 0, 0, 0);
   mavlink_msg_to_send_buffer(msg_buf_, &msg_);
   bus_->write(msg_buf_, msg_len_);
