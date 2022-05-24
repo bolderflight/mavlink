@@ -231,6 +231,9 @@ void MavLinkMission::MissionItemHandler(const mavlink_mission_item_t &ref) {
             upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
             SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
           }
+          if (use_mission_planner_) {
+            SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
+          }
         } else {
           SendMissionRequestInt(mission_upload_index_, ref.mission_type);
         }
@@ -248,6 +251,9 @@ void MavLinkMission::MissionItemHandler(const mavlink_mission_item_t &ref) {
             upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
             SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
           }
+          if (use_mission_planner_) {
+            SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
+          }
         } else {
           SendMissionRequestInt(fence_upload_index_, ref.mission_type);
         }
@@ -263,6 +269,9 @@ void MavLinkMission::MissionItemHandler(const mavlink_mission_item_t &ref) {
             memcpy(rally_, temp_, rally_upload_count_ * sizeof(MissionItem));
             rally_upload_index_ = -1;
             upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
+            SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
+          }
+          if (use_mission_planner_) {
             SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
           }
         } else {
@@ -303,6 +312,9 @@ void MavLinkMission::MissionItemIntHandler(
             upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
             SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
           }
+          if (use_mission_planner_) {
+            SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
+          }
         } else {
           SendMissionRequestInt(mission_upload_index_, ref.mission_type);
         }
@@ -320,6 +332,9 @@ void MavLinkMission::MissionItemIntHandler(
             upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
             SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
           }
+          if (use_mission_planner_) {
+            SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
+          }
         } else {
           SendMissionRequestInt(fence_upload_index_, ref.mission_type);
         }
@@ -335,6 +350,9 @@ void MavLinkMission::MissionItemIntHandler(
             memcpy(rally_, temp_, rally_upload_count_ * sizeof(MissionItem));
             rally_upload_index_ = -1;
             upload_timer_ms_ = UPLOAD_TIMEOUT_MS_;
+            SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
+          }
+          if (use_mission_planner_) {
             SendMissionAck(MAV_MISSION_ACCEPTED, ref.mission_type);
           }
         } else {

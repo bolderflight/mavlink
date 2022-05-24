@@ -105,6 +105,8 @@ class MavLinkMission {
     return status;
   }
   inline std::size_t num_rally_points() const {return rally_current_count_;}
+  /* Flag to say whether we're working with Mission Planner */
+  inline void use_mission_planner(const bool mp) {use_mission_planner_ = mp;}
 
  private:
   /* Serial bus */
@@ -118,6 +120,7 @@ class MavLinkMission {
   /* Config */
   uint8_t sys_id_ = 1;
   static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+  bool use_mission_planner_ = false;
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;

@@ -1,5 +1,9 @@
 # Changelog
 
+# v4.7.3
+- Added MAVLINK_MSG_ID_AUTOPILOT_VERSION_REQUEST handler to send capabilities to Mission Planner
+- Added a flag to identify whether we are communicating with Mission Planner to send an Ack after receiving each mission item, which Mission Planner looks for to send the next item, but Q Ground Control sees as an error
+
 # v4.7.2
 - Fixed bug in sending home position data
 
