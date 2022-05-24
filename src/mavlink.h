@@ -115,6 +115,7 @@ class MavLink {
             break;
           }
           case MAVLINK_MSG_ID_AUTOPILOT_VERSION_REQUEST: {
+            mission_.use_mission_planner(true);
             SendAutopilotVersion();
             break;
           }
