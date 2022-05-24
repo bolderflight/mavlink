@@ -90,6 +90,7 @@ class MavLink {
   void Begin(uint32_t baud) {
     bus_->begin(baud);
   }
+  inline void pipe(HardwareSerial *bus) {output_ = bus;}
   void Update() {
     /* Update child classes */
     heartbeat_.Update();
@@ -99,7 +100,11 @@ class MavLink {
     utm_.Update();
     /* Check for received messages */
     while (bus_->available()) {
-      if (mavlink_frame_char(chan_, bus_->read(), &msg_, &status_)
+      rx_byte_ = bus_->read();
+      if (output_) {
+        output_->write(rx_byte_);
+      }
+      if (mavlink_frame_char(chan_, rx_byte_, &msg_, &status_)
           != MAVLINK_FRAMING_INCOMPLETE) {
         /* Items handled by this class */
         rx_sys_id_ = msg_.sysid;
@@ -540,6 +545,8 @@ class MavLink {
  private:
   /* Serial bus */
   HardwareSerial *bus_;
+  HardwareSerial *output_ = nullptr;
+  uint8_t rx_byte_;
   /* Config */
   uint8_t sys_id_ = 1;
   static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
