@@ -41,6 +41,11 @@
 #include "rtcm.h"  // NOLINT
 #include "utm.h"  // NOLINT
 
+/* Needed for compatibility with Mission Planner */
+#ifndef MAVLINK_MSG_ID_AUTOPILOT_VERSION_REQUEST
+#define MAVLINK_MSG_ID_AUTOPILOT_VERSION_REQUEST 183
+#endif
+
 namespace bfs {
 
 template<std::size_t N, std::size_t M>
@@ -107,6 +112,10 @@ class MavLink {
           case MAVLINK_MSG_ID_COMMAND_LONG: {
             mavlink_msg_command_long_decode(&msg_, &cmd_long_);
             CommandLongHandler(cmd_long_);
+            break;
+          }
+          case MAVLINK_MSG_ID_AUTOPILOT_VERSION_REQUEST: {
+            SendAutopilotVersion();
             break;
           }
         }
