@@ -656,38 +656,38 @@ Sends the home position latitude (rad), longitude (rad), and altitude (m).
 
 **void UtmClearRx()** Clear the received data.
 
-**optional<uint64_t> utm_unix_time_us(const std::size_t idx)** Returns the received unix time (if available) from the given UTM broadcast index.
+**optional<uint64_t> get_utm_unix_time_us(const std::size_t idx)** Returns the received unix time (if available) from the given UTM broadcast index.
 
-**optional<std::array<uint8_t, UTM_UAS_ID_LEN>> utm_uas_id** Returns the received UAS ID (if available) from the given UTM broadcast index.
+**optional<std::array<uint8_t, UTM_UAS_ID_LEN>> get_utm_uas_id(const std::size_t idx)** Returns the received UAS ID (if available) from the given UTM broadcast index.
 
-**optional<double> utm_lat_rad(const std::size_t idx)** Returns the received latitude, rad (if available) from the given UTM broadcast index.
+**optional<double> get_utm_lat_rad(const std::size_t idx)** Returns the received latitude, rad (if available) from the given UTM broadcast index.
 
-**optional<double> utm_lon_rad(const std::size_t idx)** Returns the received longitude, rad (if available) from the given UTM broadcast index.
+**optional<double> get_utm_lon_rad(const std::size_t idx)** Returns the received longitude, rad (if available) from the given UTM broadcast index.
 
-**optional<float> utm_alt_wgs84_m(const std::size_t idx)** Returns the received altitude above the WGS84 ellipsoid, m (if available) from the given UTM broadcast index.
+**optional<float> get_utm_alt_wgs84_m(const std::size_t idx)** Returns the received altitude above the WGS84 ellipsoid, m (if available) from the given UTM broadcast index.
 
-**optional<float> utm_rel_alt_m(const std::size_t idx)** Returns the received altitude above ground, m (if available) from the given UTM broadcast index.
+**optional<float> get_utm_rel_alt_m(const std::size_t idx)** Returns the received altitude above ground, m (if available) from the given UTM broadcast index.
 
-**optional<float> utm_north_vel_mps(const std::size_t idx)** Returns the received north velocity, m/s (if available) from the given UTM broadcast index.
+**optional<float> get_utm_north_vel_mps(const std::size_t idx)** Returns the received north velocity, m/s (if available) from the given UTM broadcast index.
 
-**optional<float> utm_east_vel_mps(const std::size_t idx)** Returns the received east velocity, m/s (if available) from the given UTM broadcast index.
+**optional<float> get_utm_east_vel_mps(const std::size_t idx)** Returns the received east velocity, m/s (if available) from the given UTM broadcast index.
 
-**optional<float> utm_down_vel_mps(const std::size_t idx)** Returns the received down velocity, m/s (if available) from the given UTM broadcast index.
+**optional<float> get_utm_down_vel_mps(const std::size_t idx)** Returns the received down velocity, m/s (if available) from the given UTM broadcast index.
 
-**optional<float> utm_horz_acc_m(const std::size_t idx)** Returns the received horizontal position accuracy, m (if available) from the given UTM broadcast index.
+**optional<float> get_utm_horz_acc_m(const std::size_t idx)** Returns the received horizontal position accuracy, m (if available) from the given UTM broadcast index.
 
-**optional<float> utm_vert_acc_m(const std::size_t idx)** Returns the received vertical position accuracy, m (if available) from the given UTM broadcast index.
+**optional<float> get_utm_vert_acc_m(const std::size_t idx)** Returns the received vertical position accuracy, m (if available) from the given UTM broadcast index.
 
-**optional<float> utm_vel_acc_mps(const std::size_t idx)** Returns the received velocity accuracy, m/s (if available) from the given UTM broadcast index.
+**optional<float> get_utm_vel_acc_mps(const std::size_t idx)** Returns the received velocity accuracy, m/s (if available) from the given UTM broadcast index.
 
-**optional<double> utm_next_lat_rad(const std::size_t idx)** Returns the received latitude of the next waypoint, rad (if available) from the given UTM broadcast index.
+**optional<double> get_utm_next_lat_rad(const std::size_t idx)** Returns the received latitude of the next waypoint, rad (if available) from the given UTM broadcast index.
 
-**optional<double> utm_next_lon_rad(const std::size_t idx)** Returns the received longitude of the next waypoint, rad (if available) from the given UTM broadcast index.
+**optional<double> get_utm_next_lon_rad(const std::size_t idx)** Returns the received longitude of the next waypoint, rad (if available) from the given UTM broadcast index.
 
-**optional<float> utm_next_alt_wgs84_m(const std::size_t idx)** Returns the received altitude above the WGS84 ellipsoid of the next waypoint, m (if available) from the given UTM broadcast index.
+**optional<float> get_utm_next_alt_wgs84_m(const std::size_t idx)** Returns the received altitude above the WGS84 ellipsoid of the next waypoint, m (if available) from the given UTM broadcast index.
 
-**float utm_update_period_s(const std::size_t idx)** Returns the received update period, s from the given UTM broadcast index.
+**float get_utm_update_period_s(const std::size_t idx)** Returns the received update period, s from the given UTM broadcast index.
 
-**FlightState utm_flight_state(const std::size_t idx)** Returns the received UTM flight state from the given UTM broadcast index.
+**FlightState get_utm_flight_state(const std::size_t idx)** Returns the received UTM flight state from the given UTM broadcast index.
 
 

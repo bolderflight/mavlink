@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.7.4
+- Added *get_* to the UTM getters to fix an issue where it isn't clear whether the setter or getter is being used. This is a temporary fix until v5 of the library.
+
 # v4.7.3
 - Added MAVLINK_MSG_ID_AUTOPILOT_VERSION_REQUEST handler to send capabilities to Mission Planner
 - Added a flag to identify whether we are communicating with Mission Planner to send an Ack after receiving each mission item, which Mission Planner looks for to send the next item, but Q Ground Control sees as an error

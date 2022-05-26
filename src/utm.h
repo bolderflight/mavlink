@@ -109,56 +109,56 @@ class MavLinkUtm {
     ResetRxData();
     num_rx_ = 0;
   }
-  inline optional<uint64_t> unix_time_us(const std::size_t idx) const {
+  inline optional<uint64_t> get_unix_time_us(const std::size_t idx) const {
     return rx_data_[idx].unix_time_us;
   }
-  inline optional<std::array<uint8_t, UAS_ID_LEN>> uas_id(
+  inline optional<std::array<uint8_t, UAS_ID_LEN>> get_uas_id(
                                                   const std::size_t idx) const {
     return rx_data_[idx].uas_id;
   }
-  inline optional<double> lat_rad(const std::size_t idx) const {
+  inline optional<double> get_lat_rad(const std::size_t idx) const {
     return rx_data_[idx].lat_rad;
   }
-  inline optional<double> lon_rad(const std::size_t idx) const {
+  inline optional<double> get_lon_rad(const std::size_t idx) const {
     return rx_data_[idx].lon_rad;
   }
-  inline optional<float> alt_wgs84_m(const std::size_t idx) const {
+  inline optional<float> get_alt_wgs84_m(const std::size_t idx) const {
     return rx_data_[idx].alt_wgs84_m;
   }
-  inline optional<float> rel_alt_m(const std::size_t idx) const {
+  inline optional<float> get_rel_alt_m(const std::size_t idx) const {
     return rx_data_[idx].rel_alt_m;
   }
-  inline optional<float> north_vel_mps(const std::size_t idx) const {
+  inline optional<float> get_north_vel_mps(const std::size_t idx) const {
     return rx_data_[idx].north_vel_mps;
   }
-  inline optional<float> east_vel_mps(const std::size_t idx) const {
+  inline optional<float> get_east_vel_mps(const std::size_t idx) const {
     return rx_data_[idx].east_vel_mps;
   }
-  inline optional<float> down_vel_mps(const std::size_t idx) const {
+  inline optional<float> get_down_vel_mps(const std::size_t idx) const {
     return rx_data_[idx].down_vel_mps;
   }
-  inline optional<float> horz_acc_m(const std::size_t idx) const {
+  inline optional<float> get_horz_acc_m(const std::size_t idx) const {
     return rx_data_[idx].horz_acc_m;
   }
-  inline optional<float> vert_acc_m(const std::size_t idx) const {
+  inline optional<float> get_vert_acc_m(const std::size_t idx) const {
     return rx_data_[idx].vert_acc_m;
   }
-  inline optional<float> vel_acc_mps(const std::size_t idx) const {
+  inline optional<float> get_vel_acc_mps(const std::size_t idx) const {
     return rx_data_[idx].vel_acc_mps;
   }
-  inline optional<double> next_lat_rad(const std::size_t idx) const {
+  inline optional<double> get_next_lat_rad(const std::size_t idx) const {
     return rx_data_[idx].next_lat_rad;
   }
-  inline optional<double> next_lon_rad(const std::size_t idx) const {
+  inline optional<double> get_next_lon_rad(const std::size_t idx) const {
     return rx_data_[idx].next_lon_rad;
   }
-  inline optional<float> next_alt_wgs84_m(const std::size_t idx) const {
+  inline optional<float> get_next_alt_wgs84_m(const std::size_t idx) const {
     return rx_data_[idx].next_alt_wgs84_m;
   }
-  inline float update_period_s(const std::size_t idx) const {
+  inline float get_update_period_s(const std::size_t idx) const {
     return rx_data_[idx].update_period_s;
   }
-  inline FlightState flight_state(const std::size_t idx) const {
+  inline FlightState get_flight_state(const std::size_t idx) const {
     return rx_data_[idx].flight_state;
   }
 
