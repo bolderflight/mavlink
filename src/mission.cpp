@@ -490,5 +490,12 @@ void MavLinkMission::SendMissionAck(const uint8_t result,
   mavlink_msg_to_send_buffer(msg_buf_, &msg_);
   bus_->write(msg_buf_, msg_len_);
 }
+void MavLinkMission::SendMissionChanged(const uint8_t type) {
+  msg_len_ = mavlink_msg_mission_changed_pack(sys_id_, comp_id_, &msg_,
+                                              -1, -1,
+                                              sys_id_, comp_id_, type);
+  mavlink_msg_to_send_buffer(msg_buf_, &msg_);
+  bus_->write(msg_buf_, msg_len_);
+}
 
 }  // namespace bfs

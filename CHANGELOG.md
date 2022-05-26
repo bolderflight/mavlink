@@ -1,5 +1,9 @@
 # Changelog
 
+# v4.7.5
+- Added methods to set the number of mission, fence, and rally point items. This allows updating the mission on the process and sending the updated mission to the GCS.
+- Added MISSION_CHANGED message to notify ground station that the mission has changed.
+
 # v4.7.4
 - Added *get_* to the UTM getters to fix an issue where it isn't clear whether the setter or getter is being used. This is a temporary fix until v5 of the library.
 
