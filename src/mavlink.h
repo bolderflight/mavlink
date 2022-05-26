@@ -489,57 +489,57 @@ class MavLink {
   inline void utm_flight_state(const FlightState val) {utm_.flight_state(val);}
   inline std::size_t utm_num_rx() const {return utm_.num_rx();}
   inline void UtmClearRx() {utm_.ClearRx();}
-  inline optional<uint64_t> utm_unix_time_us(const std::size_t idx) const {
-    return utm_.unix_time_us(idx);
+  inline optional<uint64_t> get_utm_unix_time_us(const std::size_t idx) const {
+    return utm_.get_unix_time_us(idx);
   }
-  inline optional<std::array<uint8_t, UTM_UAS_ID_LEN>> utm_uas_id(
+  inline optional<std::array<uint8_t, UTM_UAS_ID_LEN>> get_utm_uas_id(
                                                   const std::size_t idx) const {
-    return utm_.uas_id(idx);
+    return utm_.get_uas_id(idx);
   }
-  inline optional<double> utm_lat_rad(const std::size_t idx) const {
-    return utm_.lat_rad(idx);
+  inline optional<double> get_utm_lat_rad(const std::size_t idx) const {
+    return utm_.get_lat_rad(idx);
   }
-  inline optional<double> utm_lon_rad(const std::size_t idx) const {
-    return utm_.lon_rad(idx);
+  inline optional<double> get_utm_lon_rad(const std::size_t idx) const {
+    return utm_.get_lon_rad(idx);
   }
-  inline optional<float> utm_alt_wgs84_m(const std::size_t idx) const {
-    return utm_.alt_wgs84_m(idx);
+  inline optional<float> get_utm_alt_wgs84_m(const std::size_t idx) const {
+    return utm_.get_alt_wgs84_m(idx);
   }
-  inline optional<float> utm_rel_alt_m(const std::size_t idx) const {
-    return utm_.rel_alt_m(idx);
+  inline optional<float> get_utm_rel_alt_m(const std::size_t idx) const {
+    return utm_.get_rel_alt_m(idx);
   }
-  inline optional<float> utm_north_vel_mps(const std::size_t idx) const {
-    return utm_.north_vel_mps(idx);
+  inline optional<float> get_utm_north_vel_mps(const std::size_t idx) const {
+    return utm_.get_north_vel_mps(idx);
   }
-  inline optional<float> utm_east_vel_mps(const std::size_t idx) const {
-    return utm_.east_vel_mps(idx);
+  inline optional<float> get_utm_east_vel_mps(const std::size_t idx) const {
+    return utm_.get_east_vel_mps(idx);
   }
-  inline optional<float> utm_down_vel_mps(const std::size_t idx) const {
-    return utm_.down_vel_mps(idx);
+  inline optional<float> get_utm_down_vel_mps(const std::size_t idx) const {
+    return utm_.get_down_vel_mps(idx);
   }
-  inline optional<float> utm_horz_acc_m(const std::size_t idx) const {
-    return utm_.horz_acc_m(idx);
+  inline optional<float> get_utm_horz_acc_m(const std::size_t idx) const {
+    return utm_.get_horz_acc_m(idx);
   }
-  inline optional<float> utm_vert_acc_m(const std::size_t idx) const {
-    return utm_.vert_acc_m(idx);
+  inline optional<float> get_utm_vert_acc_m(const std::size_t idx) const {
+    return utm_.get_vert_acc_m(idx);
   }
-  inline optional<float> utm_vel_acc_mps(const std::size_t idx) const {
-    return utm_.vel_acc_mps(idx);
+  inline optional<float> get_utm_vel_acc_mps(const std::size_t idx) const {
+    return utm_.get_vel_acc_mps(idx);
   }
-  inline optional<double> utm_next_lat_rad(const std::size_t idx) const {
-    return utm_.next_lat_rad(idx);
+  inline optional<double> get_utm_next_lat_rad(const std::size_t idx) const {
+    return utm_.get_next_lat_rad(idx);
   }
-  inline optional<double> utm_next_lon_rad(const std::size_t idx) const {
-    return utm_.next_lon_rad(idx);
+  inline optional<double> get_utm_next_lon_rad(const std::size_t idx) const {
+    return utm_.get_next_lon_rad(idx);
   }
-  inline optional<float> utm_next_alt_wgs84_m(const std::size_t idx) const {
-    return utm_.next_alt_wgs84_m(idx);
+  inline optional<float> get_utm_next_alt_wgs84_m(const std::size_t idx) const {
+    return utm_.get_next_alt_wgs84_m(idx);
   }
-  inline float utm_update_period_s(const std::size_t idx) const {
-    return utm_.update_period_s(idx);
+  inline float get_utm_update_period_s(const std::size_t idx) const {
+    return utm_.get_update_period_s(idx);
   }
-  inline FlightState utm_flight_state(const std::size_t idx) const {
-    return utm_.utm_flight_state(idx);
+  inline FlightState get_utm_flight_state(const std::size_t idx) const {
+    return utm_.get_utm_flight_state(idx);
   }
 
  private:
