@@ -90,6 +90,15 @@ class MavLinkMission {
   }
   inline int32_t active_mission_item() const {return mission_current_index_;}
   inline std::size_t num_mission_items() const {return mission_current_count_;}
+  inline void num_mission_items(const std::size_t val) {
+    if (val > 0) {
+      mission_current_index_ = 0;
+    } else {
+      mission_current_index_ = -1;
+    }
+    mission_current_count_ = val;
+    SendMissionChanged(MAV_MISSION_TYPE_MISSION);
+  }
   void AdvanceMissionItem();
   /* Fence */
   inline bool fence_updated() {
@@ -98,6 +107,10 @@ class MavLinkMission {
     return status;
   }
   inline std::size_t num_fence_items() const {return fence_current_count_;}
+  inline void num_fence_items(const std::size_t val) {
+    fence_current_count_ = val;
+    SendMissionChanged(MAV_MISSION_TYPE_FENCE);
+  }
   /* Rally */
   inline bool rally_points_updated() {
     bool status = rally_updated_;
@@ -105,6 +118,10 @@ class MavLinkMission {
     return status;
   }
   inline std::size_t num_rally_points() const {return rally_current_count_;}
+  inline void num_rally_points(const std::size_t val) {
+    rally_current_count_ = val;
+    SendMissionChanged(MAV_MISSION_TYPE_RALLY);
+  }
   /* Flag to say whether we're working with Mission Planner */
   inline void use_mission_planner(const bool mp) {use_mission_planner_ = mp;}
 
@@ -163,6 +180,7 @@ class MavLinkMission {
   void SendMissionCurrent(const std::size_t index);
   void SendMissionItemReached(const std::size_t index);
   void SendMissionAck(const uint8_t result, const uint8_t type);
+  void SendMissionChanged(const uint8_t type);
   /* Message data */
   mavlink_mission_count_t mission_count_;
   mavlink_mission_item_t mission_item_;
@@ -172,6 +190,7 @@ class MavLinkMission {
   mavlink_mission_request_int_t mission_request_int_;
   mavlink_mission_set_current_t mission_set_current_;
   mavlink_mission_clear_all_t mission_clear_all_;
+  mavlink_mission_changed_t mission_changed_;
   /* Mission item */
   MissionItem item_;
   bool current_;

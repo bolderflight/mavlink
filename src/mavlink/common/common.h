@@ -2457,6 +2457,7 @@ typedef enum CAN_FILTER_OP
 #include "./mavlink_msg_mission_request_list.h"
 #include "./mavlink_msg_mission_count.h"
 #include "./mavlink_msg_mission_clear_all.h"
+#include "./mavlink_msg_mission_changed.h"
 #include "./mavlink_msg_mission_item_reached.h"
 #include "./mavlink_msg_mission_ack.h"
 #include "./mavlink_msg_set_gps_global_origin.h"

@@ -446,11 +446,17 @@ class MavLink {
   inline std::size_t num_mission_items() const {
     return mission_.num_mission_items();
   }
+  inline void num_mission_items(const std::size_t val) {
+    mission_.num_mission_items(val);
+  }
   void AdvanceMissionItem() {mission_.AdvanceMissionItem();}
   /* Fence */
   inline bool fence_updated() {return mission_.fence_updated();}
   inline std::size_t num_fence_items() const {
     return mission_.num_fence_items();
+  }
+  inline void num_fence_items(const std::size_t val) {
+    mission_.num_fence_items(val);
   }
   /* Rally */
   inline bool rally_points_updated() {
@@ -458,6 +464,9 @@ class MavLink {
   }
   inline std::size_t num_rally_points() const {
     return mission_.num_rally_points();
+  }
+  inline void num_rally_points(const std::size_t val) {
+    mission_.num_rally_points(val);
   }
   /* Status text */
   template<std::size_t NCHAR>

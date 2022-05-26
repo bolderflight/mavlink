@@ -41,6 +41,9 @@ std::array<bfs::MissionItem, 250> temp;
 */
 bfs::MavLink<5, 10> mavlink;
 
+bool send_update = false;
+elapsedMillis t = 0;
+
 int main() {
   /* Starting serial to print results */
   Serial.begin(115200);
@@ -59,6 +62,7 @@ int main() {
     mavlink.Update();
     /* Check to see if the mission has been updated and print mission items */
     if (mavlink.mission_updated()) {
+      Serial.println("MISSION UPDATED");
       Serial.println(mavlink.num_mission_items());
       for (std::size_t i = 0; i < mavlink.num_mission_items(); i++) {
         Serial.print(mission[i].x);
@@ -66,8 +70,18 @@ int main() {
         Serial.print(mission[i].y);
         Serial.print("\t");
         Serial.print(mission[i].z);
+        Serial.print("\t");
+        mission[i].z += 100;
+        Serial.print(mission[i].z);
         Serial.print("\n");
       }
+      send_update = true;
+      t = 0;
+    }
+    if ((send_update) && (t > 10000)) {
+      mavlink.num_mission_items(mavlink.num_mission_items());
+      send_update = false;
+      Serial.println("UPDATE SENT");
     }
   }
 }
