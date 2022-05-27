@@ -11,7 +11,7 @@ if (DEFINED MCU)
   set(CMAKE_TOOLCHAIN_FILE "${mcu_support_SOURCE_DIR}/cmake/cortex.cmake")
   # Project information
   project(Mavlink
-    VERSION 4.7.5
+    VERSION 4.7.6
     DESCRIPTION "Mavlink communication protocol interface"
     LANGUAGES CXX
   )
@@ -36,7 +36,7 @@ if (DEFINED MCU)
   FetchContent_Declare(
     navigation
     GIT_REPOSITORY https://github.com/bolderflight/navigation.git
-    GIT_TAG v4.0.1
+    GIT_TAG revert
   )
   FetchContent_MakeAvailable(navigation)
   # Add the library target

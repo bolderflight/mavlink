@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.7.6
+- Having issues with the newest navigation library, rolling back until those are resolved.
+
 # v4.7.5
 - Added methods to set the number of mission, fence, and rally point items. This allows updating the mission on the process and sending the updated mission to the GCS.
 - Added MISSION_CHANGED message to notify ground station that the mission has changed.
