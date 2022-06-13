@@ -113,6 +113,8 @@ Available aircraft types are:
 
 **inline void sys_id(const uint8_t sys_id)** Used to set a non-default system id. By default the system id is set to 1. This could be used if other vehicles are connected to the ground control station to avoid conflicting system ids.
 
+**inline void comp_id(const uint8_t comp_id)** Used to set a non-default component id. By default the component id is set to 1 ([MAV_COMP_ID_AUTOPILOT1](http://mavlink.io/en/messages/common.html#MAV_COMP_ID_AUTOPILOT1)).
+
 **inline void gnss_serial(HardwareSerial &ast;bus)** Sets the hardware serial bus connected to the GNSS receiver to provide RTCM corrections from a base station GNSS as transmitted via MAV Link from the ground control station software. It is assumed that the serial port is configured external to this class (i.e. serial port initialized and baudrate set correctly).
 
 **inline void mission(MissionItem &ast; const mission, const std::size_t mission_size, MissionItem &ast; const temp)** Sets storage location for flight plans given a pointer for the data, the number of Mission Items that can be stored, and a pointer for temporary data. The temporary storage location is used while the ground station uploads flight plans, fences, and rally points. Once the upload is complete and verified, it's moved to the correct mission, fence, and rally point storage location. It's assumed that the temporary storage is at least as large as the largest storage location for flight plans, fences, and rally points. For example, if there is enough storage for 250 flight plan mission items, 100 fence points, and 5 rally points, the temporary storage would need at least enough capacity for 250 mission items.
