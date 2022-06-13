@@ -61,6 +61,10 @@ class MavLinkMission {
     sys_id_ = sys_id;
     util_.sys_id(sys_id);
   }
+  inline void comp_id(const uint8_t comp_id) {
+    comp_id_ = comp_id;
+    util_.comp_id(comp_id);
+  }
   inline void mission(MissionItem * const mission,
                       const std::size_t mission_size,
                       MissionItem * const temp) {
@@ -136,7 +140,7 @@ class MavLinkMission {
   std::size_t fence_size_ = 0, rally_size_ = 0;
   /* Config */
   uint8_t sys_id_ = 1;
-  static const uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+  uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   bool use_mission_planner_ = false;
   /* Message buffer */
   mavlink_message_t msg_;

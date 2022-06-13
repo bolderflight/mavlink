@@ -53,6 +53,10 @@ class MavLinkParameter {
     sys_id_ = sys_id;
     util_.sys_id(sys_id);
   }
+  inline void comp_id(const uint8_t comp_id) {
+    comp_id_ = comp_id;
+    util_.comp_id(comp_id);
+  }
   /* System and component ID getters */
   inline uint8_t sys_id() const {return sys_id_;}
   inline uint8_t comp_id() const {return comp_id_;}
@@ -140,7 +144,7 @@ class MavLinkParameter {
   /* Config */
   bool configured_ = false;
   uint8_t sys_id_ = 1;
-  static constexpr uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+  uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;
