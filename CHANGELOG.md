@@ -1,5 +1,9 @@
 # Changelog
 
+# v4.8.0
+- Rolling to the new navigation library
+- Added ability to set the component ID
+
 # v4.7.6
 - Having issues with the newest navigation library, rolling back until those are resolved.
 

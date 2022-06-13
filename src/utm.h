@@ -167,7 +167,7 @@ class MavLinkUtm {
   HardwareSerial *bus_;
   /* Config */
   uint8_t sys_id_ = 1;
-  static constexpr uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+  uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   /* UTM data */
   struct UtmData {
     uint8_t data_avail_flags;

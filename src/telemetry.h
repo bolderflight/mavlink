@@ -54,6 +54,7 @@ class MavLinkTelemetry {
   /* Config */
   inline void hardware_serial(HardwareSerial *bus) {bus_ = bus;}
   inline void sys_id(const uint8_t sys_id) {sys_id_ = sys_id;}
+  inline void comp_id(const uint8_t comp_id) {comp_id_ = comp_id;}
   /* Update and message handler methods */
   void Update();
   void MsgHandler(const mavlink_message_t &ref);
@@ -517,7 +518,7 @@ class MavLinkTelemetry {
   HardwareSerial *bus_;
   /* Config */
   uint8_t sys_id_ = 1;
-  static constexpr uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
+  uint8_t comp_id_ = MAV_COMP_ID_AUTOPILOT1;
   /* Message buffer */
   mavlink_message_t msg_;
   uint16_t msg_len_;
