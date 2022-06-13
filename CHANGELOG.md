@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.8.1
+- Fixed component ID for UTM
+
 # v4.8.0
 - Rolling to the new navigation library
 - Added ability to set the component ID

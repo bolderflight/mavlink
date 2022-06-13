@@ -55,6 +55,7 @@ class MavLinkUtm {
   /* Config */
   inline void hardware_serial(HardwareSerial *bus) {bus_ = bus;}
   inline void sys_id(const uint8_t sys_id) {sys_id_ = sys_id;}
+  inline void comp_id(const uint8_t comp_id) {comp_id_ = comp_id;}
   /* System and component ID getters */
   inline uint8_t sys_id() const {return sys_id_;}
   inline uint8_t comp_id() const {return comp_id_;}
