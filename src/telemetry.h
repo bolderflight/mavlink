@@ -28,17 +28,23 @@
 
 #if defined(ARDUINO)
 #include "Arduino.h"
+#include "optional.hpp"
 #else
+#include <optional>
 #include "core/core.h"
 #endif
 #include <array>
 #include "mavlink/mavlink_types.h"
 #include "mavlink/common/mavlink.h"
-#include "optional.hpp"
+
 
 namespace bfs {
 
+#if defined(ARDUINO)
 using nonstd::optional;
+#else
+using std::optional;
+#endif
 
 enum GnssFix : int8_t {
   GNSS_FIX_NONE = 1,

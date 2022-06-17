@@ -28,18 +28,23 @@
 
 #if defined(ARDUINO)
 #include "Arduino.h"
+#include "optional.hpp"  // NOLINT
 #else
+#include <optional>
 #include "core/core.h"
 #endif
 #include <array>
 #include "mavlink/mavlink_types.h"
 #include "mavlink/common/mavlink.h"
-#include "optional.hpp"  // NOLINT
 #include "units.h"  // NOLINT
 
 namespace bfs {
 
+#if defined(ARDUINO)
 using nonstd::optional;
+#else
+using std::optional;
+#endif
 
 enum FlightState : uint8_t {
   FLIGHT_STATE_UNKNOWN = UTM_FLIGHT_STATE_UNKNOWN,
@@ -193,6 +198,7 @@ class MavLinkUtm {
   /* RX data */
   std::size_t num_rx_ = 0;
   std::array<UtmData, N> rx_data_;
+  std::array<uint8_t, UAS_ID_LEN> uas_temp_id_;
   /* TX buffer */
   uint64_t time_;
   std::array<uint8_t, UAS_ID_LEN> uas_id_;
@@ -351,8 +357,8 @@ class MavLinkUtm {
         rx_data_[num_rx_].unix_time_us = ref.time;
       }
       if (ref.flags & UTM_DATA_AVAIL_FLAGS_UAS_ID_AVAILABLE) {
-        memcpy(rx_data_[num_rx_].uas_id.value().data(), ref.uas_id,
-               UAS_ID_LEN * sizeof(uint8_t));
+        memcpy(uas_temp_id_.data(), ref.uas_id, UAS_ID_LEN);
+        rx_data_[num_rx_].uas_id = uas_temp_id_;
       }
       if (ref.flags & UTM_DATA_AVAIL_FLAGS_POSITION_AVAILABLE) {
         rx_data_[num_rx_].lat_rad = deg2rad(static_cast<double>(ref.lat) / 1e7);

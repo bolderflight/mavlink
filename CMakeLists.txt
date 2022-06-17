@@ -11,7 +11,7 @@ if (DEFINED MCU)
   set(CMAKE_TOOLCHAIN_FILE "${mcu_support_SOURCE_DIR}/cmake/cortex.cmake")
   # Project information
   project(Mavlink
-    VERSION 4.8.1
+    VERSION 4.8.2
     DESCRIPTION "Mavlink communication protocol interface"
     LANGUAGES CXX
   )
@@ -66,6 +66,8 @@ if (DEFINED MCU)
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
     $<INSTALL_INTERFACE:include>
   )
+  # Need std::optional
+  target_compile_options(mavlink PUBLIC -std=c++20)
 
   # Example and test if this project is built separately
   if (PROJECT_NAME STREQUAL CMAKE_PROJECT_NAME)

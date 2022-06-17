@@ -500,7 +500,7 @@ class MavLink {
   inline void utm_vert_acc_m(const float val) {utm_.vert_acc_m(val);}
   inline void utm_vel_acc_mps(const float val) {utm_.vel_acc_mps(val);}
   inline void utm_next_lat_rad(const double val) {utm_.next_lat_rad(val);}
-  inline void utm_next_lon_rad(const double val) {utm_.nex_lon_rad(val);}
+  inline void utm_next_lon_rad(const double val) {utm_.next_lon_rad(val);}
   inline void utm_next_alt_wgs84_m(const float val) {
     utm_.next_alt_wgs84_m(val);
   }
