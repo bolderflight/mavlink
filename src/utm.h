@@ -30,8 +30,8 @@
 #include "Arduino.h"
 #include "optional.hpp"  // NOLINT
 #else
-#include "core/core.h"
 #include <optional>
+#include "core/core.h"
 #endif
 #include <array>
 #include "mavlink/mavlink_types.h"
