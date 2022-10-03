@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.8.4
+- Updated core to support MMOD
+
 # v4.8.3
 - Updated MCU support to enable Teensy MMOD with CMake
 
