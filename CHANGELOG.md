@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.8.3
+- Updated MCU support to enable Teensy MMOD with CMake
+
 # v4.8.2
 - Fixed two bugs with UTM, the first a typo in mavlink.h and the second, an issue with doing a memcpy directly to std::optional, now using a temp variable.
 - Switched to using std::optional for CMake builds
