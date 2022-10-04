@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.8.5
+- Updated core to v3.1.2
+
 # v4.8.4
 - Updated core to support MMOD
 
