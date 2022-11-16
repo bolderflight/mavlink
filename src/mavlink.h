@@ -638,6 +638,13 @@ class MavLink {
           SendAutopilotVersion();
           break;
         }
+        case MAV_CMD_REQUEST_MESSAGE: {
+          if (cmd_long_.param1 == MAVLINK_MSG_ID_AUTOPILOT_VERSION) {
+            SendCmdAck(MAV_RESULT_ACCEPTED, 255);
+            SendAutopilotVersion();
+          }
+          break;
+        }
       }
     }
   }
