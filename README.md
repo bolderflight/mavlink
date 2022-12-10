@@ -1,4 +1,4 @@
-[![Pipeline](https://gitlab.com/bolderflight/software/mavlink/badges/main/pipeline.svg)](https://gitlab.com/bolderflight/software/mavlink/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ![Bolder Flight Systems Logo](img/logo-words_75.png) &nbsp; &nbsp; ![Arduino Logo](img/arduino_logo_75.png)
 
@@ -53,6 +53,7 @@ This will build the library and an example executable called *mavlink_example*. 
    * MKL26Z64
    * IMXRT1062_T40
    * IMXRT1062_T41
+   * IMXRT1062_MMOD
 
 These are known to work with the same packages used in Teensy products. Also switching packages is known to work well, as long as it's only a package change.
 
