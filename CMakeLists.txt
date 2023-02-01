@@ -35,8 +35,8 @@ if (DEFINED MCU)
   # Fetch navigation
   FetchContent_Declare(
     navigation
-    GIT_REPOSITORY https://github.com/bolderflight/navigation.git
-    GIT_TAG v4.0.1
+    GIT_REPOSITORY https://github.com/TL-4319/navigation.git
+    GIT_TAG main
   )
   FetchContent_MakeAvailable(navigation)
   # Add the library target
