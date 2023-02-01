@@ -33,12 +33,12 @@ if (DEFINED MCU)
   )
   FetchContent_MakeAvailable(units)
   # Fetch navigation
-  FetchContent_Declare(
-    navigation
-    GIT_REPOSITORY https://github.com/TL-4319/navigation.git
-    GIT_TAG main
-  )
-  FetchContent_MakeAvailable(navigation)
+  # FetchContent_Declare(
+  #   navigation
+  #   GIT_REPOSITORY https://github.com/TL-4319/navigation.git
+  #   GIT_TAG main
+  # )
+  # FetchContent_MakeAvailable(navigation)
   # Add the library target
   add_library(mavlink
     src/heartbeat.cpp
@@ -59,7 +59,7 @@ if (DEFINED MCU)
     PUBLIC
       core
       units
-      navigation
+      # navigation
   )
   # Setup include directories 
   target_include_directories(mavlink PUBLIC 
