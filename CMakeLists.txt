@@ -32,13 +32,6 @@ if (DEFINED MCU)
     GIT_TAG v4.1.0
   )
   FetchContent_MakeAvailable(units)
-  # Fetch navigation
-  FetchContent_Declare(
-    navigation
-    GIT_REPOSITORY https://github.com/bolderflight/navigation.git
-    GIT_TAG v4.0.1
-  )
-  FetchContent_MakeAvailable(navigation)
   # Add the library target
   add_library(mavlink
     src/heartbeat.cpp
@@ -59,7 +52,6 @@ if (DEFINED MCU)
     PUBLIC
       core
       units
-      navigation
   )
   # Setup include directories 
   target_include_directories(mavlink PUBLIC 

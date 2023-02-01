@@ -23,7 +23,7 @@ This library has been tested extensively against [QGroundControl](http://qground
 
 # Installation
 ## Arduino
-Simply clone or download and extract the zipped library into your Arduino/libraries folder. In addition to this library, the [Bolder Flight Systems Units library](https://github.com/bolderflight/units) and the the [Bolder Flight Systems Navigation library](https://github.com/bolderflight/navigation) must be installed. The library is added as:
+Simply clone or download and extract the zipped library into your Arduino/libraries folder. In addition to this library, the [Bolder Flight Systems Units library](https://github.com/bolderflight/units) must be installed. The library is added as:
 
 ```C++
 #include "mavlink.h"

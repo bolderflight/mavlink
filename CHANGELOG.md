@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.8.8
+- Removed dependency on the navigation library
+
 # v4.8.7
 - Added support to send AUTOPILOT_CAPABILITIES in response to the MAV_CMD_REQUEST_MESSAGE requesting it. This was needed to support QGC newer than v4.2.x.
 

@@ -33,9 +33,38 @@
 #include "mavlink/mavlink_types.h"
 #include "mavlink/common/mavlink.h"
 #include "units.h"  // NOLINT
-#include "navigation.h"  // NOLINT
 
 namespace bfs {
+
+namespace {
+
+/* Converts a +/- 180 value to a 0 - 360 value */
+template<typename T>
+T WrapTo2Pi(T ang) {
+  static_assert(std::is_floating_point<T>::value,
+                "Only floating point types supported");
+  ang = std::fmod(ang, BFS_2PI<T>);
+  if (ang < static_cast<T>(0)) {
+    ang += BFS_2PI<T>;
+  }
+  return ang;
+}
+
+/* Converts a 0 - 360 value to a +/- 180 value */
+template<typename T>
+T WrapToPi(T ang) {
+  static_assert(std::is_floating_point<T>::value,
+                "Only floating point types supported");
+  if (ang > BFS_PI<T>) {
+    ang -= BFS_2PI<T>;
+  }
+  if (ang < -BFS_PI<T>) {
+    ang += BFS_2PI<T>;
+  }
+  return ang;
+}
+
+}  // namespace
 
 void MavLinkTelemetry::Update() {
   /*
