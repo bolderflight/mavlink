@@ -29,6 +29,7 @@
 #include "core/core.h"
 #endif
 #include <array>
+#include <cmath>
 #include "telemetry.h"  // NOLINT
 #include "mavlink/mavlink_types.h"
 #include "mavlink/common/mavlink.h"

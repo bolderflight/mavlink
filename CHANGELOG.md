@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.8.9
+- Added cmath library needed for Wrap functions
+
 # v4.8.8
 - Removed dependency on the navigation library
 
