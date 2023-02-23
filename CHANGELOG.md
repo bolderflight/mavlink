@@ -1,5 +1,8 @@
 # Changelog
 
+# v4.8.10
+- Disabled address-of-packed-member warning message. This is discussed more here: https://mavlink.io/en/mavgen_c/#build-warnings
+
 # v4.8.9
 - Added cmath library needed for Wrap functions
 
